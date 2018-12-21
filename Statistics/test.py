@@ -1,14 +1,9 @@
 # https://github.com/277roshan/MachineLearningFinalProject/blob/master/Machine%20Learning%20Final%20Project.ipynb
 
-import pandas as pd
-from bs4 import BeautifulSoup
-import bs4
-import requests
+import csv
 import json
-import matplotlib.pyplot as plt
-import sys
-from time import time
-from sklearn.naive_bayes import GaussianNB
+
+import requests
 
 url = "https://fantasy.premierleague.com/drf/bootstrap-static"
 r = requests.get(url)
@@ -25,6 +20,14 @@ scorers = []
 possible_scorers = {}
 count = 0
 n = 1
+
+csvfile = "data.csv"
+with open(csvfile, "a") as fp:
+    wr = csv.writer(fp, dialect="excel")
+    for i in all_players:
+        print(i)
+        wr.writerow(i)
+'''
 try:
     for i in player_dict:
         print(i, player_dict[i])
@@ -111,4 +114,4 @@ for i in plot_possible_scorers:
     if i in plot_scorers:
         print(i)
     b += 1
-
+'''
