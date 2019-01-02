@@ -22,11 +22,16 @@ count = 0
 n = 1
 
 csvfile = "data.csv"
-with open(csvfile, "a") as fp:
+with open(csvfile, "w") as fp:
     wr = csv.writer(fp, dialect="excel")
-    for i in all_players:
-        print(i)
-        wr.writerow(i)
+    print(all_players[0])
+    wr.writerow(all_players[0])
+    for dict in all_players:
+        rowList = []
+        for k,v in dict.items():
+            print(v)
+            rowList.append(v)
+        wr.writerow(rowList)
 '''
 try:
     for i in player_dict:
