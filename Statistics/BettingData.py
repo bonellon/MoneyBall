@@ -34,16 +34,19 @@ def getTeams(leagueID):
                             }
                             )
 
-    data = json.loads(response.content)
-    teams = data['api']['teams']
-    return teams
+    data = json.loads(response.text)
+    return data['api']['teams']
+
 
 
 # get League data
 # English Premier League =  2
 leagueID = getEPLleagueID()
 teams = getTeams(leagueID)
-
+teamIDs = []
+for team in teams:
+    teamIDs.append(teams[team]['team_id'])
+print(teamIDs)
 # get list of next gameweek fixtures
 
 # for each game in next gameweek; get odds
