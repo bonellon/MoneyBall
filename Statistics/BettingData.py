@@ -1,8 +1,10 @@
 import json
+import csv
 import requests
 
-isTest = False
+isTest = True
 currentGameweek = 21
+requiredOdds = {"Win the match", "Both teams score", "Result & The 2 teams score", "Scorer"}
 mashapeKey = "trr4b4xsHumshQ6nTWYhZnzZEdUnp1VvuQEjsnes6a8aaI5vgr"
 
 
@@ -11,6 +13,22 @@ def writeResponseToFile(fileName, text):
     file.write(text)
     file.close
 
+def writeOddsToCSV(fixtureId, odds):
+    for market in odds:
+        marketTitle = market.title().replace(" ", "")
+        fileName = "odds/"+marketTitle+".csv"
+        f = open(fileName, 'w', newline='')
+        w = csv.writer(f)
+        if marketTitle == "WinTheMatch":
+            WinTheMatchCSV(f, w, fixtureId, odds[market])
+
+        f.close()
+
+def WinTheMatchCSV(f, w, fixtureId, data):
+    header = ['FixtureID', '1', 'N', '2']
+    content = [fixtureId, data['1']['odd'], data['N']['odd'], data['2']['odd']]
+    w.writerow(header)
+    w.writerow(content)
 
 def getEPLleagueID():
     fileName = 'getLeagues.txt'
@@ -82,7 +100,7 @@ def getFixtures(leagueID):
 
     data = json.loads(responseText)["api"]["fixtures"]
     writeResponseToFile(fileName, responseText)
-    cleanFixtureFile(data)
+    return cleanFixtureFile(data)
 
 
 def cleanFixtureFile(data):
@@ -114,17 +132,31 @@ def getOdds(fixtureID):
                                )
         responseText = response.text
 
-    data = json.loads(responseText)["api"]["odds"]
+    responseText = responseText.replace("\\u00e9", "e")
     writeResponseToFile(fileName, responseText)
 
+    data = json.loads(responseText)["api"]["odds"]
+    return cleanOdds(data)
+
+
+def cleanOdds(odds):
+    cleanedOdds = {}
+    for odd in odds:
+        if odd in requiredOdds:
+            cleanedOdds[odd] = odds[odd]
+    writeOddsToCSV(123, cleanedOdds)
+    return cleanedOdds
+
+
+
 # leagueID = getEPLleagueID()
-#getFixtures("2")
-getOdds(271)
-teams = []#getTeams("2")
-teamIDs = []
-for team in teams:
-    teamIDs.append(teams[team]['team_id'])
-print(teamIDs)
+fixtures = getFixtures("2")
+fixtureIds = []
+for fixture in fixtures:
+    fixtureIds.append(fixture["fixture_id"])
+
+#for id in fixtureIds:
+getOdds(270)
 
 
 # for each game in next gameweek; get odds
