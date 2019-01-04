@@ -1,0 +1,4 @@
+1. Add fixtureID to odds CSVS
+2. Complete CSVs for all required markets
+3. Complete for all upcoming fixtures
+4. Scorer & 1st Scorer markets upcoming? 
