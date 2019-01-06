@@ -20,11 +20,29 @@ def writeOddsToCSV(fixtureId, odds):
         f = open(fileName, 'w', newline='')
         w = csv.writer(f)
         if marketTitle == "WinTheMatch":
-            WinTheMatchCSV(f, w, fixtureId, odds[market])
-
+            WinTheMatchCSV(w, fixtureId, odds[market])
+        elif marketTitle == "BothTeamsScore":
+            BothTeamsScoreCSV(w, fixtureId, odds[market])
+        elif marketTitle == "Result&The2TeamsScore":
+            ResultAndThe2TeamsScoreCSV(w, fixtureId, odds[market])
         f.close()
 
-def WinTheMatchCSV(f, w, fixtureId, data):
+
+def BothTeamsScoreCSV(w, fixtureId, data):
+    header = ['FixtureID', 'Yes', 'No']
+    content = [fixtureId, data['Yes']['odd'], data['No']['odd']]
+    w.writerow(header)
+    w.writerow(content)
+
+
+def ResultAndThe2TeamsScoreCSV(w, fixtureId, data):
+    header = ['FixtureID', '1 & Yes', '1 & No', 'N & Yes', 'N & No', '2 & Yes', '2 & No']
+    content = [fixtureId, data[0]['odd'], data[1]['odd'], data[2]['odd'], data[3]['odd'], data[4]['odd'], data[5]['odd']]
+    w.writerow(header)
+    w.writerow(content)
+
+
+def WinTheMatchCSV(w, fixtureId, data):
     header = ['FixtureID', '1', 'N', '2']
     content = [fixtureId, data['1']['odd'], data['N']['odd'], data['2']['odd']]
     w.writerow(header)
@@ -142,6 +160,14 @@ def getOdds(fixtureID):
 def cleanOdds(odds):
     cleanedOdds = {}
     for odd in odds:
+        if odd == "Result & The 2 teams score":
+            market = odds[odd]
+            bets = list(market.keys())
+            testkey = 'test'
+            toOverwrite = market[bets[0]]
+
+            market[testkey] = market.pop('Huddersfield / Yes')
+
         if odd in requiredOdds:
             cleanedOdds[odd] = odds[odd]
     writeOddsToCSV(123, cleanedOdds)
