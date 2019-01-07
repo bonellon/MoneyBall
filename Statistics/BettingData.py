@@ -14,13 +14,13 @@ def writeResponseToFile(fileName, text):
     file.close
 
 
-def writeOddsToCSV2(data):
+def writeOddsToCSV(data):
     isFirst = True
     for fixture in data:
         for market in data[fixture]:
             marketTitle = market.title().replace(" ", "")
             fileName = "odds/" + marketTitle + ".csv"
-            if(isFirst):
+            if (isFirst):
                 f = open(fileName, 'w', newline='')
             else:
                 f = open(fileName, 'a', newline='')
@@ -34,21 +34,6 @@ def writeOddsToCSV2(data):
                 ResultAndThe2TeamsScoreCSV(w, fixture, data[fixture][market], isFirst)
             f.close()
         isFirst = False
-
-
-def writeOddsToCSV(fixtureId, odds):
-    for market in odds:
-        marketTitle = market.title().replace(" ", "")
-        fileName = "odds/" + marketTitle + ".csv"
-        f = open(fileName, 'w', newline='')
-        w = csv.writer(f)
-        if marketTitle == "WinTheMatch":
-            WinTheMatchCSV(w, fixtureId, odds[market])
-        elif marketTitle == "BothTeamsScore":
-            BothTeamsScoreCSV(w, fixtureId, odds[market])
-        #elif marketTitle == "Result&The2TeamsScore":
-            #ResultAndThe2TeamsScoreCSV(w, fixtureId, odds[market])
-        f.close()
 
 
 def BothTeamsScoreCSV(w, fixtureId, data, isFirst):
@@ -138,7 +123,7 @@ def getFixtures(leagueID):
     else:
         response = requests.get("https://api-football-v1.p.mashape.com/fixtures/league/" + leagueID,
                                 headers={
-                                    "X-Mashape-Key": "trr4b4xsHumshQ6nTWYhZnzZEdUnp1VvuQEjsnes6a8aaI5vgr",
+                                    "X-Mashape-Key": mashapeKey,
                                     "Accept": "application/json"
                                 }
                                 )
@@ -154,9 +139,9 @@ def cleanFixtureFile(data):
     for fixture in data:
         current = data[fixture]['round']
         if current == ("Premier League - " + str(currentGameweek)):
-            cleanedFixtures = cleanedFixtures + "\""+fixture+"\":" + str(data[fixture])+","
+            cleanedFixtures = cleanedFixtures + "\"" + fixture + "\":" + str(data[fixture]) + ","
 
-    cleanedFixtures = cleanedFixtures[:-1] +"}"
+    cleanedFixtures = cleanedFixtures[:-1] + "}"
     cleanedFixtures = cleanedFixtures.replace("'penalty': None,", "")
 
     file = open("getCleanedFixtures.txt", 'w')
@@ -174,27 +159,24 @@ def getOdds(fixtureIds):
     else:
         responseText = "{"
         for fixtureId in fixtureIds:
-            responseText = responseText + "\"" + fixtureId + "\"" +":"
+            responseText = responseText + "\"" + fixtureId + "\"" + ":"
             response = requests.get("https://api-football-v1.p.mashape.com/odds/" + str(fixtureId),
                                     headers={
-                                        "X-Mashape-Key": "trr4b4xsHumshQ6nTWYhZnzZEdUnp1VvuQEjsnes6a8aaI5vgr",
+                                        "X-Mashape-Key": mashapeKey,
                                         "Accept": "application/json"
                                     }
                                     )
             temp = str(response.text)
-            #temp = temp[1:-1]
             responseText = responseText + temp + ','
 
     responseText = responseText.replace("\\u00e9", "e")
-    responseText = responseText[:-1]
-    responseText = responseText+'}'
+    responseText = responseText[:-1] + "}"
     writeResponseToFile(fileName, responseText)
 
-    #data = json.loads(responseText)["api"]["odds"]
-    #return cleanOdds(fixtureIds, data)
-    cleanOdds2(json.loads(responseText))
+    cleanOdds(json.loads(responseText))
 
-def cleanOdds2(data):
+
+def cleanOdds(data):
     cleanedOdds = {}
 
     keys = data.keys()
@@ -205,7 +187,6 @@ def cleanOdds2(data):
         temp = {}
         newDict.update(innerDict)
 
-
         markets = data[key]["api"]["odds"]
         for odd in markets:
             if odd == "Result & The 2 teams score":
@@ -214,45 +195,25 @@ def cleanOdds2(data):
                 fixedBets = ["1 / Yes", "1 / No", "N / Yes", "N / No", "2 / Yes", "2 / No"]
 
                 for i in range(0, 6):
-                    position = int(market[bets[i]]['pos'])-1
+                    position = int(market[bets[i]]['pos']) - 1
                     market[fixedBets[position]] = market.pop(bets[i])
 
             if odd in requiredOdds:
-                #newDict.update({key:{odd: "{}"}})
                 temp2 = {odd: markets[odd]}
                 temp.update(temp2)
                 innerDict.update({key: temp})
 
                 newDict.update(innerDict)
-                #newDict[key][odd] = markets[odd]
                 cleanedOdds = newDict
-                #cleanedOdds[odd] = markets[odd]
+
     jsonString = "{"
     for i in cleanedOdds:
-        jsonString = jsonString + "\"" + i+ "\":"
-        jsonString = jsonString + str(cleanedOdds[i]) + ","
-    jsonString = jsonString[:-1]+"}"
-    print(jsonString)
+        jsonString = jsonString + "\"" + i + "\":" + str(cleanedOdds[i]) + ","
+    jsonString = jsonString[:-1] + "}"
     jsonString = json.loads(jsonString.replace("'", "\""))
-    writeOddsToCSV2(jsonString)
+
+    writeOddsToCSV(jsonString)
     return jsonString
-
-def cleanOdds(fixtureId, odds):
-    cleanedOdds = {}
-    for odd in odds:
-        if odd == "Result & The 2 teams score":
-            market = odds[odd]
-            bets = list(market.keys())
-            fixedBets = ["1 / Yes", "1 / No", "N / Yes", "N / No", "2 / Yes", "2 / No"]
-
-            for i in range(1, 6):
-                position = market[bets[i]]['pos']
-                market[fixedBets[int(position) - 1]] = market.pop(bets[i])
-
-        if odd in requiredOdds:
-            cleanedOdds[odd] = odds[odd]
-    writeOddsToCSV(fixtureId, cleanedOdds)
-    return cleanedOdds
 
 
 # leagueID = getEPLleagueID()
