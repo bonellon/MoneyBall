@@ -2,8 +2,8 @@ import json
 import csv
 import requests
 
-isTest = True
-currentGameweek = 19
+isTest = False
+currentGameweek = 22
 requiredOdds = {"Win the match", "Both teams score", "Result & The 2 teams score", "Scorer"}
 mashapeKey = "trr4b4xsHumshQ6nTWYhZnzZEdUnp1VvuQEjsnes6a8aaI5vgr"
 
