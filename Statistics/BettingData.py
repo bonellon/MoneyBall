@@ -4,7 +4,7 @@ import requests
 from decimal import Decimal
 
 isTest = True
-currentGameweek = 21
+currentGameweek = 20
 requiredOdds = {"Win the match", "Both teams score", "Result & The 2 teams score", "Scorer"}
 mashapeKey = "trr4b4xsHumshQ6nTWYhZnzZEdUnp1VvuQEjsnes6a8aaI5vgr"
 
@@ -22,7 +22,7 @@ def writeOddsToCSV(data):
         teams = getFixture(fixturesList, fixtureId)
         for market in data[fixtureId]:
             marketTitle = market.title().replace(" ", "")
-            fileName = "odds/" + marketTitle + ".csv"
+            fileName = "odds/" + marketTitle + "2.csv"
             if (isFirst):
                 f = open(fileName, 'w', newline='')
             else:
@@ -43,28 +43,59 @@ def calculateImpliedProbability(odd):
     return round((1 / Decimal(odd)) * 100, 2)
 
 
+def calculateFinalProbability(odds):
+    total = 0
+    probabilities = []
+    for odd in odds:
+        probability = round((1 / Decimal(odd)) * 100, 2)
+        total = total + probability
+        probabilities.append(probability)
+
+    total = total - 100
+    divider = total / len(odds)
+    update = []
+    for probability in probabilities:
+        probability = probability - divider
+        update.append(probability)
+
+    return update
+
+
 def BothTeamsScoreCSV(w, fixtureId, teams, data, isFirst):
     if isFirst:
         header = ['FixtureID', 'Team1', 'Team2', 'Yes', '%Yes', 'No', '%No']
         w.writerow(header)
-    content = [fixtureId, teams[0], teams[1], data['Yes']['odd'], calculateImpliedProbability((data['Yes']['odd'])), data['No']['odd'], calculateImpliedProbability((data['No']['odd']))]
+    probabilities = calculateFinalProbability([data['Yes']['odd'], data['No']['odd']])
+    content = [fixtureId, teams[0], teams[1],
+               data['Yes']['odd'], probabilities[0],
+               data['No']['odd'], probabilities[1]]
     w.writerow(content)
 
 
 def ResultAndThe2TeamsScoreCSV(w, fixtureId, teams, data, isFirst):
     if isFirst:
-        header = ['FixtureID', 'Team1', 'Team2', '1 & No', '1 & Yes', '2 & No', '2 & Yes', 'N & No', 'N & Yes']
+        header = ['FixtureID', 'Team1', 'Team2', '1 & No', '%1 & No', '1 & Yes', '%1 & Yes', '2 & No', '%2 & No',
+                  '2 & Yes', '%2 & Yes', 'N & No', '%N & No', 'N & Yes', '%N & Yes']
         w.writerow(header)
-    content = [fixtureId, teams[0], teams[1], data['1 / No']['odd'], data['1 / Yes']['odd'], data['2 / No']['odd'], data['2 / Yes']['odd'],
-               data['N / No']['odd'], data['N / Yes']['odd']]
+
+    probabilities = calculateFinalProbability([data['1 / No']['odd'], data['1 / Yes']['odd'],
+                                               data['2 / No']['odd'], data['2 / Yes']['odd'],
+                                               data['N / No']['odd'], data['N / Yes']['odd']])
+
+    #    print("NEXT\n"+str(probabilities))
+    content = [fixtureId, teams[0], teams[1], data['1 / No']['odd'], probabilities[0], data['1 / Yes']['odd'],
+               probabilities[1], data['2 / No']['odd'], probabilities[2], data['2 / Yes']['odd'], probabilities[3],
+               data['N / No']['odd'], probabilities[4], data['N / Yes']['odd'], probabilities[5]]
     w.writerow(content)
 
 
 def WinTheMatchCSV(w, fixtureId, teams, data, isFirst):
     if isFirst:
-        header = ['FixtureID', 'Team1', 'Team2', '1', 'N', '2']
+        header = ['FixtureID', 'Team1', 'Team2', '1', '%1', 'N', '%N', '2', '%2']
         w.writerow(header)
-    content = [fixtureId, teams[0], teams[1], data['1']['odd'], data['N']['odd'], data['2']['odd']]
+    probabilities = calculateFinalProbability([data['1']['odd'], data['N']['odd'], data['2']['odd']])
+    content = [fixtureId, teams[0], teams[1], data['1']['odd'], probabilities[0],
+               data['N']['odd'], probabilities[1], data['2']['odd'], probabilities[2]]
     w.writerow(content)
 
 
@@ -172,10 +203,12 @@ def getFixtureNames():
             fixturesList.append(fixture)
     return fixturesList
 
+
 def getFixture(fixturesList, fixtureId):
     for fixture in fixturesList:
         if fixture[0] == fixtureId:
             return (fixture[1], fixture[2])
+
 
 def getOdds(fixtureIds):
     fileName = "getOdds.txt"
