@@ -1,9 +1,10 @@
 import json
 import csv
 import requests
+from decimal import Decimal
 
-isTest = False
-currentGameweek = 22
+isTest = True
+currentGameweek = 21
 requiredOdds = {"Win the match", "Both teams score", "Result & The 2 teams score", "Scorer"}
 mashapeKey = "trr4b4xsHumshQ6nTWYhZnzZEdUnp1VvuQEjsnes6a8aaI5vgr"
 
@@ -16,8 +17,10 @@ def writeResponseToFile(fileName, text):
 
 def writeOddsToCSV(data):
     isFirst = True
-    for fixture in data:
-        for market in data[fixture]:
+    fixturesList = getFixtureNames()
+    for fixtureId in data:
+        teams = getFixture(fixturesList, fixtureId)
+        for market in data[fixtureId]:
             marketTitle = market.title().replace(" ", "")
             fileName = "odds/" + marketTitle + ".csv"
             if (isFirst):
@@ -27,37 +30,41 @@ def writeOddsToCSV(data):
 
             w = csv.writer(f)
             if marketTitle == "WinTheMatch":
-                WinTheMatchCSV(w, fixture, data[fixture][market], isFirst)
+                WinTheMatchCSV(w, fixtureId, teams, data[fixtureId][market], isFirst)
             elif marketTitle == "BothTeamsScore":
-                BothTeamsScoreCSV(w, fixture, data[fixture][market], isFirst)
+                BothTeamsScoreCSV(w, fixtureId, teams, data[fixtureId][market], isFirst)
             elif marketTitle == "Result&The2TeamsScore":
-                ResultAndThe2TeamsScoreCSV(w, fixture, data[fixture][market], isFirst)
+                ResultAndThe2TeamsScoreCSV(w, fixtureId, teams, data[fixtureId][market], isFirst)
             f.close()
         isFirst = False
 
 
-def BothTeamsScoreCSV(w, fixtureId, data, isFirst):
+def calculateImpliedProbability(odd):
+    return round((1 / Decimal(odd)) * 100, 2)
+
+
+def BothTeamsScoreCSV(w, fixtureId, teams, data, isFirst):
     if isFirst:
-        header = ['FixtureID', 'Yes', 'No']
+        header = ['FixtureID', 'Team1', 'Team2', 'Yes', '%Yes', 'No', '%No']
         w.writerow(header)
-    content = [fixtureId, data['Yes']['odd'], data['No']['odd']]
+    content = [fixtureId, teams[0], teams[1], data['Yes']['odd'], calculateImpliedProbability((data['Yes']['odd'])), data['No']['odd'], calculateImpliedProbability((data['No']['odd']))]
     w.writerow(content)
 
 
-def ResultAndThe2TeamsScoreCSV(w, fixtureId, data, isFirst):
+def ResultAndThe2TeamsScoreCSV(w, fixtureId, teams, data, isFirst):
     if isFirst:
-        header = ['FixtureID', '1 & No', '1 & Yes', '2 & No', '2 & Yes', 'N & No', 'N & Yes']
+        header = ['FixtureID', 'Team1', 'Team2', '1 & No', '1 & Yes', '2 & No', '2 & Yes', 'N & No', 'N & Yes']
         w.writerow(header)
-    content = [fixtureId, data['1 / No']['odd'], data['1 / Yes']['odd'], data['2 / No']['odd'], data['2 / Yes']['odd'],
+    content = [fixtureId, teams[0], teams[1], data['1 / No']['odd'], data['1 / Yes']['odd'], data['2 / No']['odd'], data['2 / Yes']['odd'],
                data['N / No']['odd'], data['N / Yes']['odd']]
     w.writerow(content)
 
 
-def WinTheMatchCSV(w, fixtureId, data, isFirst):
+def WinTheMatchCSV(w, fixtureId, teams, data, isFirst):
     if isFirst:
-        header = ['FixtureID', '1', 'N', '2']
+        header = ['FixtureID', 'Team1', 'Team2', '1', 'N', '2']
         w.writerow(header)
-    content = [fixtureId, data['1']['odd'], data['N']['odd'], data['2']['odd']]
+    content = [fixtureId, teams[0], teams[1], data['1']['odd'], data['N']['odd'], data['2']['odd']]
     w.writerow(content)
 
 
@@ -150,6 +157,26 @@ def cleanFixtureFile(data):
     return cleanedFixtures
 
 
+def getFixtureNames():
+    with open('getCleanedFixtures.txt', 'r') as f:
+        read = f.read()
+        jsonFixtures = json.loads(read.replace("'", "\"").replace('None', '"NULL"'))
+
+        fixturesList = []
+        for fixture in jsonFixtures:
+            fixtureId = jsonFixtures[fixture]['fixture_id']
+            homeTeam = jsonFixtures[fixture]['homeTeam']
+            awayTeam = jsonFixtures[fixture]['awayTeam']
+
+            fixture = [fixtureId, homeTeam, awayTeam]
+            fixturesList.append(fixture)
+    return fixturesList
+
+def getFixture(fixturesList, fixtureId):
+    for fixture in fixturesList:
+        if fixture[0] == fixtureId:
+            return (fixture[1], fixture[2])
+
 def getOdds(fixtureIds):
     fileName = "getOdds.txt"
     if isTest:
@@ -210,7 +237,7 @@ def cleanOdds(data):
     for i in cleanedOdds:
         jsonString = jsonString + "\"" + i + "\":" + str(cleanedOdds[i]) + ","
     jsonString = jsonString[:-1] + "}"
-    jsonString = json.loads(jsonString.replace("'", "\""))
+    jsonString = json.loads(jsonString.replace("'", "\"").replace('None', '"NULL"'))
 
     writeOddsToCSV(jsonString)
     return jsonString
@@ -218,7 +245,8 @@ def cleanOdds(data):
 
 # leagueID = getEPLleagueID()
 fixtures = getFixtures("2")
-jsonFixtures = json.loads(fixtures.replace("\'", "\""))
+fixtures = fixtures.replace("\'", "\"").replace('None', '"NULL"')
+jsonFixtures = json.loads(fixtures)
 fixtureIds = []
 for fixture in jsonFixtures:
     fixtureIds.append(jsonFixtures[fixture]["fixture_id"])
