@@ -10,12 +10,25 @@ mashapeKey = "trr4b4xsHumshQ6nTWYhZnzZEdUnp1VvuQEjsnes6a8aaI5vgr"
 
 
 def writeResponseToFile(fileName, text):
+    """
+    Store API-Football response to file
+
+    """
+
     file = open(fileName, 'w')
     file.write(text)
     file.close
 
 
 def writeOddsToCSV(data):
+    """
+    Main odds -> CSV helper function
+    1. Get fixture ID, Names
+    2. Get marketType
+    3. Write to CSV in market-specific method
+
+    """
+
     isFirst = True
     fixturesList = getFixtureNames()
     for fixtureId in data:
@@ -40,10 +53,21 @@ def writeOddsToCSV(data):
 
 
 def calculateImpliedProbability(odd):
+    """
+    Convert decimal odds to percentage probability
+
+    """
     return round((1 / Decimal(odd)) * 100, 2)
 
 
 def calculateFinalProbability(odds):
+    """
+    Return percentage probability equivalent of decimal odds
+    after removing bookies cut
+
+    :param odds: List of all odds in market per fixture
+    :return: List of updated percentage probabilities
+    """
     total = 0
     probabilities = []
     for odd in odds:
@@ -62,6 +86,17 @@ def calculateFinalProbability(odds):
 
 
 def BothTeamsScoreCSV(w, fixtureId, teams, data, isFirst):
+    """
+    BothTeamsToScore market specific CSV Writer method
+
+    :param w: CSV writer
+    :param fixtureId: fixtureID
+    :param teams: [Team1, Team2]
+    :param data: Odds
+    :param isFirst: boolean value to determine whether headers should be written
+    :return:
+    """
+
     if isFirst:
         header = ['FixtureID', 'Team1', 'Team2', 'Yes', '%Yes', 'No', '%No']
         w.writerow(header)
@@ -73,6 +108,17 @@ def BothTeamsScoreCSV(w, fixtureId, teams, data, isFirst):
 
 
 def ResultAndThe2TeamsScoreCSV(w, fixtureId, teams, data, isFirst):
+    """
+    ResultAndThe2TeamsScore market specific CSV Writer method
+
+    :param w: CSV writer
+    :param fixtureId: fixtureID
+    :param teams: [Team1, Team2]
+    :param data: Odds
+    :param isFirst: boolean value to determine whether headers should be written
+    :return:
+    """
+
     if isFirst:
         header = ['FixtureID', 'Team1', 'Team2', '1 & No', '%1 & No', '1 & Yes', '%1 & Yes', '2 & No', '%2 & No',
                   '2 & Yes', '%2 & Yes', 'N & No', '%N & No', 'N & Yes', '%N & Yes']
@@ -82,7 +128,6 @@ def ResultAndThe2TeamsScoreCSV(w, fixtureId, teams, data, isFirst):
                                                data['2 / No']['odd'], data['2 / Yes']['odd'],
                                                data['N / No']['odd'], data['N / Yes']['odd']])
 
-    #    print("NEXT\n"+str(probabilities))
     content = [fixtureId, teams[0], teams[1], data['1 / No']['odd'], probabilities[0], data['1 / Yes']['odd'],
                probabilities[1], data['2 / No']['odd'], probabilities[2], data['2 / Yes']['odd'], probabilities[3],
                data['N / No']['odd'], probabilities[4], data['N / Yes']['odd'], probabilities[5]]
@@ -90,6 +135,17 @@ def ResultAndThe2TeamsScoreCSV(w, fixtureId, teams, data, isFirst):
 
 
 def WinTheMatchCSV(w, fixtureId, teams, data, isFirst):
+    """
+    WinTheMatch market specific CSV Writer method
+
+    :param w: CSV writer
+    :param fixtureId: fixtureID
+    :param teams: [Team1, Team2]
+    :param data: Odds
+    :param isFirst: boolean value to determine whether headers should be written
+    :return:
+    """
+
     if isFirst:
         header = ['FixtureID', 'Team1', 'Team2', '1', '%1', 'N', '%N', '2', '%2']
         w.writerow(header)
@@ -100,6 +156,11 @@ def WinTheMatchCSV(w, fixtureId, teams, data, isFirst):
 
 
 def getEPLleagueID():
+    """
+    Constant - Returns EPL LeagueID
+
+    :return: EPL LeagueID
+    """
     fileName = 'getLeagues.txt'
     if isTest:
         with open(fileName, 'r') as file:
@@ -132,6 +193,12 @@ def getEPLleagueID():
 
 # get list of teams in league
 def getTeams(leagueID):
+    """
+    Returns list of all teams playing in given League
+
+    :param leagueID: 2 -EPL
+    :return: List of teams in league
+    """
     fileName = 'getTeams.txt'
     if isTest:
         with open(fileName, 'r') as file:
@@ -153,6 +220,13 @@ def getTeams(leagueID):
 
 # get list of next gameweek fixtures
 def getFixtures(leagueID):
+    """
+    Gets list of fixtures in a league given global Gameweek var
+
+    :param leagueID: League ID
+    :return: list of fixture details
+    """
+
     fileName = "getFixtures.txt"
     if isTest:
         with open(fileName, 'r') as file:
@@ -173,6 +247,12 @@ def getFixtures(leagueID):
 
 
 def cleanFixtureFile(data):
+    """
+    Given list of all fixtures in EPL, remove all that are not
+    in the next Gameweek
+    :param data: List of all fixtures obtained from getFixtures
+    :return: Fixtures only in next Gameweek
+    """
     cleanedFixtures = "{"
     for fixture in data:
         current = data[fixture]['round']
@@ -189,6 +269,10 @@ def cleanFixtureFile(data):
 
 
 def getFixtureNames():
+    """
+    Converts fixtureId -> Fixture teams
+    :return: list of triples [fixtureID, Team1, Team2]
+    """
     with open('getCleanedFixtures.txt', 'r') as f:
         read = f.read()
         jsonFixtures = json.loads(read.replace("'", "\"").replace('None', '"NULL"'))
@@ -205,12 +289,25 @@ def getFixtureNames():
 
 
 def getFixture(fixturesList, fixtureId):
+    """
+    Returns teams playing in given FixtureID
+
+    :param fixturesList: list of triples [fixtureID, Team1, Team2]
+                            for games next gameweek.
+    :param fixtureId: FixtureID needed
+    :return: [Team1, Team2]
+    """
     for fixture in fixturesList:
         if fixture[0] == fixtureId:
             return (fixture[1], fixture[2])
 
 
 def getOdds(fixtureIds):
+    """
+
+    :param fixtureIds: List of fixtureIDs
+    :return: returns list of odds per fixture
+    """
     fileName = "getOdds.txt"
     if isTest:
         with open(fileName, 'r') as file:
@@ -237,6 +334,13 @@ def getOdds(fixtureIds):
 
 
 def cleanOdds(data):
+    """
+    Remove redundant markets
+
+    :param data: all odds
+    :return: required odds
+    """
+
     cleanedOdds = {}
 
     keys = data.keys()
