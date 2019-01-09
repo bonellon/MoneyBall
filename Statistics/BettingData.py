@@ -22,7 +22,7 @@ def writeOddsToCSV(data):
         teams = getFixture(fixturesList, fixtureId)
         for market in data[fixtureId]:
             marketTitle = market.title().replace(" ", "")
-            fileName = "odds/" + marketTitle + "2.csv"
+            fileName = "odds/" + marketTitle + ".csv"
             if (isFirst):
                 f = open(fileName, 'w', newline='')
             else:
@@ -47,7 +47,7 @@ def calculateFinalProbability(odds):
     total = 0
     probabilities = []
     for odd in odds:
-        probability = round((1 / Decimal(odd)) * 100, 2)
+        probability = (1 / Decimal(odd)) * 100
         total = total + probability
         probabilities.append(probability)
 
@@ -55,7 +55,7 @@ def calculateFinalProbability(odds):
     divider = total / len(odds)
     update = []
     for probability in probabilities:
-        probability = probability - divider
+        probability = round(probability - divider, 2)
         update.append(probability)
 
     return update
