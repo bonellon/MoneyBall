@@ -3,8 +3,8 @@ import csv
 import requests
 from decimal import Decimal
 
-isTest = True
-currentGameweek = 20
+isTest = False
+currentGameweek = 21
 requiredOdds = {"Win the match", "Both teams score", "Result & The 2 teams score", "Scorer"}
 mashapeKey = "trr4b4xsHumshQ6nTWYhZnzZEdUnp1VvuQEjsnes6a8aaI5vgr"
 
