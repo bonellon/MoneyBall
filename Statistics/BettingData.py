@@ -161,7 +161,7 @@ def getEPLleagueID():
 
     :return: EPL LeagueID
     """
-    fileName = 'getLeagues.txt'
+    fileName = 'CachedJson/getLeagues.txt'
     if isTest:
         with open(fileName, 'r') as file:
             responseText = file.read()
@@ -199,7 +199,7 @@ def getTeams(leagueID):
     :param leagueID: 2 -EPL
     :return: List of teams in league
     """
-    fileName = 'getTeams.txt'
+    fileName = 'CachedJson/getTeams.txt'
     if isTest:
         with open(fileName, 'r') as file:
             responseText = file.read()
@@ -227,7 +227,7 @@ def getFixtures(leagueID):
     :return: list of fixture details
     """
 
-    fileName = "getFixtures.txt"
+    fileName = "CachedJson/getFixtures.txt"
     if isTest:
         with open(fileName, 'r') as file:
             responseText = file.read()
@@ -262,7 +262,7 @@ def cleanFixtureFile(data):
     cleanedFixtures = cleanedFixtures[:-1] + "}"
     cleanedFixtures = cleanedFixtures.replace("'penalty': None,", "")
 
-    file = open("getCleanedFixtures.txt", 'w')
+    file = open("CachedJson/getCleanedFixtures.txt", 'w')
     file.write(cleanedFixtures)
     file.close
     return cleanedFixtures
@@ -273,7 +273,7 @@ def getFixtureNames():
     Converts fixtureId -> Fixture teams
     :return: list of triples [fixtureID, Team1, Team2]
     """
-    with open('getCleanedFixtures.txt', 'r') as f:
+    with open('CachedJson/getCleanedFixtures.txt', 'r') as f:
         read = f.read()
         jsonFixtures = json.loads(read.replace("'", "\"").replace('None', '"NULL"'))
 
@@ -308,7 +308,7 @@ def getOdds(fixtureIds):
     :param fixtureIds: List of fixtureIDs
     :return: returns list of odds per fixture
     """
-    fileName = "getOdds.txt"
+    fileName = "CachedJson/getOdds.txt"
     if isTest:
         with open(fileName, 'r') as file:
             responseText = file.read()
