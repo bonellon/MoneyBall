@@ -28,7 +28,8 @@ requiredColumns = ['id',
                    'transfers_out',
                    'transfers_out_event',
                    'total_points',
-                   'ep_next']
+                   'ep_next',
+                   'event_points']
 
 def getElementType(object):
     for element in object:
@@ -42,10 +43,15 @@ def CleanDataCSV():
     with open(csvfile, "r", newline='') as fp:
         reader = csv.reader(fp)
         readCSV = list(reader)
-        rows = []
+
+        #Define empty list with size requiredColumns
+        rows = [None] * len(requiredColumns)
+
+        #Populate rows
         for i in range(len(readCSV[0])):
             if readCSV[0][i] in requiredColumns:
-                rows.append(i)
+                rows[requiredColumns.index(readCSV[0][i])] = i
+
                 if readCSV[0][i] == "element_type":
                     elementTypePosition = i
 
