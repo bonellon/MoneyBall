@@ -1,6 +1,5 @@
 import csv
 
-
 # Goalkeepers + Defenders
 # Result and Both teams to score 1/n N/n
 def calculateBestDefense(keep):
