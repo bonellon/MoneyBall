@@ -15,12 +15,13 @@ requiredColumns = ['id', 'web_name', 'team_code', 'element_type', 'status', 'now
 
 commonColumns = ['id', 'web_name', 'team_code', 'element_type', 'status', 'now_cost', 'chance_of_playing_next_round',
                  'value_season', 'minutes', 'bps', 'ict_index', 'form', 'transfers_in_event',
-                 'transfers_out_event','total_points', 'ep_next', 'event_points']
+                 'transfers_out_event', 'total_points', 'ep_next', 'event_points']
 
 goalkeeperColumns = ['clean_sheets', 'goals_conceded']
 defenderColumns = ['clean_sheets', 'goals_conceded', 'threat']
 midfielderColumns = ['goals_scored', 'assists', 'clean_sheets', 'goals_conceded', 'threat']
 forwardColumns = ['goals_scored', 'assists', 'threat']
+
 
 def getFPLData():
     r = requests.get(url)
@@ -28,73 +29,77 @@ def getFPLData():
     all_players = data['elements']
     return all_players
 
+
 def getElementType(object):
     for element in object:
         if element == "element_type":
             return object[0]
     return 0
 
+
 def CleanDataCSV(players):
     elementTypePosition = 0
 
-    #Define empty list with size requiredColumns
+    # Define empty list with size requiredColumns
     rows = [None] * len(requiredColumns)
 
-    #Populate rows
+    # Populate rows
     newPlayers = {}
+    goalkeepers = []
+    defenders = []
+    midfielders = []
+    forwards = []
     for player in players:
         newplayer = {}
         if player['element_type'] == 1:
             newplayer = getPlayerData(player, goalkeeperColumns)
+            if checkPlayerStatus(newplayer):
+                goalkeepers.append(newplayer.values())
         elif player['element_type'] == 2:
             newplayer = getPlayerData(player, defenderColumns)
+            if checkPlayerStatus(newplayer):
+                defenders.append(newplayer.values())
         elif player['element_type'] == 3:
             newplayer = getPlayerData(player, midfielderColumns)
+            if checkPlayerStatus(newplayer):
+                midfielders.append(newplayer.values())
         elif player['element_type'] == 4:
             newplayer = getPlayerData(player, forwardColumns)
+            if checkPlayerStatus(newplayer):
+                forwards.append(newplayer.values())
 
         newPlayers[newplayer["id"]] = newplayer
 
     print(len(newPlayers))
-    newPlayers = checkPlayerStatus(newPlayers)
+    newPlayers = checkPlayersStatus(newPlayers)
     print(len(newPlayers))
-    '''
-    isFirst = True
-    
-    for row in readCSV:
-        rowContents = []
-        for i in rows:
-            rowContents.append(row[i])
-        if isFirst:
-            writeToCSV("stats/goalkeepers.csv", rowContents, "w")
-            writeToCSV("stats/defenders.csv", rowContents, "w")
-            writeToCSV("stats/midfielders.csv", rowContents, "w")
-            writeToCSV("stats/forwards.csv", rowContents, "w")
-            isFirst = False
-        else:
-            filename = "undefined.csv"
-            elementType = int(row[elementTypePosition])
+    print(len(goalkeepers), " ", len(defenders), " ", len(midfielders), " ", len(forwards), " ",
+          (len(goalkeepers) + len(defenders) + len(midfielders) + len(forwards)))
 
-            if elementType == 1:
-                filename = "stats/goalkeepers.csv"
-            elif elementType == 2:
-                filename = "stats/defenders.csv"
-            elif elementType == 3:
-                filename = "stats/midfielders.csv"
-            elif elementType == 4:
-                filename = "stats/forwards.csv"
-            writeToCSV(filename, rowContents, "a")
-    '''
+    writeManyToCSV("stats/goalkeepers.csv", goalkeepers, commonColumns + goalkeeperColumns)
+    writeManyToCSV("stats/defenders.csv", defenders, commonColumns + defenderColumns)
+    writeManyToCSV("stats/midfielders.csv", midfielders, commonColumns + midfielderColumns)
+    writeManyToCSV("stats/forwards.csv", forwards, commonColumns + forwardColumns)
 
-#Iterate through players dict and return all that have chance of playing next round higher than 75%
-def checkPlayerStatus(players):
 
+# Iterate through players dict and return all that have chance of playing next round higher than 75%
+def checkPlayersStatus(players):
     newDict = {}
     for key, value in players.items():
-        if (value['chance_of_playing_next_round'] is not None) and (int(value['chance_of_playing_next_round']) > 75):
+        if (value['chance_of_playing_next_round'] is not None) and (int(value['chance_of_playing_next_round']) >= 75):
+            newDict[key] = value
+        elif (value['status'] is not None) and value['status'] == 'a':
             newDict[key] = value
 
     return newDict
+
+
+def checkPlayerStatus(value):
+    if (value['chance_of_playing_next_round'] is not None) and (int(value['chance_of_playing_next_round']) >= 75):
+        return True
+    elif (value['status'] is not None) and value['status'] == 'a':
+        return True
+    return False
 
 
 def getPlayerData(player, columns):
@@ -106,15 +111,24 @@ def getPlayerData(player, columns):
     newPlayer = OrderedDict(newlist)
 
     for key in newPlayer:
-            newPlayer[key] = player[key]
+        newPlayer[key] = player[key]
 
     return newPlayer
+
+
+def writeManyToCSV(filename, object, headers):
+    with open(filename, 'w', newline='') as fp:
+        wr = csv.writer(fp, dialect="excel")
+        wr.writerow(headers)
+        for row in object:
+            wr.writerow(row)
 
 
 def writeToCSV(filename, object, writeOrAppend):
     with open(filename, writeOrAppend, newline='') as fp:
         wr = csv.writer(fp, dialect="excel")
         wr.writerow(object)
+
 
 players = getFPLData()
 CleanDataCSV(players)
