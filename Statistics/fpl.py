@@ -3,7 +3,11 @@
 import csv
 import json
 from collections import OrderedDict
-import PredictGoalKeeper
+import sys
+import Statistics.PredictGoalkeeper as predictGoalkeeper
+import Statistics.PredictDefender as predictDefender
+import Statistics.PredictMidfielder as predictMidfielder
+import Statistics.PredictForward as predictForward
 
 import requests
 
@@ -151,6 +155,18 @@ def writeToCSV(filename, object, writeOrAppend):
 
 #players = getFPLData()
 #CleanDataCSV(players)
-top5Goalkeepers = PredictGoalkeepers(getGoalkeepers())
+top5Goalkeepers = predictGoalkeeper.PredictGoalkeepers(predictGoalkeeper.getGoalkeepers())
 for x in top5Goalkeepers:
-    print(top5Goalkeepers[x])
+    print()#x)
+
+top5Defenders = predictDefender.PredictDefenders(predictDefender.getDefenders())
+for x in top5Defenders:
+    print(x)
+
+top5Midfielders = predictMidfielder.PredictMidfielders(predictMidfielder.getMidfielders())
+for x in top5Midfielders:
+    print()#x)
+
+top5Forwards = predictForward.PredictForwards(predictForward.getForwards())
+for x in top5Forwards:
+    print(x)

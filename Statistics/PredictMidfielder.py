@@ -1,20 +1,20 @@
 import csv
 
-def getGoalkeepers():
-    goalkeepers = {}
-    with open('stats/goalkeepers.csv', 'r', newline='') as fp:
+def getMidfielders():
+    midfielders = {}
+    with open('stats/midfielders.csv', 'r', newline='') as fp:
         reader = csv.DictReader(fp, dialect='excel')
         for row in reader:
             id = row['id']
-            goalkeepers[id] = row
-    return goalkeepers
+            midfielders[id] = row
+    return midfielders
 
-def PredictGoalkeepers(goalkeepers):
+def PredictMidfielders(midfielders):
     top5 = []
-    for goalkeeperID in goalkeepers:
-        goalkeeper = goalkeepers[goalkeeperID]
+    for midfielderID in midfielders:
+        midfielder = midfielders[midfielderID]
         if len(top5) < 5:
-            top5.append(goalkeeper)
+            top5.append(midfielder)
 
         else:
             isSorted = False
@@ -40,14 +40,14 @@ def PredictGoalkeepers(goalkeepers):
             updated = False
             for i in range (0, len(top5)-1):
                 current = top5[i]
-                if current['ep_next'] < goalkeeper['ep_next']:
+                if current['ep_next'] < midfielder['ep_next']:
                     insertAtPosition = i
                     updated = True
                     break
 
             if updated:
                 temp = top5[insertAtPosition]
-                top5[insertAtPosition] = goalkeeper
+                top5[insertAtPosition] = midfielder
 
                 if insertAtPosition < 4:
                     for i in range(insertAtPosition + 1, len(top5) - 1):
