@@ -66,5 +66,5 @@ keepOffence = ['Team1', 'Team2', '%1 & No','%1 & Yes', '%2 & No', '%2 & Yes', '%
 
 defense = calculateBestDefense(keepDefense)
 offence = calculateBestOffence(keepOffence)
-print(str(defense))
-print(str(offence))
+print("Defense: ", str(defense))
+print("Offence: ", str(offence))

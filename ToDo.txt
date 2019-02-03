@@ -1,4 +1,12 @@
-1. Add fixtureID to odds CSVS
-2. Complete CSVs for all required markets
-3. Complete for all upcoming fixtures
-4. Scorer & 1st Scorer markets upcoming? 
+Statistics calculations
+	1. Consider different metrics. eg. Threat/ICT index etc.
+	2. Divide by costNow to get metric_per_million
+	3. Add new column to CSV
+
+1. Give recommendations for best;
+	3 Goalkeepers
+	6 Defenders
+	6 Midfielders
+	5 Strikers
+
+Possibly consider adding limitations; eg. 1 premium, 2 mid-range, 2 budget options?

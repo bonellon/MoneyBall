@@ -1,11 +1,10 @@
 FixtureID,Team1,Team2,Yes,%Yes,No,%No
-289,Liverpool,Crystal Palace,2.00,43.75,1.60,56.25
-288,Huddersfield,Manchester City,2.30,37.26,1.45,62.74
-285,Arsenal,Chelsea,1.50,60.61,2.20,39.39
-290,Manchester United,Brighton,2.00,43.75,1.60,56.25
-294,Wolves,Leicester,1.85,47.62,1.70,52.38
-293,Watford,Burnley,1.75,50.79,1.80,49.21
-287,Fulham,Tottenham,1.75,50.79,1.80,49.21
-291,Newcastle,Cardiff,1.95,44.39,1.60,55.61
-286,Bournemouth,West Ham,1.45,62.26,2.25,37.74
-292,Southampton,Everton,1.60,56.25,2.00,43.75
+306,Burnley,Southampton,1.70,52.38,1.85,47.62
+309,Crystal Palace,Fulham,1.75,50.79,1.80,49.21
+313,Tottenham,Newcastle,1.95,44.39,1.60,55.61
+307,Cardiff,Bournemouth,1.60,55.61,1.95,44.39
+310,Everton,Wolves,1.70,52.38,1.85,47.62
+312,Manchester City,Arsenal,1.60,56.25,2.00,43.75
+308,Chelsea,Huddersfield,2.15,39.92,1.50,60.08
+305,Brighton,Watford,1.75,50.79,1.80,49.21
+311,Leicester,Manchester United,1.60,56.25,2.00,43.75
