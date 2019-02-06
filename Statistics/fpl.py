@@ -146,27 +146,41 @@ def writeToCSV(filename, object, writeOrAppend):
 '''
 
 '''
+4. Given list of topX players [Goalkeepers, Defenders etc.] 
+    format into a human readable form. 
+    Display ID, PlayerName, EP_Next
 '''
+def formatResults(players):
+    result = {}
+    for player in players:
+        result[player['id']] = {'name': player['web_name'], 'id': player['id'], 'ep_next': player['ep_next']}
+    return result
 '''
+5. Get fixture difficulty rating. 
+Must consider opponent form & Home/Away match 
 '''
+
 '''
 '''
 
 
 #players = getFPLData()
 #CleanDataCSV(players)
-top5Goalkeepers = predictGoalkeeper.PredictGoalkeepers(predictGoalkeeper.getGoalkeepers())
-for x in top5Goalkeepers:
-    print()#x)
+topGoalkeepers = formatResults(predictGoalkeeper.PredictGoalkeepers())
+for x in topGoalkeepers:
+    print(topGoalkeepers[x])
 
-top5Defenders = predictDefender.PredictDefenders(predictDefender.getDefenders())
-for x in top5Defenders:
-    print(x)
+print()
+topDefenders = formatResults(predictDefender.PredictDefenders())
+for x in topDefenders:
+    print(topDefenders[x])
 
-top5Midfielders = predictMidfielder.PredictMidfielders(predictMidfielder.getMidfielders())
-for x in top5Midfielders:
-    print()#x)
+print()
+topMidfielders = formatResults(predictMidfielder.PredictMidfielders())
+for x in topMidfielders:
+    print(topMidfielders[x])
 
-top5Forwards = predictForward.PredictForwards(predictForward.getForwards())
-for x in top5Forwards:
-    print(x)
+print()
+topForwards = formatResults(predictForward.PredictForwards())
+for x in topForwards:
+    print(topForwards[x])

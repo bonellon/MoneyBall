@@ -1,5 +1,8 @@
 import csv
 
+required = 5
+
+
 def getMidfielders():
     midfielders = {}
     with open('stats/midfielders.csv', 'r', newline='') as fp:
@@ -9,51 +12,54 @@ def getMidfielders():
             midfielders[id] = row
     return midfielders
 
-def PredictMidfielders(midfielders):
-    top5 = []
+def PredictMidfielders():
+
+    midfielders = getMidfielders()
+
+    top = []
     for midfielderID in midfielders:
         midfielder = midfielders[midfielderID]
-        if len(top5) < 5:
-            top5.append(midfielder)
+        if len(top) < required:
+            top.append(midfielder)
 
         else:
             isSorted = False
             while not isSorted:
-                # order first 5 elements
+                # order first REQUIRED elements
                 changeMade = False
-                for i in range(1, len(top5) - 1):
+                for i in range(1, len(top) - 1):
 
-                    current = top5[i]
-                    prev = top5[i - 1]
+                    current = top[i]
+                    prev = top[i - 1]
 
                     if (current['ep_next'] > prev['ep_next']):
                         changeMade = True
                         temp = current
-                        top5[i] = prev
-                        top5[i - 1] = temp
+                        top[i] = prev
+                        top[i - 1] = temp
 
                 if not changeMade:
                     isSorted = True
 
             #Update rest
-            insertAtPosition = 4
+            insertAtPosition = required - 1
             updated = False
-            for i in range (0, len(top5)-1):
-                current = top5[i]
+            for i in range (0, len(top)-1):
+                current = top[i]
                 if current['ep_next'] < midfielder['ep_next']:
                     insertAtPosition = i
                     updated = True
                     break
 
             if updated:
-                temp = top5[insertAtPosition]
-                top5[insertAtPosition] = midfielder
+                temp = top[insertAtPosition]
+                top[insertAtPosition] = midfielder
 
-                if insertAtPosition < 4:
-                    for i in range(insertAtPosition + 1, len(top5) - 1):
-                        temp2 = top5[i]
-                        top5[i] = temp
+                if insertAtPosition < required - 1:
+                    for i in range(insertAtPosition + 1, len(top) - 1):
+                        temp2 = top[i]
+                        top[i] = temp
                         temp = temp2
 
 
-    return top5
+    return top
