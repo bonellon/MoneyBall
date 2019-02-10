@@ -3,7 +3,6 @@
 import csv
 import json
 from collections import OrderedDict
-import sys
 import Statistics.PredictGoalkeeper as predictGoalkeeper
 import Statistics.PredictDefender as predictDefender
 import Statistics.PredictMidfielder as predictMidfielder
@@ -30,16 +29,28 @@ forwardColumns = ['goals_scored', 'assists', 'threat']
 
 def getFPLData():
     r = requests.get(url)
-    data = json.loads(r.text)
-    all_players = data['elements']
-    return all_players
-
+    return json.loads(r.text)
 
 def getElementType(object):
     for element in object:
         if element == "element_type":
             return object[0]
     return 0
+
+def getPlayerData():
+    data = getFPLData()
+    all_players = data['elements']
+    return all_players
+
+
+def getTeamIds():
+
+    teams = {}
+    data = getFPLData()
+    teamsData = data['teams']
+    for team in teamsData:
+        teams[team['short_name']] = {"id": team['id'], "name": team["name"]}
+    return teams
 
 def CleanDataCSV(players):
     elementTypePosition = 0
@@ -163,8 +174,8 @@ Must consider opponent form & Home/Away match
 '''
 '''
 
-
-#players = getFPLData()
+'''
+#players = getPlayerData()
 #CleanDataCSV(players)
 topGoalkeepers = formatResults(predictGoalkeeper.PredictGoalkeepers())
 for x in topGoalkeepers:
@@ -184,3 +195,4 @@ print()
 topForwards = formatResults(predictForward.PredictForwards())
 for x in topForwards:
     print(topForwards[x])
+'''

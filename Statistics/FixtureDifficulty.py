@@ -4,14 +4,10 @@ Pull table from https://premierfantasytools.com/fpl-fixture-difficulty/#15439790
 
 # Import the libraries we need
 import pandas as pd
-import re
-import random
-import requests
-from bs4 import BeautifulSoup
-from selenium import webdriver
-import datetime
+from Statistics.fpl import getTeamIds
 
-def convertToTeam():
+
+#def convertToTeam():
 
 
 attackURL = "https://premierfantasytools.com/fpl-fixture-difficulty/#1543979080334-134ad6be-5480"
@@ -20,9 +16,32 @@ tables = pd.read_html(attackURL, encoding='utf-8')
 
 attack = tables[0]
 attack.head(10)
+attack.rename(columns={'Unnamed: 0': 'teams'}, inplace=True)
 
+def convertToShortTeamName(teamName):
+    return teamName[:-1]
 
-gw25 = attack[['Unnamed: 0', 'GW 25']]
+gw25 = attack.iloc[:, 0:2]
+gw25['teams'] = gw25['teams'].apply(convertToShortTeamName)
 print(gw25)
+
+attackDict = {}
+for row in gw25.iterrows():
+    temp = {}
+    index, data = row
+    current = data.tolist()
+    temp = {current[0]:current[1]}
+    attackDict.update(temp)
+
+teams = getTeamIds()
+
+for team in teams:
+    current = teams[team]
+    current.update({"opponent":attackDict[team]})
+
+
+print(teams)
+
+
 
 
