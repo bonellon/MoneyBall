@@ -1,6 +1,6 @@
 import csv
 
-required = 5
+required = 6
 
 
 def getMidfielders():
@@ -11,6 +11,18 @@ def getMidfielders():
             id = row['id']
             midfielders[id] = row
     return midfielders
+
+
+# getPlayerScore finds top 5 players and 1 random -> sorts and removes last element
+# hack -> temp solution
+def sortAndRemove(top):
+    currentTop = {}
+    for i in range(0, len(top)):
+        currentTop[i] = top[i]
+
+    sortedTop = sorted(currentTop.items(), key=lambda v: v[1]['ep_next'])
+    return sortedTop[1:]
+
 
 def PredictMidfielders():
 
@@ -61,5 +73,4 @@ def PredictMidfielders():
                         top[i] = temp
                         temp = temp2
 
-
-    return top
+    return sortAndRemove(top)

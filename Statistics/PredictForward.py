@@ -1,8 +1,11 @@
 import csv
+import collections
 
-required = 5
+required = 6
+
 
 def getForwards():
+    print("----getForwards")
     forwards = {}
     with open('stats/forwards.csv', 'r', newline='') as fp:
         reader = csv.DictReader(fp, dialect='excel')
@@ -11,8 +14,34 @@ def getForwards():
             forwards[id] = row
     return forwards
 
-def PredictForwards():
 
+# getPlayerScore finds top 5 players and 1 random -> sorts and removes last element
+# hack -> temp solution
+def sortAndRemove(top):
+    currentTop = {}
+    for i in range(0, len(top)):
+        currentTop[i] = top[i]
+
+    sortedTop = sorted(currentTop.items(), key=lambda v: v[1]['ep_next'])
+    return sortedTop[1:]
+
+
+def getPlayerScore(player):
+    totalScore = 0;
+
+    threat = float(player['threat'])
+    form = float(player['form'])
+
+    ep_next = float(player['ep_next'])
+
+    totalScore = ep_next + (form * threat)
+    player['predictedValue'] = totalScore
+    # return float(totalScore)
+    return float(ep_next)
+
+
+def PredictForwards():
+    print("--PredictForwards")
     forwards = getForwards()
 
     top = []
@@ -31,7 +60,7 @@ def PredictForwards():
                     current = top[i]
                     prev = top[i - 1]
 
-                    if (current['ep_next'] > prev['ep_next']):
+                    if getPlayerScore(current) > getPlayerScore(prev):
                         changeMade = True
                         temp = current
                         top[i] = prev
@@ -40,12 +69,12 @@ def PredictForwards():
                 if not changeMade:
                     isSorted = True
 
-            #Update rest
+            # Update rest
             insertAtPosition = required - 1
             updated = False
-            for i in range (0, len(top)-1):
+            for i in range(0, len(top) - 1):
                 current = top[i]
-                if current['ep_next'] < forward['ep_next']:
+                if getPlayerScore(current) < getPlayerScore(forward):
                     insertAtPosition = i
                     updated = True
                     break
@@ -60,5 +89,4 @@ def PredictForwards():
                         top[i] = temp
                         temp = temp2
 
-
-    return top
+    return sortAndRemove(top)

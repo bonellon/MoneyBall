@@ -1,7 +1,8 @@
 import csv
 
-#Number of defenders to return
-required = 5
+# Number of defenders to return
+required = 6
+
 
 def getDefenders():
     defenders = {}
@@ -12,8 +13,19 @@ def getDefenders():
             defenders[id] = row
     return defenders
 
-def PredictDefenders():
 
+# getPlayerScore finds top 5 players and 1 random -> sorts and removes last element
+# hack -> temp solution
+def sortAndRemove(top):
+    currentTop = {}
+    for i in range(0, len(top)):
+        currentTop[i] = top[i]
+
+    sortedTop = sorted(currentTop.items(), key=lambda v: v[1]['ep_next'])
+    return sortedTop[1:]
+
+
+def PredictDefenders():
     defenders = getDefenders()
 
     top = []
@@ -41,10 +53,10 @@ def PredictDefenders():
                 if not changeMade:
                     isSorted = True
 
-            #Update rest
+            # Update rest
             insertAtPosition = required - 1
             updated = False
-            for i in range (0, len(top)-1):
+            for i in range(0, len(top) - 1):
                 current = top[i]
                 if current['ep_next'] < defender['ep_next']:
                     insertAtPosition = i
@@ -61,5 +73,4 @@ def PredictDefenders():
                         top[i] = temp
                         temp = temp2
 
-
-    return top
+    return sortAndRemove(top)
