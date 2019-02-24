@@ -3,6 +3,7 @@ import csv
 required = 6
 
 def getGoalkeepers():
+    print("----getGoalkeepers")
     goalkeepers = {}
     with open('stats/goalkeepers.csv', 'r', newline='') as fp:
         reader = csv.DictReader(fp, dialect='excel')
@@ -23,8 +24,28 @@ def sortAndRemove(top):
     return sortedTop[1:]
 
 
-def PredictGoalkeepers():
+def getPlayerScore(player):
+    totalScore = 0;
 
+    cleansheets = int(player['clean_sheets'])
+    conceded = int(player['goals_conceded'])
+
+    form = float(player['form'])
+
+    ep_next = float(player['ep_next'])
+
+
+    if conceded > 0:
+        totalScore = ep_next + (form / 100) + cleansheets / conceded
+    else:
+        totalScore = ep_next + (form / 100)
+
+    player['predictedValue'] = totalScore
+    return float(totalScore)
+
+
+def PredictGoalkeepers():
+    print("--PredictGoalkeepers")
     goalkeepers = getGoalkeepers()
 
     top = []
@@ -43,7 +64,7 @@ def PredictGoalkeepers():
                     current = top[i]
                     prev = top[i - 1]
 
-                    if (current['ep_next'] > prev['ep_next']):
+                    if getPlayerScore(current) > getPlayerScore(prev):
                         changeMade = True
                         temp = current
                         top[i] = prev
@@ -57,7 +78,7 @@ def PredictGoalkeepers():
             updated = False
             for i in range (0, len(top)-1):
                 current = top[i]
-                if current['ep_next'] < goalkeeper['ep_next']:
+                if getPlayerScore(current) < getPlayerScore(goalkeeper):
                     insertAtPosition = i
                     updated = True
                     break
@@ -72,4 +93,7 @@ def PredictGoalkeepers():
                         top[i] = temp
                         temp = temp2
 
+
+    for player in top:
+        player['predictedValue'] = getPlayerScore(player)
     return sortAndRemove(top)

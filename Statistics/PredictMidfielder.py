@@ -4,6 +4,7 @@ required = 6
 
 
 def getMidfielders():
+    print("----getMidfielders")
     midfielders = {}
     with open('stats/midfielders.csv', 'r', newline='') as fp:
         reader = csv.DictReader(fp, dialect='excel')
@@ -24,8 +25,19 @@ def sortAndRemove(top):
     return sortedTop[1:]
 
 
-def PredictMidfielders():
+def getPlayerScore(player):
+    threat = float(player['threat'])
+    form = float(player['form'])
 
+    ep_next = float(player['ep_next'])
+
+    totalScore = ep_next + (form * threat)
+    player['predictedValue'] = totalScore
+    return float(totalScore)
+
+
+def PredictMidfielders():
+    print("--PredictMidfielders")
     midfielders = getMidfielders()
 
     top = []
@@ -44,7 +56,7 @@ def PredictMidfielders():
                     current = top[i]
                     prev = top[i - 1]
 
-                    if (current['ep_next'] > prev['ep_next']):
+                    if getPlayerScore(current) > getPlayerScore(prev):
                         changeMade = True
                         temp = current
                         top[i] = prev
@@ -58,7 +70,7 @@ def PredictMidfielders():
             updated = False
             for i in range (0, len(top)-1):
                 current = top[i]
-                if current['ep_next'] < midfielder['ep_next']:
+                if getPlayerScore(current) < getPlayerScore(midfielder):
                     insertAtPosition = i
                     updated = True
                     break
@@ -73,4 +85,6 @@ def PredictMidfielders():
                         top[i] = temp
                         temp = temp2
 
+    for player in top:
+        player['predictedValue'] = getPlayerScore(player)
     return sortAndRemove(top)

@@ -18,6 +18,7 @@ def getForwards():
 # getPlayerScore finds top 5 players and 1 random -> sorts and removes last element
 # hack -> temp solution
 def sortAndRemove(top):
+    print("----sortAndRemove")
     currentTop = {}
     for i in range(0, len(top)):
         currentTop[i] = top[i]
@@ -36,8 +37,7 @@ def getPlayerScore(player):
 
     totalScore = ep_next + (form * threat)
     player['predictedValue'] = totalScore
-    # return float(totalScore)
-    return float(ep_next)
+    return float(totalScore)
 
 
 def PredictForwards():
@@ -89,4 +89,7 @@ def PredictForwards():
                         top[i] = temp
                         temp = temp2
 
+
+    for player in top:
+        player['predictedValue'] = getPlayerScore(player)
     return sortAndRemove(top)

@@ -5,6 +5,7 @@ required = 6
 
 
 def getDefenders():
+    print("----getDefenders")
     defenders = {}
     with open('stats/defenders.csv', 'r', newline='') as fp:
         reader = csv.DictReader(fp, dialect='excel')
@@ -12,6 +13,19 @@ def getDefenders():
             id = row['id']
             defenders[id] = row
     return defenders
+
+
+def getPlayerScore(player):
+    totalScore = 0;
+
+    threat = float(player['threat'])
+    form = float(player['form'])
+
+    ep_next = float(player['ep_next'])
+
+    totalScore = ep_next + (form * threat)
+    player['predictedValue'] = totalScore
+    return float(totalScore)
 
 
 # getPlayerScore finds top 5 players and 1 random -> sorts and removes last element
@@ -25,7 +39,21 @@ def sortAndRemove(top):
     return sortedTop[1:]
 
 
+def getPlayerScore(player):
+    totalScore = 0;
+
+    threat = float(player['threat'])
+    form = float(player['form'])
+
+    ep_next = float(player['ep_next'])
+
+    totalScore = ep_next + (form * threat)
+    player['predictedValue'] = totalScore
+    return float(totalScore)
+
+
 def PredictDefenders():
+    print("--PredictDefenders")
     defenders = getDefenders()
 
     top = []
@@ -44,7 +72,7 @@ def PredictDefenders():
                     current = top[i]
                     prev = top[i - 1]
 
-                    if (current['ep_next'] > prev['ep_next']):
+                    if getPlayerScore(current) > getPlayerScore(prev):
                         changeMade = True
                         temp = current
                         top[i] = prev
@@ -58,7 +86,7 @@ def PredictDefenders():
             updated = False
             for i in range(0, len(top) - 1):
                 current = top[i]
-                if current['ep_next'] < defender['ep_next']:
+                if getPlayerScore(current) < getPlayerScore(defender):
                     insertAtPosition = i
                     updated = True
                     break
@@ -73,4 +101,6 @@ def PredictDefenders():
                         top[i] = temp
                         temp = temp2
 
+    for player in top:
+        player['predictedValue'] = getPlayerScore(player)
     return sortAndRemove(top)
