@@ -3,10 +3,10 @@ import csv
 import requests
 from decimal import Decimal
 
-isTest = False
-currentGameweek = 25
+isTest = True
+currentGameweek = 27
 requiredOdds = {"Win the match", "Both teams score", "Result & The 2 teams score", "Scorer"}
-mashapeKey = "trr4b4xsHumshQ6nTWYhZnzZEdUnp1VvuQEjsnes6a8aaI5vgr"
+mashapeKey = "3a0d311a29msh2e1cbe6ed3fc121p144095jsn72261a29e5bc"
 
 
 def writeResponseToFile(fileName, text):
@@ -207,7 +207,7 @@ def getTeams(leagueID):
     else:
         response = requests.get("https://api-football-v1.p.mashape.com/teams/league/" + leagueID,
                                 headers={
-                                    "X-Mashape-Key": mashapeKey,
+                                    "X-RapidAPI-Key": mashapeKey,
                                     "Accept": "application/json"
                                 }
                                 )
