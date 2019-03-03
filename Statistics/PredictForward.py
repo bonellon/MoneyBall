@@ -1,7 +1,7 @@
 import csv
-import collections
+import Statistics.PredictMain as predict
 
-required = 6
+required = predict.required
 
 
 def getForwards():
@@ -24,11 +24,10 @@ def sortAndRemove(top):
         currentTop[i] = top[i]
 
     sortedTop = sorted(currentTop.items(), key=lambda v: v[1]['ep_next'])
-    return sortedTop[1:]
+    return sortedTop
 
 
 def getPlayerScore(player):
-    totalScore = 0;
 
     threat = float(player['threat'])
     form = float(player['form'])
@@ -44,52 +43,34 @@ def PredictForwards():
     print("--PredictForwards")
     forwards = getForwards()
 
-    top = []
-    for forwardID in forwards:
-        forward = forwards[forwardID]
-        if len(top) < required:
-            top.append(forward)
+    playersList = []
+    for key, value in forwards.items():
+        playersList.append([key, value])
 
-        else:
-            isSorted = False
-            while not isSorted:
-                # order first REQUIRED elements
-                changeMade = False
-                for i in range(1, len(top) - 1):
+    top = predict.sortList(playersList[0:required])
 
-                    current = top[i]
-                    prev = top[i - 1]
+    for playerTup in playersList[required:]:
+        player = playerTup[1]
 
-                    if getPlayerScore(current) > getPlayerScore(prev):
-                        changeMade = True
-                        temp = current
-                        top[i] = prev
-                        top[i - 1] = temp
+        # Update rest
+        insertAtPosition = required
+        updated = False
 
-                if not changeMade:
-                    isSorted = True
+        for i in range(0, len(top)):
+            current = top[i]
+            if getPlayerScore(current[1]) < getPlayerScore(player):
+                insertAtPosition = i
+                updated = True
+                break
 
-            # Update rest
-            insertAtPosition = required - 1
-            updated = False
-            for i in range(0, len(top) - 1):
-                current = top[i]
-                if getPlayerScore(current) < getPlayerScore(forward):
-                    insertAtPosition = i
-                    updated = True
-                    break
-
-            if updated:
-                temp = top[insertAtPosition]
-                top[insertAtPosition] = forward
-
-                if insertAtPosition < required - 1:
-                    for i in range(insertAtPosition + 1, len(top) - 1):
-                        temp2 = top[i]
-                        top[i] = temp
-                        temp = temp2
+        if updated:
+            top[insertAtPosition] = playerTup
+            top = predict.sortList(top)
 
 
-    for player in top:
+    for playerTup in top:
+        player = playerTup[1]
         player['predictedValue'] = getPlayerScore(player)
-    return sortAndRemove(top)
+
+    predict.getTopTransfers(forwards)
+    return predict.sortAndRemove(top)

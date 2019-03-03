@@ -26,6 +26,7 @@ defenderColumns = ['clean_sheets', 'goals_conceded', 'threat']
 midfielderColumns = ['goals_scored', 'assists', 'clean_sheets', 'goals_conceded', 'threat']
 forwardColumns = ['goals_scored', 'assists', 'threat']
 
+gameweek = 0
 
 def getFPLData():
     r = requests.get(url)
@@ -37,11 +38,19 @@ def getElementType(object):
             return object[0]
     return 0
 
-def getPlayerData():
+def getPlayersData():
     data = getFPLData()
     all_players = data['elements']
+    getCurrentGameweek(data['events'])
+    print("Gameweek: ",gameweek)
     return all_players
 
+def getCurrentGameweek(events):
+    for event in events:
+        if event['is_current']:
+            global gameweek
+            gameweek = event['id']
+            continue
 
 def getTeamIds():
 
@@ -179,9 +188,10 @@ Must consider opponent form & Home/Away match
 '''
 '''
 
-
-#players = getPlayerData()
+#players = getPlayersData()
 #CleanDataCSV(players)
+
+'''
 topGoalkeepers = formatResults(predictGoalkeeper.PredictGoalkeepers())
 for x in topGoalkeepers:
     print(topGoalkeepers[x])
@@ -195,8 +205,9 @@ print()
 topMidfielders = formatResults(predictMidfielder.PredictMidfielders())
 for x in topMidfielders:
     print(topMidfielders[x])
-
+'''
 print()
 topForwards = formatResults(predictForward.PredictForwards())
 for x in topForwards:
     print(topForwards[x])
+

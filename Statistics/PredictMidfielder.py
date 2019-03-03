@@ -1,7 +1,7 @@
 import csv
+import Statistics.PredictMain as predict
 
-required = 6
-
+required = predict.required
 
 def getMidfielders():
     print("----getMidfielders")
@@ -13,25 +13,14 @@ def getMidfielders():
             midfielders[id] = row
     return midfielders
 
-
-# getPlayerScore finds top 5 players and 1 random -> sorts and removes last element
-# hack -> temp solution
-def sortAndRemove(top):
-    currentTop = {}
-    for i in range(0, len(top)):
-        currentTop[i] = top[i]
-
-    sortedTop = sorted(currentTop.items(), key=lambda v: v[1]['ep_next'])
-    return sortedTop[1:]
-
-
 def getPlayerScore(player):
     threat = float(player['threat'])
     form = float(player['form'])
 
     ep_next = float(player['ep_next'])
+    cost = float(player['now_cost'])
 
-    totalScore = ep_next + (form * threat)
+    totalScore = ((ep_next + (form * threat))/(cost/100))/1000
     player['predictedValue'] = totalScore
     return float(totalScore)
 
@@ -87,4 +76,4 @@ def PredictMidfielders():
 
     for player in top:
         player['predictedValue'] = getPlayerScore(player)
-    return sortAndRemove(top)
+    return predict.sortAndRemove(top)

@@ -1,8 +1,7 @@
 import csv
+import Statistics.PredictMain as predict
 
-# Number of defenders to return
-required = 6
-
+required = predict.required
 
 def getDefenders():
     print("----getDefenders")
@@ -16,28 +15,21 @@ def getDefenders():
 
 
 def getPlayerScore(player):
-    totalScore = 0;
-
     threat = float(player['threat'])
     form = float(player['form'])
+    cost = float(player['now_cost'])
+    cleansheets = int(player['clean_sheets'])
+    conceded = int(player['goals_conceded'])
 
     ep_next = float(player['ep_next'])
 
-    totalScore = ep_next + (form * threat)
+    if conceded > 0:
+        totalScore = (ep_next * form) + (cleansheets / conceded)
+    else:
+        totalScore = (ep_next * form) + cleansheets
+    totalScore = (totalScore/cost)
     player['predictedValue'] = totalScore
     return float(totalScore)
-
-
-# getPlayerScore finds top 5 players and 1 random -> sorts and removes last element
-# hack -> temp solution
-def sortAndRemove(top):
-    currentTop = {}
-    for i in range(0, len(top)):
-        currentTop[i] = top[i]
-
-    sortedTop = sorted(currentTop.items(), key=lambda v: v[1]['ep_next'])
-    return sortedTop[1:]
-
 
 def getPlayerScore(player):
     totalScore = 0;
@@ -103,4 +95,4 @@ def PredictDefenders():
 
     for player in top:
         player['predictedValue'] = getPlayerScore(player)
-    return sortAndRemove(top)
+    return predict.sortAndRemove(top)
