@@ -178,7 +178,7 @@ def formatResults(players):
             print("NO PREDICTED VALUE FOUND??????????")
             print(player)
         result[player['id']] = {'name': player['web_name'], 'id': player['id'], 'ep_next': player['ep_next'],
-                                'predictedValue': player['predictedValue']}
+                                'predictedValue': player['predictedValue'], 'transferRatio':player['transferRatio']}
     return result
 '''
 5. Get fixture difficulty rating. 
@@ -191,7 +191,7 @@ Must consider opponent form & Home/Away match
 #players = getPlayersData()
 #CleanDataCSV(players)
 
-'''
+
 topGoalkeepers = formatResults(predictGoalkeeper.PredictGoalkeepers())
 for x in topGoalkeepers:
     print(topGoalkeepers[x])
@@ -205,7 +205,7 @@ print()
 topMidfielders = formatResults(predictMidfielder.PredictMidfielders())
 for x in topMidfielders:
     print(topMidfielders[x])
-'''
+
 print()
 topForwards = formatResults(predictForward.PredictForwards())
 for x in topForwards:

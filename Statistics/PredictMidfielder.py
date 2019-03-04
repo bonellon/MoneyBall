@@ -20,7 +20,15 @@ def getPlayerScore(player):
     ep_next = float(player['ep_next'])
     cost = float(player['now_cost'])
 
-    totalScore = ((ep_next + (form * threat))/(cost/100))/1000
+    transfer_in = float(player['transfers_in_event'])
+    transfer_out = float(player['transfers_out_event'])
+    transfer_ratio = 0.1
+    if transfer_in > 0.0 and transfer_out > 0.0:
+        transfer_ratio = transfer_in / transfer_out
+    player['transferRatio'] = transfer_ratio
+
+    totalScore = ((ep_next + (form * threat)) / cost) / 10000
+    totalScore = totalScore*transfer_ratio
     player['predictedValue'] = totalScore
     return float(totalScore)
 
@@ -29,51 +37,32 @@ def PredictMidfielders():
     print("--PredictMidfielders")
     midfielders = getMidfielders()
 
-    top = []
-    for midfielderID in midfielders:
-        midfielder = midfielders[midfielderID]
-        if len(top) < required:
-            top.append(midfielder)
+    playersList = []
+    for key, value in midfielders.items():
+        playersList.append([key, value])
 
-        else:
-            isSorted = False
-            while not isSorted:
-                # order first REQUIRED elements
-                changeMade = False
-                for i in range(1, len(top) - 1):
+    top = predict.sortList(playersList[0:required])
+    for playerTup in playersList[required:]:
+        player = playerTup[1]
 
-                    current = top[i]
-                    prev = top[i - 1]
+        # Update rest
+        insertAtPosition = required
+        updated = False
 
-                    if getPlayerScore(current) > getPlayerScore(prev):
-                        changeMade = True
-                        temp = current
-                        top[i] = prev
-                        top[i - 1] = temp
+        for i in range(0, len(top)):
+            current = top[i]
+            if getPlayerScore(current[1]) < getPlayerScore(player):
+                insertAtPosition = i
+                updated = True
+                break
 
-                if not changeMade:
-                    isSorted = True
+        if updated:
+            top[insertAtPosition] = playerTup
+            top = predict.sortList(top)
 
-            #Update rest
-            insertAtPosition = required - 1
-            updated = False
-            for i in range (0, len(top)-1):
-                current = top[i]
-                if getPlayerScore(current) < getPlayerScore(midfielder):
-                    insertAtPosition = i
-                    updated = True
-                    break
-
-            if updated:
-                temp = top[insertAtPosition]
-                top[insertAtPosition] = midfielder
-
-                if insertAtPosition < required - 1:
-                    for i in range(insertAtPosition + 1, len(top) - 1):
-                        temp2 = top[i]
-                        top[i] = temp
-                        temp = temp2
-
-    for player in top:
+    for playerTup in top:
+        player = playerTup[1]
         player['predictedValue'] = getPlayerScore(player)
+
+#    predict.getTopTransfers(midfielders)
     return predict.sortAndRemove(top)

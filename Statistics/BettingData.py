@@ -4,7 +4,7 @@ import requests
 from decimal import Decimal
 
 isTest = True
-currentGameweek = 27
+currentGameweek = 29
 requiredOdds = {"Win the match", "Both teams score", "Result & The 2 teams score", "Scorer"}
 mashapeKey = "3a0d311a29msh2e1cbe6ed3fc121p144095jsn72261a29e5bc"
 

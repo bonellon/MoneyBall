@@ -14,27 +14,15 @@ def getForwards():
             forwards[id] = row
     return forwards
 
-
-# getPlayerScore finds top 5 players and 1 random -> sorts and removes last element
-# hack -> temp solution
-def sortAndRemove(top):
-    print("----sortAndRemove")
-    currentTop = {}
-    for i in range(0, len(top)):
-        currentTop[i] = top[i]
-
-    sortedTop = sorted(currentTop.items(), key=lambda v: v[1]['ep_next'])
-    return sortedTop
-
-
 def getPlayerScore(player):
 
     threat = float(player['threat'])
     form = float(player['form'])
 
     ep_next = float(player['ep_next'])
-
-    totalScore = ep_next + (form * threat)
+    transfer_ratio = float(player['transfers_in_event'])/float(player['transfers_out_event'])
+    player['transferRatio'] = transfer_ratio
+    totalScore = (ep_next + (form * threat))*transfer_ratio
     player['predictedValue'] = totalScore
     return float(totalScore)
 
@@ -72,5 +60,5 @@ def PredictForwards():
         player = playerTup[1]
         player['predictedValue'] = getPlayerScore(player)
 
-    predict.getTopTransfers(forwards)
+#    predict.getTopTransfers(forwards)
     return predict.sortAndRemove(top)

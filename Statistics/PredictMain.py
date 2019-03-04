@@ -29,7 +29,34 @@ def sortList(list):
             isSorted = True
     return list
 
-def getTopTransfers(players):
+def getTopTransfersIn(players):
+    playersList = []
+    for key, value in players.items():
+        playersList.append([key, value])
+
+    top = sortList(playersList[0:required])
+
+    for playerTup in playersList[required:]:
+        player = playerTup[1]
+
+        # Update rest
+        insertAtPosition = required
+        updated = False
+
+        for i in range(0, len(top)):
+            current = top[i]
+            if getTransferCounts(current[1]) < getTransferCounts(player):
+                insertAtPosition = i
+                updated = True
+                break
+
+        if updated:
+            top[insertAtPosition] = playerTup
+            top = sortList(top)
+
+    return OrderedDict(top)
+
+def getTopTransfersOut(players):
     playersList = []
     for key, value in players.items():
         playersList.append([key, value])
