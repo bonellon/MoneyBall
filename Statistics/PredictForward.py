@@ -20,9 +20,11 @@ def getPlayerScore(player):
     form = float(player['form'])
 
     ep_next = float(player['ep_next'])
+    cost = float(player['now_cost'])
+
     transfer_ratio = float(player['transfers_in_event'])/float(player['transfers_out_event'])
     player['transferRatio'] = transfer_ratio
-    totalScore = (ep_next + (form * threat))*transfer_ratio
+    totalScore = (ep_next + (form * threat))*transfer_ratio/cost
     player['predictedValue'] = totalScore
     return float(totalScore)
 

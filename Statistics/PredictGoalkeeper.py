@@ -25,9 +25,9 @@ def getPlayerScore(player):
     player['transferRatio'] = transfer_ratio
 
     if conceded > 0:
-        totalScore = ep_next + (form / 100) + (cleansheets / conceded)
+        totalScore = (ep_next + (form / 100))* (cleansheets / conceded)
     else:
-        totalScore = ep_next + (form / 100) + cleansheets
+        totalScore = ep_next + (form / 1000) + cleansheets
     totalScore = totalScore*transfer_ratio
     player['predictedValue'] = totalScore
     return float(totalScore)
