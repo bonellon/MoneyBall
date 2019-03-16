@@ -21,9 +21,8 @@ def getPlayerGameweekCSV(playerFolder):
     playerFile = playerFolder+"\\gw.csv"
 
     playerDict = addTotalPointsNextWeek(playerFile)
-    playerTable = getPlayerStatistics(playerFile)
-    playerTable2 = getPlayerStatistics2(playerDict)
-    return addIsCaptain(playerTable2)
+    playerTable2 = getPlayerStatistics(playerDict)
+    return addIsCaptain2(playerTable2)
 
 def addTotalPointsNextWeek(file):
     newCSV = dict()
@@ -64,10 +63,10 @@ def iteratePlayers():
     allPlayer = []
     for folderName in os.listdir(BASEPATH):
         playerTable = getPlayerGameweekCSV(BASEPATH+"\\"+folderName)
-        allPlayer.append(playerTable[1:])
+        allPlayer.append(playerTable)
     return allPlayer
 
-def getPlayerStatistics2(gwDict):
+def getPlayerStatistics(gwDict):
     filteredDict = dict()
     keepPositions = {}
     for i in range(0, len(gwDict[0])):
@@ -84,65 +83,32 @@ def getPlayerStatistics2(gwDict):
             filteredDict[currentPlayer][round][key] = gwDict[i][int(value)]
     return filteredDict
 
-def getPlayerStatistics(playerFile):
-    with open(playerFile, 'r') as file:
-        csv_reader = csv.reader(file, delimiter=',')
-        isFirst = True
-        table = []
-
-        keepPosition = []
-        for row in csv_reader:
-            rowArr = []
-            if isFirst:
-                for i in range(len(row)):
-                    if row[i] in keep:
-                        keepPosition.append(i)
-                        rowArr.append(row[i])
-                isFirst = False
-            else:
-                for position in keepPosition:
-                    if (position == 30):
-                        rowArr.append(Teams(int(row[position])).name)
-                    else:
-                        rowArr.append(row[position])
-            table.append(rowArr)
-    return table
-
 def writeNewCSV(table):
 
-    #with open("predictor.csv", 'w', newline='') as csvFile:
+    with open("predictor.csv", 'w', newline='') as csvFile:
+        w = csv.writer(csvFile)
+        keys = table[0][list(table[0])[0]]['1'].keys()
+        w.writerow(keys)
 
-    for row in table:
-        isFirst = True
-        if(isFirst):
-            isFirst = False
-        print(row)
+        for player in table:
+            current = list(player.keys())[0]
+            for gw in player[current]:
+                write = player[current][gw]
+                w.writerow(write.values())
 
-def addIsCaptain(table):
-    isFirst = True
-    totalPoints = 0
-    for row in table:
-        if(isFirst):
-            position = 0
-            for elem in row:
-                if(elem == 'total_points'):
-                    totalPoints = position
-                position = position + 1
 
-            row.append("isCaptain")
-            row.append("player")
 
-            isFirst = False
-
-        else:
-            points = int(row[totalPoints])
-            if(points >= 4):
-                row.append(1)
+def addIsCaptain2(playerLists):
+    print(playerLists)
+    for player in playerLists:
+        for gw in playerLists[player]:
+            if (int(playerLists[player][gw]['total_points']) >= 4):
+                playerLists[player][gw]['isCaptain'] = 1
             else:
-                row.append(0)
-            row.append(currentPlayer)
-    return table
+                playerLists[player][gw]['isCaptain'] = 0
 
+            playerLists[player][gw]['player'] = currentPlayer
+    return playerLists
 
 #ramseyPath = "C:/Users/Nicky/Documents/Moneyball/MoneyBall_Code/External/vaastav/data/2018-19/players/Aaron_Ramsey_14/gw.csv"
 #START
