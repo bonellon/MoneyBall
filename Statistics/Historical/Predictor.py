@@ -1,6 +1,7 @@
 import os
 import csv
 import pandas as pd
+import Statistics.Historical.csvWriter as csvWriter
 
 from Statistics.Historical.Teams import Teams
 
@@ -21,8 +22,50 @@ def getPlayerGameweekCSV(playerFolder):
     playerFile = playerFolder+"\\gw.csv"
 
     playerDict = addTotalPointsNextWeek(playerFile)
-    playerTable2 = getPlayerStatistics(playerDict)
-    return addIsCaptain2(playerTable2)
+    playerDict = addTotalPointsPrevWeeks(playerFile)
+    playerTable = getPlayerStatistics(playerDict)
+    return addIsCaptain(playerTable)
+
+
+def addTotalPointsPrevWeeks(file):
+    newCSV = dict()
+    lineCounter = 0
+    with open(file, 'r') as csvFile:
+        for line in csvFile:
+            line = line.strip().split(",")
+            newCSV[lineCounter] = line
+            lineCounter += 1
+
+    if ("points_PrevWeek" in newCSV[0]):
+        return newCSV
+
+    newCSV[0].append('points_PrevWeek')
+    newCSV[0].append('points_2PrevWeek')
+
+    with open(file, 'w', newline='') as csvFile:
+        newCSV[1].append(0)
+        newCSV[1].append(0)
+
+        print(newCSV[1][46])
+        newCSV[2].append(newCSV[1][46])
+        newCSV[2].append(0)
+
+        for i in range(3, len(newCSV)):
+            row = newCSV[i]
+            prevRow = newCSV[i - 1]
+            prevRow2 = newCSV[i - 2]
+
+            pointsPW = prevRow[46]
+            pointsPW2 = prevRow2[46]
+
+            row.append(pointsPW)
+            row.append(pointsPW2)
+
+        writer = csv.writer(csvFile)
+        for key, value in newCSV.items():
+            writer.writerow(value)
+    return newCSV
+
 
 def addTotalPointsNextWeek(file):
     newCSV = dict()
@@ -83,22 +126,8 @@ def getPlayerStatistics(gwDict):
             filteredDict[currentPlayer][round][key] = gwDict[i][int(value)]
     return filteredDict
 
-def writeNewCSV(table):
 
-    with open("predictor.csv", 'w', newline='') as csvFile:
-        w = csv.writer(csvFile)
-        keys = table[0][list(table[0])[0]]['1'].keys()
-        w.writerow(keys)
-
-        for player in table:
-            current = list(player.keys())[0]
-            for gw in player[current]:
-                write = player[current][gw]
-                w.writerow(write.values())
-
-
-
-def addIsCaptain2(playerLists):
+def addIsCaptain(playerLists):
     print(playerLists)
     for player in playerLists:
         for gw in playerLists[player]:
@@ -114,10 +143,7 @@ def addIsCaptain2(playerLists):
 #START
 playersList = iteratePlayers()
 
-#addTotalPointsNextWeek(ramseyPath)
-
-#table = getPlayerStatistics(ramseyPath)
-writeNewCSV(playersList)
+csvWriter.writeNewCSV(playersList)
 
 
 
