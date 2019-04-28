@@ -7,7 +7,7 @@ from Statistics.Historical.Teams import Teams
 
 BASEPATH = "C:\\Users\\Nicky\\Documents\\Moneyball\\MoneyBall_Code\\External\\vaastav\\data\\2018-19\\players"
 
-keep = ['round', 'opponent_team', 'total_points', 'opponent_NextWeek', 'points_NextWeek']
+keep = ['round', 'opponent_team', 'was_home', 'total_points', 'opponent_NextWeek', 'points_NextWeek', 'points_PrevWeek', 'points_2PrevWeek']
 
 currentPlayer = ""
 
@@ -123,7 +123,13 @@ def getPlayerStatistics(gwDict):
         round = gwDict[i][keepPositions['round']]
         filteredDict[currentPlayer][round] = dict()
         for key,value in keepPositions.items():
-            filteredDict[currentPlayer][round][key] = gwDict[i][int(value)]
+            if(key =="was_home"):
+                toAppend = 0
+                if(gwDict[i][value] == "True"):
+                    toAppend = 1
+                filteredDict[currentPlayer][round][key] = toAppend
+            else:
+                filteredDict[currentPlayer][round][key] = gwDict[i][int(value)]
     return filteredDict
 
 

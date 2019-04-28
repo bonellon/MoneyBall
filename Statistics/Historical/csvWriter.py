@@ -31,7 +31,10 @@ def writeNewCSV(table):
 #|   Player  |   Round   |   Opponent    |   points  |   isCaptain   |   opponent_NextWeek   |   points_NextWeek |
 def formatDictionary(table):
 
-    orderedList = [['Player', 'Round', 'Opponent', 'Points', 'isCaptain', 'Opponent_NextWeek', 'Points_NextWeek']]
+    #orderedList = [['Player', 'Round', 'Opponent', 'isHome', 'Points', 'isCaptain', 'Opponent_NextWeek', 'isHome_Next', 'Points_NextWeek', 'Opponent_PrevWeek', 'Points_PrevWeek', 'isHome_PrevWeek', 'Opponent_2PrevWeek', 'Points_2PrevWeek', 'isHome_2PrevWeek']]
+    orderedList = [['Player', 'Round', 'Opponent', 'isHome', 'Points', 'isCaptain', 'Opponent_NextWeek',
+                    'Points_NextWeek', 'Points_PrevWeek', 'Points_2PrevWeek']]
+
     for playerList in table:
         #player = table[player]
         for player in playerList:
@@ -40,8 +43,8 @@ def formatDictionary(table):
                 try:
                     print(str(i) + " --> " + player)
                     current = playerList[player][str(i)]
-                    newList = [player, str(i), current['opponent_team'], current['total_points'], current['isCaptain'],
-                               current['opponent_NextWeek'], current['points_NextWeek']]
+                    newList = [player, str(i), current['opponent_team'], current['was_home'], current['total_points'], current['isCaptain'],
+                               current['opponent_NextWeek'], current['points_NextWeek'], current['points_PrevWeek'], current['points_2PrevWeek']]
                     orderedList.append(newList)
                 except KeyError as e:
                     print('Skipping '+str(i) +' - '+player+'. Reason:"%s"' % str(e))
