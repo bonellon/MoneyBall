@@ -27,13 +27,13 @@ def writeNewCSV(table):
         writer = csv.writer(csvFile)
         writer.writerows(table)
 
-
-#|   Player  |   Round   |   Opponent    |   points  |   isCaptain   |   opponent_NextWeek   |   points_NextWeek |
 def formatDictionary(table):
 
-    #orderedList = [['Player', 'Round', 'Opponent', 'isHome', 'Points', 'isCaptain', 'Opponent_NextWeek', 'isHome_Next', 'Points_NextWeek', 'Opponent_PrevWeek', 'Points_PrevWeek', 'isHome_PrevWeek', 'Opponent_2PrevWeek', 'Points_2PrevWeek', 'isHome_2PrevWeek']]
-    orderedList = [['Player', 'Round', 'Opponent', 'Opponent_FDR', 'isHome', 'Points', 'isCaptain', 'Opponent_NextWeek',
-                    'Points_NextWeek', 'Points_PrevWeek', 'Points_2PrevWeek']]
+    orderedList = [['Player', 'Round',
+                    'Opponent', 'Opponent_FDR', 'isHome', 'Points',
+                    'Opponent_PrevWeek', 'Opponent_FDR_PrevWeek', 'isHome_PrevWeek', 'Points_PrevWeek',
+                    'Opponent_2PrevWeek', 'Opponent_FDR_2PrevWeek', 'isHome_2PrevWeek', 'Points_2PrevWeek',
+                    'isCaptain']]
 
     for playerList in table:
         #player = table[player]
@@ -43,8 +43,10 @@ def formatDictionary(table):
                 try:
                     print(str(i) + " --> " + player)
                     current = playerList[player][str(i)]
-                    newList = [player, str(i), current['opponent_team'], current['FDR_NextWeek'], current['was_home'], current['total_points'], current['isCaptain'],
-                               current['opponent_NextWeek'], current['points_NextWeek'], current['points_PrevWeek'], current['points_2PrevWeek']]
+                    newList = [player, str(i), current['opponent_team'], current['opponent_FDR'], current['was_home'], current['total_points'],
+                               current['opponent_PrevWeek'], current['opponent_FDR_PrevWeek'], current['was_home_PrevWeek'], current['points_PrevWeek'],
+                               current['opponent_2PrevWeek'], current['opponent_FDR_2PrevWeek'], current['was_home_2PrevWeek'], current['points_2PrevWeek'],
+                               current['isCaptain']]
                     orderedList.append(newList)
                 except KeyError as e:
                     print('Skipping '+str(i) +' - '+player+'. Reason:"%s"' % str(e))

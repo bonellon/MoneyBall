@@ -37,13 +37,20 @@ correlations
 
 
 y = ds.isCaptain
-GB_table = ds.drop(['isCaptain', 'Points_NextWeek', 'Points', 'Player', 'Round', 'Opponent'], axis=1)
+GB_table = ds.drop(['Player', 'Round', 'isCaptain', 'Points', 'Opponent'], axis=1)
 GB_table.head()
 
 points_prev_2prev = GB_table['Points_2PrevWeek'] * GB_table['Points_PrevWeek']
-#points_fdr = testTable['Points'] * testTable['Opponent_FDR']
+average_points = (GB_table['Points_2PrevWeek'] + GB_table['Points_PrevWeek'])/2
 
-GB_table = GB_table.assign(points_prev_2prev=points_prev_2prev)
+prev_points_fdr = GB_table['Points_PrevWeek'] * GB_table['Opponent_FDR_PrevWeek']
+prev_points_home = GB_table['Points_PrevWeek'] * GB_table['isHome_PrevWeek']
+
+prev2_points_fdr = GB_table['Points_2PrevWeek'] * GB_table['Opponent_FDR_2PrevWeek']
+prev2_points_home = GB_table['Points_2PrevWeek'] * GB_table['isHome_2PrevWeek']
+
+GB_table = GB_table.assign(points_prev_2prev=points_prev_2prev, average_points = average_points, prev_points_fdr = prev_points_fdr,
+                           prev_points_home = prev_points_home, prev2_points_fdr = prev2_points_fdr, prev2_points_home = prev2_points_home)
 
 X_train, X_test, y_train, y_test = train_test_split(GB_table, y, test_size=0.2)
 
@@ -53,6 +60,7 @@ predictors=list(X_train)
 feat_imp = pd.Series(baseline.feature_importances_, predictors).sort_values(ascending=False)
 feat_imp.plot(kind='bar', title='Importance of Features')
 plt.ylabel('Feature Importance Score')
+#plt.show()
 print('Accuracy of GBM on test set: {:.3f}'.format(baseline.score(X_test, y_test)))
 pred=baseline.predict(X_test)
 print(classification_report(y_test, pred))
