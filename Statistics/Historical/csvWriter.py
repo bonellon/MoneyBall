@@ -32,7 +32,7 @@ def writeNewCSV(table):
 def formatDictionary(table):
 
     #orderedList = [['Player', 'Round', 'Opponent', 'isHome', 'Points', 'isCaptain', 'Opponent_NextWeek', 'isHome_Next', 'Points_NextWeek', 'Opponent_PrevWeek', 'Points_PrevWeek', 'isHome_PrevWeek', 'Opponent_2PrevWeek', 'Points_2PrevWeek', 'isHome_2PrevWeek']]
-    orderedList = [['Player', 'Round', 'Opponent', 'isHome', 'Points', 'isCaptain', 'Opponent_NextWeek',
+    orderedList = [['Player', 'Round', 'Opponent', 'Opponent_FDR', 'isHome', 'Points', 'isCaptain', 'Opponent_NextWeek',
                     'Points_NextWeek', 'Points_PrevWeek', 'Points_2PrevWeek']]
 
     for playerList in table:
@@ -43,7 +43,7 @@ def formatDictionary(table):
                 try:
                     print(str(i) + " --> " + player)
                     current = playerList[player][str(i)]
-                    newList = [player, str(i), current['opponent_team'], current['was_home'], current['total_points'], current['isCaptain'],
+                    newList = [player, str(i), current['opponent_team'], current['FDR_NextWeek'], current['was_home'], current['total_points'], current['isCaptain'],
                                current['opponent_NextWeek'], current['points_NextWeek'], current['points_PrevWeek'], current['points_2PrevWeek']]
                     orderedList.append(newList)
                 except KeyError as e:

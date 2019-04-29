@@ -1,13 +1,13 @@
 import os
 import csv
-import pandas as pd
 import Statistics.Historical.csvWriter as csvWriter
 
-from Statistics.Historical.Teams import Teams
+import Statistics.Historical.Teams as Teams
 
+CAPTAIN_POINTS = 6
 BASEPATH = "C:\\Users\\Nicky\\Documents\\Moneyball\\MoneyBall_Code\\External\\vaastav\\data\\2018-19\\players"
 
-keep = ['round', 'opponent_team', 'was_home', 'total_points', 'opponent_NextWeek', 'points_NextWeek', 'points_PrevWeek', 'points_2PrevWeek']
+keep = ['round', 'opponent_team', 'was_home', 'total_points', 'opponent_NextWeek', 'FDR_NextWeek', 'points_NextWeek', 'points_PrevWeek', 'points_2PrevWeek']
 
 currentPlayer = ""
 
@@ -81,6 +81,7 @@ def addTotalPointsNextWeek(file):
 
     newCSV[0].append('opponent_NextWeek')
     newCSV[0].append('points_NextWeek')
+    newCSV[0].append('FDR_NextWeek')
 
     with open(file, 'w', newline='') as csvFile:
 
@@ -88,11 +89,20 @@ def addTotalPointsNextWeek(file):
             row = newCSV[i]
             nextRow = newCSV[i+1]
 
-            opponentNW = Teams(int(nextRow[30])).name
+            #opponentNW = TeamsEnum(int(nextRow[30])).name
+            opponentNW = int(nextRow[30])
             pointsNW = nextRow[46]
+
+            isHome = 0
+            if(row[51] == 'True'):
+                isHome = 1
+
+            FDR_NW = Teams.GetFDR(opponentNW, isHome)
+
 
             row.append(opponentNW)
             row.append(pointsNW)
+            row.append(FDR_NW)
 
         newCSV[len(newCSV)-1].append(0)
         newCSV[len(newCSV)-1].append(0)
@@ -119,17 +129,22 @@ def getPlayerStatistics(gwDict):
                     keepPositions[key] = i
 
     filteredDict[currentPlayer] = dict()
-    for i in range(1, len(gwDict)):
-        round = gwDict[i][keepPositions['round']]
-        filteredDict[currentPlayer][round] = dict()
-        for key,value in keepPositions.items():
-            if(key =="was_home"):
-                toAppend = 0
-                if(gwDict[i][value] == "True"):
-                    toAppend = 1
-                filteredDict[currentPlayer][round][key] = toAppend
-            else:
-                filteredDict[currentPlayer][round][key] = gwDict[i][int(value)]
+    try:
+
+        for i in range(1, len(gwDict)):
+            round = gwDict[i][keepPositions['round']]
+            filteredDict[currentPlayer][round] = dict()
+            for key,value in keepPositions.items():
+                if(key =="was_home"):
+                    toAppend = 0
+                    if(gwDict[i][value] == "True"):
+                        toAppend = 1
+                    filteredDict[currentPlayer][round][key] = toAppend
+                else:
+                    filteredDict[currentPlayer][round][key] = gwDict[i][int(value)]
+
+    except:
+        print("ERROR")
     return filteredDict
 
 
@@ -137,7 +152,7 @@ def addIsCaptain(playerLists):
     print(playerLists)
     for player in playerLists:
         for gw in playerLists[player]:
-            if (int(playerLists[player][gw]['total_points']) >= 4):
+            if (int(playerLists[player][gw]['total_points']) >= CAPTAIN_POINTS):
                 playerLists[player][gw]['isCaptain'] = 1
             else:
                 playerLists[player][gw]['isCaptain'] = 0

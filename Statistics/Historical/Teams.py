@@ -1,26 +1,4 @@
-from enum import Enum
-
-class Teams(Enum):
-    Arsenal = 1
-    Bournemouth = 2
-    Brighton = 3
-    Burnley = 4
-    Cardiff = 5
-    Chelsea = 6
-    Crystal_Palace = 7
-    Everton = 8
-    Fulham = 9
-    Huddersfield = 10
-    Leicester_City = 11
-    Liverpool = 12
-    Manchester_City = 13
-    Manchester_United = 14
-    Newcastle = 15
-    Southampton = 16
-    Spurs = 17
-    Watford = 18
-    West_Ham = 19
-    Wolves = 20
+from Statistics.Historical.TeamsEnum import TeamsEnum
 
 def FDR_Arsenal(isHome):
     if(isHome):
@@ -52,7 +30,7 @@ def FDR_Chelsea(isHome):
         return 4
     return 4
 
-def FDR_CrystalPalace(isHome):
+def FDR_Crystal_Palace(isHome):
     if(isHome):
         return 2
     return 2
@@ -72,7 +50,7 @@ def FDR_Huddersfield(isHome):
         return 1
     return 2
 
-def FDR_Leicester(isHome):
+def FDR_Leicester_City(isHome):
     if(isHome):
         return 3
     return 3
@@ -82,12 +60,12 @@ def FDR_Liverpool(isHome):
         return 4
     return 5
 
-def FDR_ManCity(isHome):
+def FDR_Manchester_City(isHome):
     if(isHome):
         return 4
     return 5
 
-def FDR_ManUtd(isHome):
+def FDR_Manchester_United(isHome):
     if(isHome):
         return 4
     return 4
@@ -112,7 +90,7 @@ def FDR_Watford(isHome):
         return 3
     return 3
 
-def FDR_WestHam(isHome):
+def FDR_West_Ham(isHome):
     if(isHome):
         return 3
     return 3
@@ -122,3 +100,10 @@ def FDR_Wolves(isHome):
         return 3
     return 3
 
+def GetFDR(team, isHome):
+    import sys
+    current_module = sys.modules[__name__]
+
+    methodName = 'FDR_'+str(TeamsEnum(team).name)
+    method = getattr(current_module, methodName)(isHome)
+    return method
