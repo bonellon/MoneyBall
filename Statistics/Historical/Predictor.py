@@ -9,7 +9,7 @@ BASEPATH = "C:\\Users\\Nicky\\Documents\\Moneyball\\MoneyBall_Code\\External\\va
 
 keep = ['round', 'opponent_team', 'opponent_FDR', 'was_home', 'total_points', 'points_PrevWeek', 'was_home_PrevWeek',
         'opponent_PrevWeek', 'opponent_FDR_PrevWeek', 'points_2PrevWeek', 'was_home_2PrevWeek', 'opponent_2PrevWeek',
-        'opponent_FDR_2PrevWeek' ]
+        'opponent_FDR_2PrevWeek', 'minutes_PrevWeek']
 
 
 currentPlayer = ""
@@ -45,6 +45,7 @@ def addTotalPointsPrevWeeks(file):
     newCSV[0].append('was_home_PrevWeek')
     newCSV[0].append('opponent_PrevWeek')
     newCSV[0].append('opponent_FDR_PrevWeek')
+    newCSV[0].append('minutes_PrevWeek')
 
     newCSV[0].append('points_2PrevWeek')
     newCSV[0].append('was_home_2PrevWeek')
@@ -57,6 +58,7 @@ def addTotalPointsPrevWeeks(file):
         points      46
         was_home    51
         opponent    30
+        minutes     27
     '''
 
     with open(file, 'w', newline='') as csvFile:
@@ -64,6 +66,8 @@ def addTotalPointsPrevWeeks(file):
         newCSV[1].append(0)
         newCSV[1].append(0)
         newCSV[1].append(0)
+        newCSV[1].append(1)
+
         newCSV[1].append(0)
         newCSV[1].append(0)
         newCSV[1].append(0)
@@ -76,6 +80,7 @@ def addTotalPointsPrevWeeks(file):
         newCSV[2].append(isHome)
         newCSV[2].append(newCSV[1][30])
         newCSV[2].append(Teams.GetFDR(int(newCSV[1][30]), isHome))
+        newCSV[2].append(newCSV[1][27])
 
         newCSV[2].append(0)
         newCSV[2].append(0)
@@ -91,6 +96,7 @@ def addTotalPointsPrevWeeks(file):
             homePW = {True: 1, False: 0} [prevRow[51] == 'True']
             opponentPW = prevRow[30]
             FDR_PW = Teams.GetFDR(int(opponentPW), int(homePW))
+            minutes_PW = int(prevRow[27])
 
 
             pointsPW2 = prevRow2[46]
@@ -102,6 +108,7 @@ def addTotalPointsPrevWeeks(file):
             row.append(homePW)
             row.append(opponentPW)
             row.append(FDR_PW)
+            row.append(minutes_PW)
 
             row.append(pointsPW2)
             row.append(homePW2)
@@ -172,11 +179,20 @@ def addOpponentFDR(playerLists):
             playerLists[player][gw]['opponent_FDR'] = FDR
     return playerLists
 
+def removeNonPlaying(playerList):
+    for players in list(playerList):
+        for player in list(players):
+            for gameweek in list(players[player]):
+                if (int(players[player][gameweek]['minutes_PrevWeek']) == 0):
+                    players[player].pop(gameweek, None)
+
+    return playerList
+
 #ramseyPath = "C:/Users/Nicky/Documents/Moneyball/MoneyBall_Code/External/vaastav/data/2018-19/players/Aaron_Ramsey_14/gw.csv"
 #START
 playersList = iteratePlayers()
 
-csvWriter.writeNewCSV(playersList)
+csvWriter.writeNewCSV(removeNonPlaying(playersList))
 
 
 
