@@ -25,6 +25,8 @@ def getPlayerGameweekCSV(playerFolder):
     playerFile = playerFolder+"\\gw.csv"
 
     playerDict = addTotalPointsPrevWeeks(playerFile)
+    if(playerDict == {}):
+        return None
     playerTable = getPlayerStatistics(playerDict)
     playerTable = addIsCaptain(playerTable)
     return addOpponentFDR(playerTable)
@@ -37,6 +39,8 @@ def addTotalPointsPrevWeeks(file):
             line = line.strip().split(",")
             newCSV[lineCounter] = line
             lineCounter += 1
+    if(lineCounter == 0):
+        return newCSV
 
     if ("points_PrevWeek" in newCSV[0]):
         return newCSV
@@ -125,7 +129,8 @@ def iteratePlayers():
     allPlayer = []
     for folderName in os.listdir(BASEPATH):
         playerTable = getPlayerGameweekCSV(BASEPATH+"\\"+folderName)
-        allPlayer.append(playerTable)
+        if(playerTable != None):
+            allPlayer.append(playerTable)
     return allPlayer
 
 def getPlayerStatistics(gwDict):

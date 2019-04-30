@@ -5,9 +5,9 @@ from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import classification_report
 
 pd.options.mode.chained_assignment = None  # default='warn'
-CURRENT_GAMEWEEK = 34
+CURRENT_GAMEWEEK = 36
 
-ds=pd.read_csv('Predictor.csv', encoding="ISO-8859-1")
+ds=(pd.read_csv('Predictor.csv', encoding="ISO-8859-1"))#.sort_values(by=['Round'])
 #ds.head()
 
 '''
@@ -30,7 +30,13 @@ plt.show()
 correlations
 '''
 
-def prediction(ds, learning_rate, n_estimators, max_depth, min_samples_split, min_samples_leaf, max_features, subsample, random_state):
+def getTestSize(ds):
+    gameweekLen = ds.drop(ds[ds.Round != CURRENT_GAMEWEEK].index).index.size
+    total = ds.index.size
+    percent = gameweekLen/total
+    return percent
+
+def prediction(ds, learning_rate, n_estimators, max_depth, min_samples_split, min_samples_leaf, max_features, subsample):
     y = ds.isCaptain
     GB_table = ds.drop(['Player', 'Round', 'isCaptain', 'Points'], axis=1)
     GB_table.head()
@@ -49,11 +55,11 @@ def prediction(ds, learning_rate, n_estimators, max_depth, min_samples_split, mi
                                prev_points_home=prev_points_home, prev2_points_fdr=prev2_points_fdr,
                                prev2_points_home=prev2_points_home)
 
-    X_train, X_test, y_train, y_test = train_test_split(GB_table, y, test_size=0.2)
+    X_train, X_test, y_train, y_test = train_test_split(GB_table, y, test_size=getTestSize(ds), shuffle=False)
 
     baseline = GradientBoostingClassifier(learning_rate=learning_rate, n_estimators=n_estimators, max_depth=max_depth,
                                           min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf,
-                                          max_features=max_features, subsample=subsample, random_state=random_state)
+                                          max_features=max_features, subsample=subsample)
     baseline.fit(X_train, y_train)
     predictors = list(X_train)
     feat_imp = pd.Series(baseline.feature_importances_, predictors).sort_values(ascending=False)
@@ -74,5 +80,5 @@ count = 0
 for i in range(0,1):
     print(i)
     count += prediction(ds, learning_rate=0.01, n_estimators=550, max_depth=4, min_samples_split=40,
-           min_samples_leaf=7, max_features=6, subsample=0.95, random_state=10)
+           min_samples_leaf=7, max_features=6, subsample=0.95)
 print("Average Count = "+str(count/50))

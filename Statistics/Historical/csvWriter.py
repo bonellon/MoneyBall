@@ -25,7 +25,15 @@ def writeNewCSV(table):
 
     with open("predictor.csv", 'w', newline='') as csvFile:
         writer = csv.writer(csvFile)
-        writer.writerows(table)
+        writer.writerow(table[0])
+
+        maximum = 1
+        for i in range (1, 39):
+            for j in range(1, len(table)):
+                if(int(table[j][1]) == i):
+                    maximum = i
+                    writer.writerow(table[j])
+
 
 def formatDictionary(table):
 
@@ -36,14 +44,13 @@ def formatDictionary(table):
                     'isCaptain']]
 
     for playerList in table:
-        #player = table[player]
         for player in playerList:
             maxGameweeks = 0
             for gw in playerList[player]:
                 if(int(gw) > maxGameweeks):
                     maxGameweeks = int(gw)
 
-            for i in range (1, maxGameweeks):
+            for i in range (1, maxGameweeks+1):
                 try:
                     print(str(i) + " --> " + player)
                     current = playerList[player][str(i)]
