@@ -38,7 +38,11 @@ def formatDictionary(table):
     for playerList in table:
         #player = table[player]
         for player in playerList:
-            maxGameweeks = len(playerList[player])
+            maxGameweeks = 0
+            for gw in playerList[player]:
+                if(int(gw) > maxGameweeks):
+                    maxGameweeks = int(gw)
+
             for i in range (1, maxGameweeks):
                 try:
                     print(str(i) + " --> " + player)

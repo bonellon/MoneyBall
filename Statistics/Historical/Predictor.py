@@ -4,7 +4,7 @@ import Statistics.Historical.csvWriter as csvWriter
 
 import Statistics.Historical.Teams as Teams
 
-CAPTAIN_POINTS = 6
+CAPTAIN_POINTS = 4
 BASEPATH = "C:\\Users\\Nicky\\Documents\\Moneyball\\MoneyBall_Code\\External\\vaastav\\data\\2018-19\\players"
 
 keep = ['round', 'opponent_team', 'opponent_FDR', 'was_home', 'total_points', 'points_PrevWeek', 'was_home_PrevWeek',
@@ -191,8 +191,8 @@ def removeNonPlaying(playerList):
 #ramseyPath = "C:/Users/Nicky/Documents/Moneyball/MoneyBall_Code/External/vaastav/data/2018-19/players/Aaron_Ramsey_14/gw.csv"
 #START
 playersList = iteratePlayers()
-
-csvWriter.writeNewCSV(removeNonPlaying(playersList))
+playersList = removeNonPlaying(playersList)
+csvWriter.writeNewCSV(playersList)
 
 
 
