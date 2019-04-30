@@ -5,7 +5,7 @@ from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import classification_report
 
 pd.options.mode.chained_assignment = None  # default='warn'
-CURRENT_GAMEWEEK = 36
+CURRENT_GAMEWEEK = 37
 
 ds=(pd.read_csv('Predictor.csv', encoding="ISO-8859-1"))#.sort_values(by=['Round'])
 #ds.head()

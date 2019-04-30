@@ -1,5 +1,5 @@
 import csv
-from collections import OrderedDict
+import Statistics.Historical.Teams as Teams
 
 '''
 Player
@@ -34,11 +34,57 @@ def writeNewCSV(table):
                     maximum = i
                     writer.writerow(table[j])
 
+    with open("predictor.csv", 'r') as csvFile:
+        reader = csv.reader(csvFile)
+        gwList = list(reader)
+        latestGW = []
+        for i in range(1, len(gwList)):
+            if(int(gwList[i][1]) == maximum and int(gwList[i][6]) > 0):
+                latestGW.append(gwList[i])
+
+    newGW = []
+    for player in latestGW:
+
+        #player
+        current = [player[0], str(int(player[1])+1)]
+
+        #opponent
+        team = 9
+        isHome = 1
+        current.append(team)
+        current.append(Teams.GetFDR(team, isHome))
+        current.append(isHome)
+
+        #points, minutes
+        current.append(0)
+        current.append(0)
+
+        #Previous week
+        current.append(player[2])
+        current.append(player[3])
+        current.append(player[4])
+        current.append(player[5])
+
+        #2 Weeks ago
+        current.append(player[7])
+        current.append(player[8])
+        current.append(player[9])
+        current.append(player[10])
+
+        #isCaptain = 0
+        current.append(0)
+
+        newGW.append(current)
+
+    with open("Predictor.csv", 'a+', newline='') as csvFile:
+        writer = csv.writer(csvFile)
+        writer.writerows(newGW)
+
 
 def formatDictionary(table):
 
     orderedList = [['Player', 'Round',
-                    'Opponent', 'Opponent_FDR', 'isHome', 'Points',
+                    'Opponent', 'Opponent_FDR', 'isHome', 'Points', 'minutes',
                     'Opponent_PrevWeek', 'Opponent_FDR_PrevWeek', 'isHome_PrevWeek', 'Points_PrevWeek',
                     'Opponent_2PrevWeek', 'Opponent_FDR_2PrevWeek', 'isHome_2PrevWeek', 'Points_2PrevWeek',
                     'isCaptain']]
@@ -54,7 +100,7 @@ def formatDictionary(table):
                 try:
                     print(str(i) + " --> " + player)
                     current = playerList[player][str(i)]
-                    newList = [player, str(i), current['opponent_team'], current['opponent_FDR'], current['was_home'], current['total_points'],
+                    newList = [player, str(i), current['opponent_team'], current['opponent_FDR'], current['was_home'], current['total_points'], current['minutes'],
                                current['opponent_PrevWeek'], current['opponent_FDR_PrevWeek'], current['was_home_PrevWeek'], current['points_PrevWeek'],
                                current['opponent_2PrevWeek'], current['opponent_FDR_2PrevWeek'], current['was_home_2PrevWeek'], current['points_2PrevWeek'],
                                current['isCaptain']]
