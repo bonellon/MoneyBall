@@ -37,7 +37,8 @@ def getTestSize(ds):
     return percent
 
 def prediction(ds, learning_rate, n_estimators, max_depth, min_samples_split, min_samples_leaf, max_features, subsample):
-    y = ds.isCaptain
+    #y = ds.isCaptain
+    y = ds.Points
     GB_table = ds.drop(['Player', 'Round', 'isCaptain', 'Points'], axis=1)
     GB_table.head()
 
@@ -59,26 +60,30 @@ def prediction(ds, learning_rate, n_estimators, max_depth, min_samples_split, mi
 
     baseline = GradientBoostingClassifier(learning_rate=learning_rate, n_estimators=n_estimators, max_depth=max_depth,
                                           min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf,
-                                          max_features=max_features, subsample=subsample)
+                                          max_features=max_features, subsample=subsample, verbose=10)
     baseline.fit(X_train, y_train)
     predictors = list(X_train)
     feat_imp = pd.Series(baseline.feature_importances_, predictors).sort_values(ascending=False)
     feat_imp.plot(kind='bar', title='Importance of Features')
     plt.ylabel('Feature Importance Score')
-    plt.show()
+    #plt.show()
     print('Accuracy of GBM on test set: {:.3f}'.format(baseline.score(X_test, y_test)))
     pred = baseline.predict(X_test)
     print(classification_report(y_test, pred))
 
     pred_original_data = ds.iloc[X_test.index]
     pred_original_data['prediction'] = pred
-    pred_original_data.drop(pred_original_data[pred_original_data.prediction < 1].index, inplace=True)
+    pred_original_data.drop(pred_original_data[pred_original_data.prediction < 4].index, inplace=True)
 
-    return len(pred_original_data.index)
+    return pred_original_data
 
-count = 0
+names = []
 for i in range(0,1):
     print(i)
-    count += prediction(ds, learning_rate=0.01, n_estimators=550, max_depth=4, min_samples_split=40,
-           min_samples_leaf=7, max_features=6, subsample=0.95)
-print("Average Count = "+str(count/50))
+    current = prediction(ds, learning_rate=0.01, n_estimators=550, max_depth=4, min_samples_split=40,
+           min_samples_leaf=7, max_features=15, subsample=0.95)
+    names.append(current['Player'].tolist())
+
+print("Finished")
+for name in names:
+    print(name)

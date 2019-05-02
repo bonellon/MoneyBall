@@ -29,12 +29,25 @@ def getFPL():
 def getTeam(FPL, currentOpponent):
     for team in FPL["teams"]:
         current = int(team["current_event_fixture"][0]["opponent"])
-        print(currentOpponent)
         if(int(current) == int(currentOpponent)):
             opponent = int(team['next_event_fixture'][0]['opponent'])
             isHome = int(team['next_event_fixture'][0]['is_home'])
             return opponent, isHome
 
+#Get ict_index, threat, creativity, influence, trasnfers_balance,
+def getPlayerStats(FPL, player):
+    player = player.lower()
+    for elem in FPL['elements']:
+        if(player == elem['web_name'].lower() or player == elem['first_name'].lower() or player == elem['second_name'].lower()):
+            ict = float(elem['ict_index'])/20
+            threat = float(elem['threat'])/10
+            creativity = float(elem['creativity'])/10
+            influence = float(elem['influence'])/10
+            transferBalance = int(elem['transfers_in_event']) - int(elem['transfers_out_event'])
+            return ict, threat, creativity, influence, transferBalance
+
+    print("getPlayerStats: Skipping %s -> Web_Name not found", player)
+    return 0,0,0,0,0
 
 def writeNewCSV(table):
     table = formatDictionary(table)
@@ -90,6 +103,14 @@ def writeNewCSV(table):
         #isCaptain = 0
         current.append(0)
 
+        #ICT_index, Threat, Creativity, Influence, Transfers_Balance
+        playerData = getPlayerStats(FPL, player[0])
+        current.append(playerData[0])
+        current.append(playerData[1])
+        #current.append(playerData[2])
+        #current.append(playerData[3])
+        current.append(playerData[4])
+
         newGW.append(current)
 
     with open("Predictor.csv", 'a+', newline='') as csvFile:
@@ -103,7 +124,7 @@ def formatDictionary(table):
                     'Opponent', 'Opponent_FDR', 'isHome', 'Points', 'minutes',
                     'Opponent_PrevWeek', 'Opponent_FDR_PrevWeek', 'isHome_PrevWeek', 'Points_PrevWeek',
                     'Opponent_2PrevWeek', 'Opponent_FDR_2PrevWeek', 'isHome_2PrevWeek', 'Points_2PrevWeek',
-                    'isCaptain']]
+                    'isCaptain', 'ICT_index', 'Threat', 'Transfers_Balance']]
 
     for playerList in table:
         for player in playerList:
@@ -119,7 +140,7 @@ def formatDictionary(table):
                     newList = [player, str(i), current['opponent_team'], current['opponent_FDR'], current['was_home'], current['total_points'], current['minutes'],
                                current['opponent_PrevWeek'], current['opponent_FDR_PrevWeek'], current['was_home_PrevWeek'], current['points_PrevWeek'],
                                current['opponent_2PrevWeek'], current['opponent_FDR_2PrevWeek'], current['was_home_2PrevWeek'], current['points_2PrevWeek'],
-                               current['isCaptain']]
+                               current['isCaptain'], current['ict_index'], current['threat'], current['transfers_balance']]
                     orderedList.append(newList)
                 except KeyError as e:
                     print('Skipping '+str(i) +' - '+player+'. Reason:"%s"' % str(e))

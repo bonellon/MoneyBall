@@ -4,12 +4,12 @@ import Statistics.Historical.csvWriter as csvWriter
 
 import Statistics.Historical.Teams as Teams
 
-CAPTAIN_POINTS = 4
+CAPTAIN_POINTS = 8
 BASEPATH = "C:\\Users\\Nicky\\Documents\\Moneyball\\MoneyBall_Code\\External\\vaastav\\data\\2018-19\\players"
 
 keep = ['round', 'opponent_team', 'opponent_FDR', 'was_home', 'total_points', 'minutes', 'points_PrevWeek', 'was_home_PrevWeek',
         'opponent_PrevWeek', 'opponent_FDR_PrevWeek', 'points_2PrevWeek', 'was_home_2PrevWeek', 'opponent_2PrevWeek',
-        'opponent_FDR_2PrevWeek', 'minutes_PrevWeek']
+        'opponent_FDR_2PrevWeek', 'minutes_PrevWeek', 'ict_index', 'threat', 'creativity', 'influence', 'transfers_balance']
 
 
 currentPlayer = ""
