@@ -1,6 +1,7 @@
 import csv
 import Statistics.Historical.Teams as Teams
-
+import json
+import requests
 '''
 Player
     1
@@ -19,9 +20,25 @@ Player
     CSV Order:
     |   Player  |   Round   |   Opponent    |   points  |   isCaptain   |   opponent_NextWeek   |   points_NextWeek |
 '''
+def getFPL():
+    url = "https://fantasy.premierleague.com/drf/bootstrap-static"
+    r = requests.get(url)
+    return json.loads(r.text)
+
+
+def getTeam(FPL, currentOpponent):
+    for team in FPL["teams"]:
+        current = int(team["current_event_fixture"][0]["opponent"])
+        print(currentOpponent)
+        if(int(current) == int(currentOpponent)):
+            opponent = int(team['next_event_fixture'][0]['opponent'])
+            isHome = int(team['next_event_fixture'][0]['is_home'])
+            return opponent, isHome
+
 
 def writeNewCSV(table):
     table = formatDictionary(table)
+    FPL = getFPL()
 
     with open("predictor.csv", 'w', newline='') as csvFile:
         writer = csv.writer(csvFile)
@@ -49,15 +66,14 @@ def writeNewCSV(table):
         current = [player[0], str(int(player[1])+1)]
 
         #opponent
-        team = 9
-        isHome = 1
+        team, isHome = getTeam(FPL, player[2])
         current.append(team)
         current.append(Teams.GetFDR(team, isHome))
         current.append(isHome)
 
         #points, minutes
         current.append(0)
-        current.append(0)
+        current.append(90)
 
         #Previous week
         current.append(player[2])

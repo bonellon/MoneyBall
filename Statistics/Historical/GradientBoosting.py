@@ -65,8 +65,8 @@ def prediction(ds, learning_rate, n_estimators, max_depth, min_samples_split, mi
     feat_imp = pd.Series(baseline.feature_importances_, predictors).sort_values(ascending=False)
     feat_imp.plot(kind='bar', title='Importance of Features')
     plt.ylabel('Feature Importance Score')
-    # plt.show()
-    #print('Accuracy of GBM on test set: {:.3f}'.format(baseline.score(X_test, y_test)))
+    plt.show()
+    print('Accuracy of GBM on test set: {:.3f}'.format(baseline.score(X_test, y_test)))
     pred = baseline.predict(X_test)
     print(classification_report(y_test, pred))
 
