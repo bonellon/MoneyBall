@@ -8,7 +8,7 @@ from sklearn.metrics import roc_curve
 from sklearn.metrics import auc
 
 pd.options.mode.chained_assignment = None  # default='warn'
-CURRENT_GAMEWEEK = 36
+CURRENT_GAMEWEEK = 37
 
 ds=(pd.read_csv('Predictor.csv', encoding="ISO-8859-1"))
 
@@ -76,7 +76,7 @@ def prediction(ds, learning_rate, n_estimators, max_depth, min_samples_split, mi
 
     baseline = GradientBoostingClassifier(learning_rate=learning_rate, n_estimators=n_estimators, max_depth=max_depth,
                                           min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf,
-                                          max_features=max_features, subsample=subsample, verbose=10)
+                                          max_features=max_features, subsample=subsample, verbose=0)
     baseline.fit(X_train, y_train)
     #predictors = list(X_train)
     #feat_imp = pd.Series(baseline.feature_importances_, predictors).sort_values(ascending=False)
@@ -114,10 +114,10 @@ test_results = []
 learning_rates = [1, 0.75, 0.5, 0.25, 0.1, 0.075, 0.05]
 
 #600
-n_estimators = [1, 2, 4, 8, 16, 32, 64, 100, 250, 500, 600, 750, 1000]
+n_estimators = [1, 2, 4, 8, 16, 32, 64, 100, 250, 500, 600, 750, 1000, 1600]
 
 #5
-max_depths = np.linspace(1, 32, 32, endpoint=True)
+max_depths = np.linspace(3, 10, 7, endpoint=True)
 
 #0.02
 min_samples_leafs = np.linspace(0.00001, 0.5, 100, endpoint=True)
@@ -125,14 +125,17 @@ min_samples_leafs = np.linspace(0.00001, 0.5, 100, endpoint=True)
 #2
 max_features = [1,2,3,4,5,6,7,8,9,10]
 
+#0.8
 subsample = np.linspace(0.0001, 1, 20, endpoint=True)
 
+realTest = [1,2,3]
 
-currentTest = subsample
+currentTest = realTest
+
 for test in currentTest:
 
-    current = prediction(ds, learning_rate=0.25, n_estimators=600, max_depth=5, min_samples_split=2,
-           min_samples_leaf=0.02, max_features=2, subsample=0.8)
+    current = prediction(ds, learning_rate=0.2, n_estimators=1600, max_depth=5, min_samples_split=2,
+           min_samples_leaf=0.0001, max_features=2, subsample=0.8)
     names.append(current[0]['Player'].tolist())
     train_results.append(current[1])
     test_results.append(current[2])
