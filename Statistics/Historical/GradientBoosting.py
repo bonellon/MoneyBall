@@ -60,19 +60,6 @@ def getTestTrain(ds, y):
     return X_train, X_test, y_train, y_test
 
 
-def gradientBoosting(X_train, y_train):
-    baseline = GradientBoostingClassifier(learning_rate=LEARNING_RATE, n_estimators=N_ESTIMATORS, max_depth=MAX_DEPTH,
-                                          min_samples_split=MIN_SAMPLES_LEAFS, min_samples_leaf=MIN_SAMPLES_LEAFS,
-                                          max_features=MAX_FEATURES, subsample=SUBSAMPLE, verbose=1)
-    # predictors = list(X_train)
-    # feat_imp = pd.Series(baseline.feature_importances_, predictors).sort_values(ascending=False)
-    # feat_imp.plot(kind='bar', title='Importance of Features')
-    # plt.ylabel('Feature Importance Score')
-    # plt.show()
-
-    return baseline
-
-
 def predictionRandom(ds):
 
     #remove current & all next gameweeks
@@ -99,8 +86,9 @@ def predictionRandom(ds):
 #print classification report
 #print accuracy
 def getPredictionResults(X_train, y_train, X_test, y_test):
-
-    baseline = GradientBoostingClassifier(X_train, y_train)
+    baseline = GradientBoostingClassifier(learning_rate=LEARNING_RATE, n_estimators=N_ESTIMATORS, max_depth=MAX_DEPTH,
+                                          min_samples_split=MIN_SAMPLES_LEAFS, min_samples_leaf=MIN_SAMPLES_LEAFS,
+                                          max_features=MAX_FEATURES, subsample=SUBSAMPLE, verbose=1)
 
     baseline.fit(X_train, y_train)
     pred = baseline.predict(X_train)
@@ -161,7 +149,11 @@ def prediction(ds):
     X_train, X_test, y_train, y_test = getTestTrain(GB_table, y)
     #X_train, X_test, y_train, y_test = train_test_split(GB_table, y, test_size=getTestSize(ds), shuffle=False)
 
-    baseline = gradientBoosting(X_train, y_train)
+    baseline = GradientBoostingClassifier(learning_rate=LEARNING_RATE, n_estimators=N_ESTIMATORS, max_depth=MAX_DEPTH,
+                                          min_samples_split=MIN_SAMPLES_LEAFS, min_samples_leaf=MIN_SAMPLES_LEAFS,
+                                          max_features=MAX_FEATURES, subsample=SUBSAMPLE, verbose=1)
+
+    baseline.fit(X_train, y_train)
 
     pred = baseline.predict(X_train)
 
