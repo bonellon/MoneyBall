@@ -1,7 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.model_selection import train_test_split
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import classification_report
 from sklearn.metrics import roc_curve
@@ -9,6 +8,15 @@ from sklearn.metrics import auc
 
 pd.options.mode.chained_assignment = None  # default='warn'
 CURRENT_GAMEWEEK = 36
+
+K_SPLITS = 10
+
+LEARNING_RATE = 0.25
+N_ESTIMATORS = 600
+MAX_DEPTH = 5
+MIN_SAMPLES_LEAFS = 0.02
+MAX_FEATURES = 2
+SUBSAMPLE = 0.8
 
 ds=(pd.read_csv('Predictor.csv', encoding="ISO-8859-1"))
 
@@ -18,7 +26,6 @@ print(meanValues)
 
 
 GRAPH
-
 
 correlations = ds.corr()
 fig = plt.figure()
@@ -32,11 +39,16 @@ plt.show()
 correlations
 '''
 
+def removeCurrentAndFuture(ds):
+    ds = ds.drop(ds[ds.Round >= CURRENT_GAMEWEEK].index)
+    return ds
+
+
 def getTestTrain(ds, y):
 
     ds['y'] = y
 
-    X_train = ds.drop(ds[ds.Round >= CURRENT_GAMEWEEK].index)
+    X_train = removeCurrentAndFuture(ds)
     X_test = ds.drop(ds[ds.Round != CURRENT_GAMEWEEK].index)
 
     y_train = X_train['y']
@@ -47,12 +59,66 @@ def getTestTrain(ds, y):
 
     return X_train, X_test, y_train, y_test
 
-def prediction(ds, learning_rate, n_estimators, max_depth, min_samples_split, min_samples_leaf, max_features, subsample):
-    y = ds.isCaptain
-    #y = ds.Points
 
-    train_results = []
-    test_results = []
+def predictionRandom(ds):
+
+    #remove current & all next gameweeks
+    ds = removeCurrentAndFuture(ds)
+    X, y = generateTable(ds)
+
+    from sklearn.model_selection import RepeatedKFold
+
+#what is n_repeats???
+    kf = RepeatedKFold(n_splits=5, n_repeats=1, random_state=None)
+
+    for train_index, test_index in kf.split(X,y):
+        print("Train:", train_index, "Validation:", test_index)
+
+        X_train, X_test = X.iloc[train_index], X.iloc[test_index]
+        y_train, y_test = y.iloc[train_index], y.iloc[test_index]
+
+        X_train.drop(['Player', 'Round', 'isCaptain', 'Points'], axis=1, inplace=True)
+        X_test.drop(['Player', 'Round', 'isCaptain', 'Points'], axis=1, inplace=True)
+
+        getPredictionResults(X_train, y_train, X_test, y_test)
+
+#plot ROC graphs from test and training set
+#print classification report
+#print accuracy
+def getPredictionResults(X_train, y_train, X_test, y_test):
+    baseline = GradientBoostingClassifier(learning_rate=LEARNING_RATE, n_estimators=N_ESTIMATORS, max_depth=MAX_DEPTH,
+                                          min_samples_split=MIN_SAMPLES_LEAFS, min_samples_leaf=MIN_SAMPLES_LEAFS,
+                                          max_features=MAX_FEATURES, subsample=SUBSAMPLE, verbose=False)
+
+    baseline.fit(X_train, y_train)
+    pred = baseline.predict(X_train)
+
+    false_positive_rate, true_positive_rate, thresholds = roc_curve(y_train, pred)
+    roc_auc = auc(false_positive_rate, true_positive_rate)
+    train_results.append(roc_auc)
+
+    pred = baseline.predict(X_test)
+
+    false_positive_rate, true_positive_rate, thresholds = roc_curve(y_test, pred)
+    roc_auc = auc(false_positive_rate, true_positive_rate)
+    test_results.append(roc_auc)
+
+    print(classification_report(y_test, pred))
+
+    pred_original_data = ds.iloc[X_test.index]
+    pred_original_data['prediction'] = pred
+    # pred_original_data.drop(pred_original_data[pred_original_data.prediction < 1].index, inplace=True)
+
+    pred_original_data.drop(pred_original_data[pred_original_data.isCaptain < 1].index, inplace=True)
+
+    print('Accuracy of GBM on test set: {:.3f}'.format(baseline.score(X_test, y_test)))
+
+
+#Creates X and Y tables - does not split into train/test
+#Adds all multiplication columns
+def generateTable(ds):
+    y = ds.isCaptain
+    # y = ds.Points
 
     GB_table = ds
     GB_table.head()
@@ -71,20 +137,20 @@ def prediction(ds, learning_rate, n_estimators, max_depth, min_samples_split, mi
                                prev_points_home=prev_points_home, prev2_points_fdr=prev2_points_fdr,
                                prev2_points_home=prev2_points_home)
 
+    return GB_table, y
+
+def prediction(ds):
+
+    GB_table, y = generateTable(ds)
+
     X_train, X_test, y_train, y_test = getTestTrain(GB_table, y)
     #X_train, X_test, y_train, y_test = train_test_split(GB_table, y, test_size=getTestSize(ds), shuffle=False)
 
-    baseline = GradientBoostingClassifier(learning_rate=learning_rate, n_estimators=n_estimators, max_depth=max_depth,
-                                          min_samples_split=min_samples_split, min_samples_leaf=min_samples_leaf,
-                                          max_features=max_features, subsample=subsample, verbose=0)
-    baseline.fit(X_train, y_train)
-    #predictors = list(X_train)
-    #feat_imp = pd.Series(baseline.feature_importances_, predictors).sort_values(ascending=False)
-    #feat_imp.plot(kind='bar', title='Importance of Features')
-    #plt.ylabel('Feature Importance Score')
-    #plt.show()
-    print('Accuracy of GBM on test set: {:.3f}'.format(baseline.score(X_test, y_test)))
+    baseline = GradientBoostingClassifier(learning_rate=LEARNING_RATE, n_estimators=N_ESTIMATORS, max_depth=MAX_DEPTH,
+                                          min_samples_split=MIN_SAMPLES_LEAFS, min_samples_leaf=MIN_SAMPLES_LEAFS,
+                                          max_features=MAX_FEATURES, subsample=SUBSAMPLE, verbose=False)
 
+    baseline.fit(X_train, y_train)
 
     pred = baseline.predict(X_train)
 
@@ -102,13 +168,16 @@ def prediction(ds, learning_rate, n_estimators, max_depth, min_samples_split, mi
 
     pred_original_data = ds.iloc[X_test.index]
     pred_original_data['prediction'] = pred
-    pred_original_data.drop(pred_original_data[pred_original_data.prediction < 1].index, inplace=True)
+    #pred_original_data.drop(pred_original_data[pred_original_data.prediction < 1].index, inplace=True)
+
+    pred_original_data.drop(pred_original_data[pred_original_data.isCaptain < 1].index, inplace=True)
 
     return pred_original_data, train_results, test_results
 
 names = []
 train_results = []
 test_results = []
+
 
 #0.25
 learning_rates = [1, 0.75, 0.5, 0.25, 0.1, 0.075, 0.05]
@@ -132,10 +201,13 @@ realTest = [1,2,3]
 
 currentTest = realTest
 
+
+
+#predictionRandom(ds)
+
 for test in currentTest:
 
-    current = prediction(ds, learning_rate=0.2, n_estimators=1600, max_depth=5, min_samples_split=2,
-           min_samples_leaf=0.0001, max_features=2, subsample=0.8)
+    current = prediction(ds)
     names.append(current[0]['Player'].tolist())
     train_results.append(current[1])
     test_results.append(current[2])
@@ -145,9 +217,11 @@ for name in names:
     print(name)
 
 from matplotlib.legend_handler import HandlerLine2D
+
 line1, = plt.plot(currentTest, train_results, 'b', label='Train AUC')
 line2, = plt.plot(currentTest, test_results, 'r', label='Test AUC')
 plt.legend(handler_map={line1: HandlerLine2D(numpoints=2)})
 plt.ylabel('AUC score')
 plt.xlabel('learning rate')
 plt.show()
+
