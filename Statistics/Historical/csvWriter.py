@@ -111,6 +111,10 @@ def writeNewCSV(table):
         current.append(playerData[3])
         current.append(playerData[4])
 
+        #value, bps
+        current.append(player[20])
+        current.append(player[21])
+
         newGW.append(current)
 
     with open("Predictor.csv", 'a+', newline='') as csvFile:
@@ -124,7 +128,7 @@ def formatDictionary(table):
                     'Opponent', 'Opponent_FDR', 'isHome', 'Points', 'minutes',
                     'Opponent_PrevWeek', 'Opponent_FDR_PrevWeek', 'isHome_PrevWeek', 'Points_PrevWeek',
                     'Opponent_2PrevWeek', 'Opponent_FDR_2PrevWeek', 'isHome_2PrevWeek', 'Points_2PrevWeek',
-                    'isCaptain', 'ICT_index', 'Threat','Influence', 'Transfers_Balance']]
+                    'isCaptain', 'ICT_index', 'Threat','Influence', 'Transfers_Balance', 'Value', 'BPS']]
 
     for playerList in table:
         for player in playerList:
@@ -140,7 +144,7 @@ def formatDictionary(table):
                     newList = [player, str(i), current['opponent_team'], current['opponent_FDR'], current['was_home'], current['total_points'], current['minutes'],
                                current['opponent_PrevWeek'], current['opponent_FDR_PrevWeek'], current['was_home_PrevWeek'], current['points_PrevWeek'],
                                current['opponent_2PrevWeek'], current['opponent_FDR_2PrevWeek'], current['was_home_2PrevWeek'], current['points_2PrevWeek'],
-                               current['isCaptain'], current['ict_index'], current['threat'], current['influence'],current['transfers_balance']]
+                               current['isCaptain'], current['ict_index'], current['threat'], current['influence'], current['transfers_balance'], current['value'], current['bps']]
                     orderedList.append(newList)
                 except KeyError as e:
                     print('Skipping '+str(i) +' - '+player+'. Reason:"%s"' % str(e))

@@ -8,7 +8,7 @@ from sklearn.metrics import roc_curve
 from sklearn.metrics import auc
 
 pd.options.mode.chained_assignment = None  # default='warn'
-CURRENT_GAMEWEEK = 37
+CURRENT_GAMEWEEK = 36
 
 ds=(pd.read_csv('Predictor.csv', encoding="ISO-8859-1"))
 

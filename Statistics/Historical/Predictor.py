@@ -12,7 +12,7 @@ keep = ['round', 'opponent_team', 'opponent_FDR', 'was_home', 'total_points', 'm
         'was_home_PrevWeek',
         'opponent_PrevWeek', 'opponent_FDR_PrevWeek', 'points_2PrevWeek', 'was_home_2PrevWeek', 'opponent_2PrevWeek',
         'opponent_FDR_2PrevWeek', 'minutes_PrevWeek', 'ict_index', 'threat', 'creativity', 'influence',
-        'transfers_balance']
+        'transfers_balance', 'value', 'bps']
 
 currentPlayer = ""
 
