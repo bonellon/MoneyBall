@@ -1,35 +1,39 @@
 import os
 import csv
-import Statistics.Historical.csvWriter as csvWriter
+from pathlib import Path
 
+import Statistics.Historical.csvWriter as csvWriter
 import Statistics.Historical.Teams as Teams
 
 CAPTAIN_POINTS = 20
-BASEPATH = "C:\\Users\\Nicky\\Documents\\Moneyball\\MoneyBall_Code\\External\\vaastav\\data\\2018-19\\players"
+BASEPATH = str(Path(__file__).parents[2]) + "\\External\\vaastav\\data\\2018-19\\players"
 
-keep = ['round', 'opponent_team', 'opponent_FDR', 'was_home', 'total_points', 'minutes', 'points_PrevWeek', 'was_home_PrevWeek',
+keep = ['round', 'opponent_team', 'opponent_FDR', 'was_home', 'total_points', 'minutes', 'points_PrevWeek',
+        'was_home_PrevWeek',
         'opponent_PrevWeek', 'opponent_FDR_PrevWeek', 'points_2PrevWeek', 'was_home_2PrevWeek', 'opponent_2PrevWeek',
-        'opponent_FDR_2PrevWeek', 'minutes_PrevWeek', 'ict_index', 'threat', 'creativity', 'influence', 'transfers_balance']
-
+        'opponent_FDR_2PrevWeek', 'minutes_PrevWeek', 'ict_index', 'threat', 'creativity', 'influence',
+        'transfers_balance']
 
 currentPlayer = ""
+
 
 def updateCurrentPlayer(playerFolder):
     global currentPlayer
     currentPlayer = playerFolder.split('\\')
-    currentPlayer = currentPlayer[len(currentPlayer)-1].split('_')[1]
+    currentPlayer = currentPlayer[len(currentPlayer) - 1].split('_')[1]
 
 
 def getPlayerGameweekCSV(playerFolder):
     updateCurrentPlayer(playerFolder)
-    playerFile = playerFolder+"\\gw.csv"
+    playerFile = playerFolder + "\\gw.csv"
 
     playerDict = addTotalPointsPrevWeeks(playerFile)
-    if(playerDict == {}):
+    if (playerDict == {}):
         return None
     playerTable = getPlayerStatistics(playerDict)
     playerTable = addIsCaptain(playerTable)
     return addOpponentFDR(playerTable)
+
 
 def addTotalPointsPrevWeeks(file):
     newCSV = dict()
@@ -39,7 +43,7 @@ def addTotalPointsPrevWeeks(file):
             line = line.strip().split(",")
             newCSV[lineCounter] = line
             lineCounter += 1
-    if(lineCounter == 0):
+    if (lineCounter == 0):
         return newCSV
 
     if ("points_PrevWeek" in newCSV[0]):
@@ -58,7 +62,7 @@ def addTotalPointsPrevWeeks(file):
 
     '''
         ROW POSITIONS
-    
+
         points      46
         was_home    51
         opponent    30
@@ -79,7 +83,7 @@ def addTotalPointsPrevWeeks(file):
 
         newCSV[2].append(newCSV[1][46])
 
-        isHome = {True: 1, False: 0} [newCSV[1][51] == 'True']
+        isHome = {True: 1, False: 0}[newCSV[1][51] == 'True']
 
         newCSV[2].append(isHome)
         newCSV[2].append(newCSV[1][30])
@@ -97,14 +101,13 @@ def addTotalPointsPrevWeeks(file):
             prevRow2 = newCSV[i - 2]
 
             pointsPW = prevRow[46]
-            homePW = {True: 1, False: 0} [prevRow[51] == 'True']
+            homePW = {True: 1, False: 0}[prevRow[51] == 'True']
             opponentPW = prevRow[30]
             FDR_PW = Teams.GetFDR(int(opponentPW), int(homePW))
             minutes_PW = int(prevRow[27])
 
-
             pointsPW2 = prevRow2[46]
-            homePW2 = {True: 1, False: 0} [prevRow2[51] == 'True']
+            homePW2 = {True: 1, False: 0}[prevRow2[51] == 'True']
             opponentPW2 = prevRow[30]
             FDR_PW2 = Teams.GetFDR(int(opponentPW2), int(homePW2))
 
@@ -128,18 +131,19 @@ def addTotalPointsPrevWeeks(file):
 def iteratePlayers():
     allPlayer = []
     for folderName in os.listdir(BASEPATH):
-        playerTable = getPlayerGameweekCSV(BASEPATH+"\\"+folderName)
-        if(playerTable != None):
+        playerTable = getPlayerGameweekCSV(BASEPATH + "\\" + folderName)
+        if (playerTable != None):
             allPlayer.append(playerTable)
     return allPlayer
+
 
 def getPlayerStatistics(gwDict):
     filteredDict = dict()
     keepPositions = {}
     for i in range(0, len(gwDict[0])):
-        if(gwDict[0][i] in keep):
+        if (gwDict[0][i] in keep):
             for key in keep:
-                if(key == gwDict[0][i]):
+                if (key == gwDict[0][i]):
                     keepPositions[key] = i
 
     filteredDict[currentPlayer] = dict()
@@ -148,10 +152,10 @@ def getPlayerStatistics(gwDict):
         for i in range(1, len(gwDict)):
             round = gwDict[i][keepPositions['round']]
             filteredDict[currentPlayer][round] = dict()
-            for key,value in keepPositions.items():
-                if(key =="was_home"):
+            for key, value in keepPositions.items():
+                if (key == "was_home"):
                     toAppend = 0
-                    if(gwDict[i][value] == "True"):
+                    if (gwDict[i][value] == "True"):
                         toAppend = 1
                     filteredDict[currentPlayer][round][key] = toAppend
                 else:
@@ -174,6 +178,7 @@ def addIsCaptain(playerLists):
             playerLists[player][gw]['player'] = currentPlayer
     return playerLists
 
+
 def addOpponentFDR(playerLists):
     for player in playerLists:
         for gw in playerLists[player]:
@@ -184,6 +189,7 @@ def addOpponentFDR(playerLists):
             playerLists[player][gw]['opponent_FDR'] = FDR
     return playerLists
 
+
 def removeNonPlaying(playerList):
     for players in list(playerList):
         for player in list(players):
@@ -193,13 +199,12 @@ def removeNonPlaying(playerList):
 
     return playerList
 
-#ramseyPath = "C:/Users/Nicky/Documents/Moneyball/MoneyBall_Code/External/vaastav/data/2018-19/players/Aaron_Ramsey_14/gw.csv"
-#START
+
+# ramseyPath = "C:/Users/Nicky/Documents/Moneyball/MoneyBall_Code/External/vaastav/data/2018-19/players/Aaron_Ramsey_14/gw.csv"
+# START
 playersList = iteratePlayers()
 playersList = removeNonPlaying(playersList)
 csvWriter.writeNewCSV(playersList)
 
-
-
-#Y = 0 if player < 4 points
-#Y = 1 if player >= 4 points
+# Y = 0 if player < 4 points
+# Y = 1 if player >= 4 points
