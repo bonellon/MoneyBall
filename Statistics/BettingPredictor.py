@@ -64,7 +64,14 @@ def calculateBestOffence(keep):
 keepDefense = ['Team1', 'Team2', '%1 & No', '%2 & No', '%N & No']
 keepOffence = ['Team1', 'Team2', '%1 & No','%1 & Yes', '%2 & No', '%2 & Yes', '%N & Yes']
 
-defense = calculateBestDefense(keepDefense)
-offence = calculateBestOffence(keepOffence)
-print("Defense: ", str(defense))
-print("Offence: ", str(offence))
+
+def getDefenseOffence():
+
+    defense = calculateBestDefense(keepDefense)
+    offence = calculateBestOffence(keepOffence)
+    print("Defense: ", str(defense))
+    print("Offence: ", str(offence))
+    return defense, offence
+
+
+getDefenseOffence()

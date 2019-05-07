@@ -1,11 +1,11 @@
 FixtureID,Team1,Team2,1,%1,N,%N,2,%2
-347,Burnley,Crystal Palace,2.80,33.49,3.15,29.52,2.55,36.99
-354,Wolves,Cardiff,1.50,64.21,3.95,22.86,6.50,12.93
-350,Manchester United,Southampton,1.40,68.70,4.45,19.74,7.00,11.56
-352,Watford,Leicester,2.55,37.25,3.30,28.34,2.75,34.40
-353,West Ham,Newcastle,2.05,46.38,3.35,27.45,3.50,26.17
-348,Everton,Liverpool,5.80,14.99,4.00,22.75,1.55,62.26
-351,Tottenham,Arsenal,2.00,47.60,3.60,25.38,3.40,27.02
-345,Bournemouth,Manchester City,11.80,6.08,6.50,12.99,1.20,80.94
-349,Fulham,Chelsea,6.50,13.11,4.45,20.20,1.45,66.69
-346,Brighton,Huddersfield,1.80,53.69,3.35,27.98,4.95,18.33
+75,Cardiff,Newcastle,2.95,29.42,2.85,30.61,2.25,39.97
+77,Everton,Southampton,1.69,54.77,3.25,26.37,4.30,18.86
+78,Leicester,Wolves,1.93,47.14,3.05,28.12,3.40,24.74
+79,Tottenham,Fulham,1.18,80.27,5.30,14.40,10.20,5.33
+80,West Ham,Bournemouth,1.93,47.36,3.25,26.32,3.25,26.32
+81,Chelsea,Arsenal,1.66,56.13,3.65,23.29,4.05,20.58
+76,Burnley,Watford,2.20,41.10,2.75,32.01,3.20,26.89
+82,Manchester City,Huddersfield,1.03,92.62,8.20,7.72,24.20,-0.34
+83,Brighton,Manchester United,4.55,17.49,3.20,26.76,1.66,55.75
+84,Crystal Palace,Liverpool,6.30,11.61,4.60,17.47,1.33,70.92

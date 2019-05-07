@@ -3,10 +3,10 @@ import csv
 import requests
 from decimal import Decimal
 
-isTest = True
-currentGameweek = 29
+isTest = False
+currentGameweek = 36
 requiredOdds = {"Win the match", "Both teams score", "Result & The 2 teams score", "Scorer"}
-mashapeKey = "3a0d311a29msh2e1cbe6ed3fc121p144095jsn72261a29e5bc"
+mashapeKey = "c0fce7377emsh4084b4f22dbc8f0p17508ajsn635090a150d6"
 
 
 def writeResponseToFile(fileName, text):
@@ -219,7 +219,7 @@ def getTeams(leagueID):
 
 
 # get list of next gameweek fixtures
-def getFixtures(leagueID):
+def getFixtures(leagueID, gw):
     """
     Gets list of fixtures in a league given global Gameweek var
 
@@ -243,10 +243,10 @@ def getFixtures(leagueID):
 
     data = json.loads(responseText)["api"]["fixtures"]
     writeResponseToFile(fileName, responseText)
-    return cleanFixtureFile(data)
+    return cleanFixtureFile(data, gw)
 
 
-def cleanFixtureFile(data):
+def cleanFixtureFile(data, gw):
     """
     Given list of all fixtures in EPL, remove all that are not
     in the next Gameweek
@@ -256,7 +256,7 @@ def cleanFixtureFile(data):
     cleanedFixtures = "{"
     for fixture in data:
         current = data[fixture]['round']
-        if current == ("Premier League - " + str(currentGameweek)):
+        if current == ("Regular Season - "+str(gw)):
             cleanedFixtures = cleanedFixtures + "\"" + fixture + "\":" + str(data[fixture]) + ","
 
     cleanedFixtures = cleanedFixtures[:-1] + "}"
@@ -330,7 +330,7 @@ def getOdds(fixtureIds):
     responseText = responseText[:-1] + "}"
     writeResponseToFile(fileName, responseText)
 
-    cleanOdds(json.loads(responseText))
+    return cleanOdds(json.loads(responseText))
 
 
 def cleanOdds(data):
@@ -379,9 +379,21 @@ def cleanOdds(data):
     writeOddsToCSV(jsonString)
     return jsonString
 
+def getOddsGW(gw):
+    # leagueID = getEPLleagueID()
+    fixtures = getFixtures("2", gw)
+    fixtures = fixtures.replace("\'", "\"").replace('None', '"NULL"')
+    jsonFixtures = json.loads(fixtures)
+    fixtureIds = []
+    for fixture in jsonFixtures:
+        fixtureIds.append(jsonFixtures[fixture]["fixture_id"])
 
+    odds = getOdds(fixtureIds)
+    return odds;
+
+'''
 # leagueID = getEPLleagueID()
-fixtures = getFixtures("2")
+fixtures = getFixtures("2", currentGameweek)
 fixtures = fixtures.replace("\'", "\"").replace('None', '"NULL"')
 jsonFixtures = json.loads(fixtures)
 fixtureIds = []
@@ -389,3 +401,6 @@ for fixture in jsonFixtures:
     fixtureIds.append(jsonFixtures[fixture]["fixture_id"])
 
 getOdds(fixtureIds)
+'''
+getOddsGW(2)
+
