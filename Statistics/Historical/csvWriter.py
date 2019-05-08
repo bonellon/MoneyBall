@@ -1,7 +1,11 @@
 import csv
 import Statistics.Historical.Teams as Teams
+import Statistics.Historical.TeamsEnum as TeamsEnum
 import json
 import requests
+
+import Statistics.BettingData as bettingData
+import Statistics.BettingPredictor as bettingPredictor
 '''
 Player
     1
@@ -34,6 +38,7 @@ def getTeam(FPL, currentOpponent):
             isHome = int(team['next_event_fixture'][0]['is_home'])
             return opponent, isHome
 
+
 #Get ict_index, threat, creativity, influence, trasnfers_balance,
 def getPlayerStats(FPL, player):
     player = player.lower()
@@ -49,8 +54,9 @@ def getPlayerStats(FPL, player):
     print("getPlayerStats: Skipping %s -> Web_Name not found", player)
     return 0,0,0,0,0
 
+
 def writeNewCSV(table):
-    table = formatDictionary(table)
+    table = formatDictionary(table)[0]
     FPL = getFPL()
 
     with open("predictor.csv", 'w', newline='') as csvFile:
@@ -115,11 +121,69 @@ def writeNewCSV(table):
         current.append(player[20])
         current.append(player[21])
 
+        #defenseOdds, attackOdds
+        gwOdds = table[1]
+
+        if(str((int(player[1])+1)) in gwOdds):
+            gwDef = gwOdds[int(player[1]) + 1]['Defense']
+            gwAtt = gwOdds[int(player[1]) + 1]['Offence']
+
+            for i in range(0, len(gwDef) - 1):
+                if gwAtt[i][0] == int(current['opponent_team']):
+                    current.append(gwAtt[i][1])
+
+                if gwDef[i][0] == int(current['opponent_team']):
+                    current.append(gwDef[i][1])
+
         newGW.append(current)
 
     with open("Predictor.csv", 'a+', newline='') as csvFile:
         writer = csv.writer(csvFile)
         writer.writerows(newGW)
+
+
+def getGWOdds():
+
+    import os
+
+    filepath = '../CachedJson/allOdds.txt'
+    if os.path.isfile(filepath) and os.path.getsize(filepath) > 0:
+        file = open(filepath , 'r')
+
+        #JSON.LOADS GWCSV
+        #TEST TO SEE WAHT HAPPENS????
+
+
+
+    gwDict = {}
+
+    for i in range(1, 38):
+        gw = bettingData.getOddsGW(i)
+        defenseOffence = bettingPredictor.getDefenseOffence()
+        print("Round: "+str(i))
+        for list in defenseOffence:
+            for elem in list:
+                if elem[0] == 'Leicester':
+                    elem[0] = 'Leicester_City'
+                elif elem[0] == 'Tottenham':
+                    elem[0] = 'Spurs'
+                else:
+                    elem[0] = elem[0].replace(' ', '_')
+
+            for elem in list:
+                elem[0] = TeamsEnum.TeamsEnum[elem[0]].value
+
+        gwDict.update({str(i): {
+            "Defense": defenseOffence[0],
+            "Offence": defenseOffence[1]
+        }})
+
+    with open('../CachedJson/allOdds.txt', 'w') as file:
+        file.write(json.dumps(gwDict))
+    return gwDict
+
+
+    return defenseOffence
 
 
 def formatDictionary(table):
@@ -128,7 +192,9 @@ def formatDictionary(table):
                     'Opponent', 'Opponent_FDR', 'isHome', 'Points', 'minutes',
                     'Opponent_PrevWeek', 'Opponent_FDR_PrevWeek', 'isHome_PrevWeek', 'Points_PrevWeek',
                     'Opponent_2PrevWeek', 'Opponent_FDR_2PrevWeek', 'isHome_2PrevWeek', 'Points_2PrevWeek',
-                    'isCaptain', 'ICT_index', 'Threat','Influence', 'Transfers_Balance', 'Value', 'BPS']]
+                    'isCaptain', 'ICT_index', 'Threat','Influence', 'Transfers_Balance', 'Value', 'BPS', 'DefenseOdds', 'OffenceOdds']]
+
+    gwOdds = getGWOdds()
 
     for playerList in table:
         for player in playerList:
@@ -144,8 +210,23 @@ def formatDictionary(table):
                     newList = [player, str(i), current['opponent_team'], current['opponent_FDR'], current['was_home'], current['total_points'], current['minutes'],
                                current['opponent_PrevWeek'], current['opponent_FDR_PrevWeek'], current['was_home_PrevWeek'], current['points_PrevWeek'],
                                current['opponent_2PrevWeek'], current['opponent_FDR_2PrevWeek'], current['was_home_2PrevWeek'], current['points_2PrevWeek'],
-                               current['isCaptain'], current['ict_index'], current['threat'], current['influence'], current['transfers_balance'], current['value'], current['bps']]
+                               current['isCaptain'], current['ict_index'], current['threat'], current['influence'], current['transfers_balance'],
+                               current['value'], current['bps']]
+
+                    if str(i) in gwOdds:
+                        gwDef = gwOdds[i]['Defense']
+                        gwAtt = gwOdds[i]['Offence']
+
+                        for i in range (0, len(gwDef) -1):
+                            if gwAtt[i][0] == int(current['opponent_team']):
+                                newList.append(gwAtt[i][1])
+
+                            if gwDef[i][0] == int(current['opponent_team']):
+                                newList.append(gwDef[i][1])
+
+
+
                     orderedList.append(newList)
                 except KeyError as e:
                     print('Skipping '+str(i) +' - '+player+'. Reason:"%s"' % str(e))
-    return orderedList
+    return orderedList, gwOdds

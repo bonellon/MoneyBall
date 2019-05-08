@@ -12,12 +12,14 @@ class TeamsEnum(Enum):
     Fulham = 9
     Huddersfield = 10
     Leicester_City = 11
+    Leicester = 11
     Liverpool = 12
     Manchester_City = 13
     Manchester_United = 14
     Newcastle = 15
     Southampton = 16
     Spurs = 17
+    Tottenham = 17
     Watford = 18
     West_Ham = 19
     Wolves = 20

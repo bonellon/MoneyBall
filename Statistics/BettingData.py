@@ -4,7 +4,7 @@ import requests
 from decimal import Decimal
 
 isTest = False
-currentGameweek = 36
+currentGameweek = 1
 requiredOdds = {"Win the match", "Both teams score", "Result & The 2 teams score", "Scorer"}
 mashapeKey = "c0fce7377emsh4084b4f22dbc8f0p17508ajsn635090a150d6"
 
@@ -35,7 +35,18 @@ def writeOddsToCSV(data):
         teams = getFixture(fixturesList, fixtureId)
         for market in data[fixtureId]:
             marketTitle = market.title().replace(" ", "")
-            fileName = "odds/" + marketTitle + ".csv"
+
+            import os
+
+            current = os.path.abspath(os.curdir).split('\\')
+
+            if current[len(current) - 1] == 'Historical':
+                fileName = "../odds/" + marketTitle + ".csv"
+            else:
+                fileName = "odds/" + marketTitle + ".csv"
+
+
+
             if (isFirst):
                 f = open(fileName, 'w', newline='')
             else:
@@ -226,10 +237,13 @@ def getFixtures(leagueID, gw):
     :param leagueID: League ID
     :return: list of fixture details
     """
+    import os
+    from pathlib import Path
 
-    fileName = "CachedJson/getFixtures.txt"
-    if isTest:
-        with open(fileName, 'r') as file:
+    filePath = str(Path(__file__).parents[2])+"\\MoneyBall_Code\\Statistics\\CachedJson\\getFixtures.txt"
+
+    if os.path.isfile(filePath) and os.stat(filePath).st_size != 0:
+        with open(filePath, 'r') as file:
             responseText = file.read()
 
     else:
@@ -242,7 +256,7 @@ def getFixtures(leagueID, gw):
         responseText = response.text
 
     data = json.loads(responseText)["api"]["fixtures"]
-    writeResponseToFile(fileName, responseText)
+    writeResponseToFile(filePath, responseText)
     return cleanFixtureFile(data, gw)
 
 
@@ -262,7 +276,13 @@ def cleanFixtureFile(data, gw):
     cleanedFixtures = cleanedFixtures[:-1] + "}"
     cleanedFixtures = cleanedFixtures.replace("'penalty': None,", "")
 
-    file = open("CachedJson/getCleanedFixtures.txt", 'w')
+    import os
+
+    current = os.path.abspath(os.curdir).split('\\')
+    if current[len(current)-1] == 'Historical':
+        file = open("../CachedJson/getCleanedFixtures.txt", 'w')
+    else:
+        file = open("CachedJson/getCleanedFixtures.txt", 'w')
     file.write(cleanedFixtures)
     file.close
     return cleanedFixtures
@@ -273,18 +293,26 @@ def getFixtureNames():
     Converts fixtureId -> Fixture teams
     :return: list of triples [fixtureID, Team1, Team2]
     """
-    with open('CachedJson/getCleanedFixtures.txt', 'r') as f:
-        read = f.read()
-        jsonFixtures = json.loads(read.replace("'", "\"").replace('None', '"NULL"'))
+    import os
+    current = os.path.abspath(os.curdir).split('\\')
+    if current[len(current) - 1] == 'Historical':
+        file = open("../CachedJson/getCleanedFixtures.txt", 'r')
+    else:
+        file = open('CachedJson/getCleanedFixtures.txt', 'r')
 
-        fixturesList = []
-        for fixture in jsonFixtures:
-            fixtureId = jsonFixtures[fixture]['fixture_id']
-            homeTeam = jsonFixtures[fixture]['homeTeam']
-            awayTeam = jsonFixtures[fixture]['awayTeam']
+    read = file.read()
+    jsonFixtures = json.loads(read.replace("'", "\"").replace('None', '"NULL"'))
 
-            fixture = [fixtureId, homeTeam, awayTeam]
-            fixturesList.append(fixture)
+    fixturesList = []
+    for fixture in jsonFixtures:
+        fixtureId = jsonFixtures[fixture]['fixture_id']
+        homeTeam = jsonFixtures[fixture]['homeTeam']
+        awayTeam = jsonFixtures[fixture]['awayTeam']
+
+        fixture = [fixtureId, homeTeam, awayTeam]
+        fixturesList.append(fixture)
+
+    file.close
     return fixturesList
 
 
@@ -308,7 +336,13 @@ def getOdds(fixtureIds):
     :param fixtureIds: List of fixtureIDs
     :return: returns list of odds per fixture
     """
-    fileName = "CachedJson/getOdds.txt"
+    import os
+    current = os.path.abspath(os.curdir).split('\\')
+    if current[len(current)-1] == 'Historical':
+        fileName = "../CachedJson/getOdds.txt"
+    else:
+        fileName = "CachedJson/getOdds.txt"
+
     if isTest:
         with open(fileName, 'r') as file:
             responseText = file.read()
@@ -402,5 +436,5 @@ for fixture in jsonFixtures:
 
 getOdds(fixtureIds)
 '''
-getOddsGW(2)
+getOddsGW(currentGameweek)
 
