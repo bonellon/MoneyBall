@@ -149,13 +149,9 @@ def getGWOdds():
     filepath = '../CachedJson/allOdds.txt'
     if os.path.isfile(filepath) and os.path.getsize(filepath) > 0:
         file = open(filepath , 'r')
+        gwDict = json.load(file)
 
-        #JSON.LOADS GWCSV
-        #TEST TO SEE WAHT HAPPENS????
-
-
-
-    gwDict = {}
+        return gwDict
 
     for i in range(1, 38):
         gw = bettingData.getOddsGW(i)
@@ -214,10 +210,11 @@ def formatDictionary(table):
                                current['value'], current['bps']]
 
                     if str(i) in gwOdds:
-                        gwDef = gwOdds[i]['Defense']
-                        gwAtt = gwOdds[i]['Offence']
+                        gwDef = gwOdds[str(i)]['Defense']
+                        gwAtt = gwOdds[str(i)]['Offence']
 
                         for i in range (0, len(gwDef) -1):
+                            print(i)
                             if gwAtt[i][0] == int(current['opponent_team']):
                                 newList.append(gwAtt[i][1])
 
