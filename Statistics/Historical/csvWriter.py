@@ -213,7 +213,7 @@ def formatDictionary(table):
                         gwDef = gwOdds[str(i)]['Defense']
                         gwAtt = gwOdds[str(i)]['Offence']
 
-                        for i in range (0, len(gwDef) -1):
+                        for i in range (0, len(gwDef)):
                             print(i)
                             if gwAtt[i][0] == int(current['opponent_team']):
                                 newList.append(gwAtt[i][1])

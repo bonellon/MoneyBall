@@ -7,7 +7,7 @@ from sklearn.metrics import roc_curve
 from sklearn.metrics import auc
 
 pd.options.mode.chained_assignment = None  # default='warn'
-CURRENT_GAMEWEEK = 36
+CURRENT_GAMEWEEK = 37
 
 K_SPLITS = 10
 
@@ -19,6 +19,7 @@ MAX_FEATURES = 2
 SUBSAMPLE = 0.8
 
 ds=(pd.read_csv('Predictor.csv', encoding="ISO-8859-1"))
+ds.fillna(ds.mean(), inplace=True)
 
 '''
 meanValues = ds.groupby(['isCaptain']).mean()
