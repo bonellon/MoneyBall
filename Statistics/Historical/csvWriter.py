@@ -142,38 +142,6 @@ def writeNewCSV(table):
         writer = csv.writer(csvFile)
         writer.writerows(newGW)
 
-    splitTable()
-
-
-def splitTable():
-    playerDict = {}
-    with open("predictor.csv", 'r') as csvFile:
-        reader = csv.DictReader(csvFile)
-        for row in reader:
-            name = row.pop('Player')
-            round = row.pop('Round')
-            if name not in playerDict:
-                playerDict.update({name: {}})
-            playerDict[name].update({round: row})
-
-    keeperDict = {}
-    defenderDict = {}
-    midfielderDict = {}
-    forwardDict = {}
-
-    for player in playerDict:
-        x = list(playerDict[player].keys())[0]
-        currentID = playerDict[player][x]['elementID']
-        if  currentID == '1':
-            keeperDict.update({player: playerDict[player]})
-        elif currentID == '2':
-            defenderDict.update({player: playerDict[player]})
-        elif currentID == '3':
-            midfielderDict.update({player: playerDict[player]})
-        elif currentID == '4':
-            forwardDict.update({player: playerDict[player]})
-
-    print("Y")
 
 def getGWOdds():
 
