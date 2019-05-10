@@ -49,7 +49,8 @@ def getPlayerStats(FPL, player):
             creativity = float(elem['creativity'])/10
             influence = float(elem['influence'])/10
             transferBalance = int(elem['transfers_in_event']) - int(elem['transfers_out_event'])
-            return ict, threat, creativity, influence, transferBalance
+            elementID = int(elem['id'])
+            return ict, threat, creativity, influence, transferBalance, elementID
 
     print("getPlayerStats: Skipping %s -> Web_Name not found", player)
     return 0,0,0,0,0
@@ -141,6 +142,38 @@ def writeNewCSV(table):
         writer = csv.writer(csvFile)
         writer.writerows(newGW)
 
+    splitTable()
+
+
+def splitTable():
+    playerDict = {}
+    with open("predictor.csv", 'r') as csvFile:
+        reader = csv.DictReader(csvFile)
+        for row in reader:
+            name = row.pop('Player')
+            round = row.pop('Round')
+            if name not in playerDict:
+                playerDict.update({name: {}})
+            playerDict[name].update({round: row})
+
+    keeperDict = {}
+    defenderDict = {}
+    midfielderDict = {}
+    forwardDict = {}
+
+    for player in playerDict:
+        x = list(playerDict[player].keys())[0]
+        currentID = playerDict[player][x]['elementID']
+        if  currentID == '1':
+            keeperDict.update({player: playerDict[player]})
+        elif currentID == '2':
+            defenderDict.update({player: playerDict[player]})
+        elif currentID == '3':
+            midfielderDict.update({player: playerDict[player]})
+        elif currentID == '4':
+            forwardDict.update({player: playerDict[player]})
+
+    print("Y")
 
 def getGWOdds():
 
@@ -153,6 +186,7 @@ def getGWOdds():
 
         return gwDict
 
+    gwDict = {}
     for i in range(1, 38):
         gw = bettingData.getOddsGW(i)
         defenseOffence = bettingPredictor.getDefenseOffence()
@@ -184,7 +218,7 @@ def getGWOdds():
 
 def formatDictionary(table):
 
-    orderedList = [['Player', 'Round',
+    orderedList = [['Player', 'Round', 'elementID',
                     'Opponent', 'Opponent_FDR', 'isHome', 'Points', 'minutes',
                     'Opponent_PrevWeek', 'Opponent_FDR_PrevWeek', 'isHome_PrevWeek', 'Points_PrevWeek',
                     'Opponent_2PrevWeek', 'Opponent_FDR_2PrevWeek', 'isHome_2PrevWeek', 'Points_2PrevWeek',
@@ -203,7 +237,7 @@ def formatDictionary(table):
                 try:
                     print(str(i) + " --> " + player)
                     current = playerList[player][str(i)]
-                    newList = [player, str(i), current['opponent_team'], current['opponent_FDR'], current['was_home'], current['total_points'], current['minutes'],
+                    newList = [player, str(i), current['elementID'], current['opponent_team'], current['opponent_FDR'], current['was_home'], current['total_points'], current['minutes'],
                                current['opponent_PrevWeek'], current['opponent_FDR_PrevWeek'], current['was_home_PrevWeek'], current['points_PrevWeek'],
                                current['opponent_2PrevWeek'], current['opponent_FDR_2PrevWeek'], current['was_home_2PrevWeek'], current['points_2PrevWeek'],
                                current['isCaptain'], current['ict_index'], current['threat'], current['influence'], current['transfers_balance'],
@@ -214,7 +248,6 @@ def formatDictionary(table):
                         gwAtt = gwOdds[str(i)]['Offence']
 
                         for i in range (0, len(gwDef)):
-                            print(i)
                             if gwAtt[i][0] == int(current['opponent_team']):
                                 newList.append(gwAtt[i][1])
 

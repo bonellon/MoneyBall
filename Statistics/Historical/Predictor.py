@@ -12,9 +12,18 @@ keep = ['round', 'opponent_team', 'opponent_FDR', 'was_home', 'total_points', 'm
         'was_home_PrevWeek',
         'opponent_PrevWeek', 'opponent_FDR_PrevWeek', 'points_2PrevWeek', 'was_home_2PrevWeek', 'opponent_2PrevWeek',
         'opponent_FDR_2PrevWeek', 'minutes_PrevWeek', 'ict_index', 'threat', 'creativity', 'influence',
-        'transfers_balance', 'value', 'bps']
+        'transfers_balance', 'value', 'bps', 'element_id']
 
 currentPlayer = ""
+
+
+def getFPL():
+    import requests
+    import json
+
+    url = "https://fantasy.premierleague.com/drf/bootstrap-static"
+    r = requests.get(url)
+    return json.loads(r.text)
 
 
 def updateCurrentPlayer(playerFolder):
@@ -23,7 +32,7 @@ def updateCurrentPlayer(playerFolder):
     currentPlayer = currentPlayer[len(currentPlayer) - 1].split('_')[1]
 
 
-def getPlayerGameweekCSV(playerFolder):
+def getPlayerGameweekCSV(playerFolder, fpl):
     updateCurrentPlayer(playerFolder)
     playerFile = playerFolder + "\\gw.csv"
 
@@ -32,6 +41,7 @@ def getPlayerGameweekCSV(playerFolder):
         return None
     playerTable = getPlayerStatistics(playerDict)
     playerTable = addIsCaptain(playerTable)
+    playerTable = addElementId(playerTable, fpl)
     return addOpponentFDR(playerTable)
 
 
@@ -128,10 +138,10 @@ def addTotalPointsPrevWeeks(file):
     return newCSV
 
 
-def iteratePlayers():
+def iteratePlayers(fpl):
     allPlayer = []
     for folderName in os.listdir(BASEPATH):
-        playerTable = getPlayerGameweekCSV(BASEPATH + "\\" + folderName)
+        playerTable = getPlayerGameweekCSV(BASEPATH + "\\" + folderName, fpl)
         if (playerTable != None):
             allPlayer.append(playerTable)
     return allPlayer
@@ -166,8 +176,26 @@ def getPlayerStatistics(gwDict):
     return filteredDict
 
 
+def addElementId(playerLists, FPL):
+    for player in playerLists:
+        elementID = 0
+        playerLower = player.lower()
+        for elem in FPL['elements']:
+            if (playerLower == elem['web_name'].lower() or playerLower == elem['first_name'].lower()
+                    or playerLower == elem['second_name'].lower()):
+                print(elem['web_name'] + ': '+str(elem['element_type']))
+                elementID = elem['element_type']
+
+    for player in playerLists:
+        for gw in playerLists[player]:
+            playerLists[player][gw]['elementID'] = elementID
+            if(elementID == 0):
+                print("ERROR: playerID cannot be 0!\n" + playerLists[player])
+
+    return playerLists
+
+
 def addIsCaptain(playerLists):
-    print(playerLists)
     for player in playerLists:
         for gw in playerLists[player]:
             if (int(playerLists[player][gw]['total_points']) >= CAPTAIN_POINTS):
@@ -202,7 +230,8 @@ def removeNonPlaying(playerList):
 
 # ramseyPath = "C:/Users/Nicky/Documents/Moneyball/MoneyBall_Code/External/vaastav/data/2018-19/players/Aaron_Ramsey_14/gw.csv"
 # START
-playersList = iteratePlayers()
+fpl = getFPL()
+playersList = iteratePlayers(fpl)
 playersList = removeNonPlaying(playersList)
 csvWriter.writeNewCSV(playersList)
 
