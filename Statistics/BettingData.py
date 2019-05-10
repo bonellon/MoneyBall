@@ -240,7 +240,7 @@ def getFixtures(leagueID, gw):
     import os
     from pathlib import Path
 
-    filePath = str(Path(__file__).parents[2])+"\\MoneyBall_Code\\Statistics\\CachedJson\\getFixtures.txt"
+    filePath = str(Path(__file__).parents[1])+"\\Statistics\\CachedJson\\getFixtures.txt"
 
     if os.path.isfile(filePath) and os.stat(filePath).st_size != 0:
         with open(filePath, 'r') as file:

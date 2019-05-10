@@ -49,8 +49,8 @@ def getPlayerStats(FPL, player):
             creativity = float(elem['creativity'])/10
             influence = float(elem['influence'])/10
             transferBalance = int(elem['transfers_in_event']) - int(elem['transfers_out_event'])
-            elementID = int(elem['id'])
-            return ict, threat, creativity, influence, transferBalance, elementID
+            elementID = int(elem['element_type'])
+            return ict, threat, creativity, influence, transferBalance#, elementID
 
     print("getPlayerStats: Skipping %s -> Web_Name not found", player)
     return 0,0,0,0,0
@@ -82,8 +82,9 @@ def writeNewCSV(table):
     newGW = []
     for player in latestGW:
 
+        playerData = getPlayerStats(FPL, player[0])
         #player
-        current = [player[0], str(int(player[1])+1)]
+        current = [player[0], str(int(player[1])+1)]#, playerData[5]]
 
         #opponent
         team, isHome = getTeam(FPL, player[2])
@@ -111,7 +112,6 @@ def writeNewCSV(table):
         current.append(0)
 
         #ICT_index, Threat, Creativity, Influence, Transfers_Balance
-        playerData = getPlayerStats(FPL, player[0])
         current.append(playerData[0])
         current.append(playerData[1])
         #current.append(playerData[2])
@@ -186,7 +186,7 @@ def getGWOdds():
 
 def formatDictionary(table):
 
-    orderedList = [['Player', 'Round', 'elementID',
+    orderedList = [['Player', 'Round', #'elementID',
                     'Opponent', 'Opponent_FDR', 'isHome', 'Points', 'minutes',
                     'Opponent_PrevWeek', 'Opponent_FDR_PrevWeek', 'isHome_PrevWeek', 'Points_PrevWeek',
                     'Opponent_2PrevWeek', 'Opponent_FDR_2PrevWeek', 'isHome_2PrevWeek', 'Points_2PrevWeek',

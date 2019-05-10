@@ -1,13 +1,14 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import csv
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import classification_report
 from sklearn.metrics import roc_curve
 from sklearn.metrics import auc
 
 pd.options.mode.chained_assignment = None  # default='warn'
-CURRENT_GAMEWEEK = 37
+CURRENT_GAMEWEEK = 38
 
 K_SPLITS = 10
 
@@ -18,8 +19,27 @@ MIN_SAMPLES_LEAFS = 0.02
 MAX_FEATURES = 2
 SUBSAMPLE = 0.8
 
-ds=(pd.read_csv('Predictor.csv', encoding="ISO-8859-1"))
-ds.fillna(ds.mean(), inplace=True)
+
+#0.25
+learning_rates = [0.5, 0.25, 0.105]
+
+#600
+n_estimators = [500, 600, 750]
+
+#5
+max_depths = np.linspace(3, 10, 3, endpoint=True)
+
+min_sample_splits = [0.01, 0.025, 0.05]
+
+#0.02
+min_samples_leafs = np.linspace(0.01, 0.05, 3, endpoint=True)
+
+#2
+max_features = [2,4,6]
+
+#0.8
+subsample = np.linspace(0.5, 1, 3, endpoint=True)
+
 
 '''
 meanValues = ds.groupby(['isCaptain']).mean()
@@ -41,34 +61,14 @@ correlations
 '''
 
 
-def splitTable():
-    playerDict = {}
-    with open("predictor.csv", 'r') as csvFile:
-        reader = csv.DictReader(csvFile)
-        for row in reader:
-            name = row.pop('Player')
-            round = row.pop('Round')
-            if name not in playerDict:
-                playerDict.update({name: {}})
-            playerDict[name].update({round: row})
+def splitTable(df):
 
-    keeperDict = {}
-    defenderDict = {}
-    midfielderDict = {}
-    forwardDict = {}
+    keeperDS = df.drop(df[df.elementID != 1].index)
+    defenderDS = df.drop(df[df.elementID != 2].index)
+    midfielderDS = df.drop(df[df.elementID != 3].index)
+    forwardDS = df.drop(df[df.elementID != 4].index)
 
-    for player in playerDict:
-        x = list(playerDict[player].keys())[0]
-        currentID = playerDict[player][x]['elementID']
-        if  currentID == '1':
-            keeperDict.update({player: playerDict[player]})
-        elif currentID == '2':
-            defenderDict.update({player: playerDict[player]})
-        elif currentID == '3':
-            midfielderDict.update({player: playerDict[player]})
-        elif currentID == '4':
-            forwardDict.update({player: playerDict[player]})
-
+    return keeperDS, defenderDS, midfielderDS, forwardDS
 
 def removeCurrentAndFuture(ds):
     ds = ds.drop(ds[ds.Round >= CURRENT_GAMEWEEK].index)
@@ -170,18 +170,26 @@ def generateTable(ds):
 
     return GB_table, y
 
-def prediction(ds):
+def prediction(ds,i):
 
     GB_table, y = generateTable(ds)
 
     X_train, X_test, y_train, y_test = getTestTrain(GB_table, y)
     #X_train, X_test, y_train, y_test = train_test_split(GB_table, y, test_size=getTestSize(ds), shuffle=False)
 
-    baseline = GradientBoostingClassifier(learning_rate=LEARNING_RATE, n_estimators=N_ESTIMATORS, max_depth=MAX_DEPTH,
-                                          min_samples_split=MIN_SAMPLES_LEAFS, min_samples_leaf=MIN_SAMPLES_LEAFS,
-                                          max_features=MAX_FEATURES, subsample=SUBSAMPLE, verbose=False)
+    baseline = GradientBoostingClassifier(learning_rate=learning_rates[i], n_estimators=n_estimators[i], max_depth=max_depths[i],
+                                          min_samples_split=min_sample_splits[i], min_samples_leaf=min_samples_leafs[i],
+                                          max_features=max_features[i], subsample=subsample[i], verbose=False)
 
     baseline.fit(X_train, y_train)
+
+    predictors = list(X_train)
+    feat_imp = pd.Series(baseline.feature_importances_, predictors).sort_values(ascending=False)
+    feat_imp.plot(kind='bar', title='Importance of Features')
+    plt.ylabel('Feature Importance Score')
+    plt.show()
+    print('Accuracy of the GBM on test set: {:.3f}'.format(baseline.score(X_test, y_test)))
+
 
     pred = baseline.predict(X_train)
 
@@ -197,7 +205,7 @@ def prediction(ds):
 
     print(classification_report(y_test, pred))
 
-    pred_original_data = ds.iloc[X_test.index]
+    pred_original_data = ds.loc[X_test.index]
     pred_original_data['prediction'] = pred
     #pred_original_data.drop(pred_original_data[pred_original_data.prediction < 1].index, inplace=True)
 
@@ -205,54 +213,57 @@ def prediction(ds):
 
     return pred_original_data, train_results, test_results
 
+
+
+
+ds=(pd.read_csv('Predictor.csv', encoding="ISO-8859-1"))
+ds.fillna(ds.mean(), inplace=True)
+
+keeperDS, defenderDS, midfielderDS, forwardDS =splitTable(ds)
+
 names = []
+points = []
 train_results = []
 test_results = []
 
 
-#0.25
-learning_rates = [1, 0.75, 0.5, 0.25, 0.1, 0.075, 0.05]
-
-#600
-n_estimators = [1, 2, 4, 8, 16, 32, 64, 100, 250, 500, 600, 750, 1000, 1600]
-
-#5
-max_depths = np.linspace(3, 10, 7, endpoint=True)
-
-#0.02
-min_samples_leafs = np.linspace(0.00001, 0.5, 100, endpoint=True)
-
-#2
-max_features = [1,2,3,4,5,6,7,8,9,10]
-
-#0.8
-subsample = np.linspace(0.0001, 1, 20, endpoint=True)
-
-realTest = [1,2,3]
-
-currentTest = realTest
-
-
-
-#predictionRandom(ds)
-
-for test in currentTest:
-
-    current = prediction(ds)
+for i in range(0,1):
+    current = prediction(keeperDS, i)
     names.append(current[0]['Player'].tolist())
+    points.append(current[0]['Points'].tolist())
     train_results.append(current[1])
     test_results.append(current[2])
 
-print("Finished")
-for name in names:
-    print(name)
+    current = prediction(defenderDS, i)
+    names.append(current[0]['Player'].tolist())
+    points.append(current[0]['Points'].tolist())
+    train_results.append(current[1])
+    test_results.append(current[2])
 
+    current = prediction(midfielderDS, i)
+    names.append(current[0]['Player'].tolist())
+    points.append(current[0]['Points'].tolist())
+    train_results.append(current[1])
+    test_results.append(current[2])
+
+    current = prediction(forwardDS, i)
+    names.append(current[0]['Player'].tolist())
+    points.append(current[0]['Points'].tolist())
+    train_results.append(current[1])
+    test_results.append(current[2])
+
+print("Finished!")
+for i in range(0, len(names)-1):
+    for j in range(0, len(names[i])-1):
+        print(names[i][j] + "  "+ str(points[i][j]))
+'''
 from matplotlib.legend_handler import HandlerLine2D
 
-line1, = plt.plot(currentTest, train_results, 'b', label='Train AUC')
-line2, = plt.plot(currentTest, test_results, 'r', label='Test AUC')
+line1, = plt.plot(learning_rates, train_results, 'b', label='Train AUC')
+line2, = plt.plot(learning_rates, test_results, 'r', label='Test AUC')
 plt.legend(handler_map={line1: HandlerLine2D(numpoints=2)})
 plt.ylabel('AUC score')
 plt.xlabel('learning rate')
 plt.show()
+'''
 
