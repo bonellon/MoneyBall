@@ -50,7 +50,7 @@ def getPlayerStats(FPL, player):
             influence = float(elem['influence'])/10
             transferBalance = int(elem['transfers_in_event']) - int(elem['transfers_out_event'])
             elementID = int(elem['element_type'])
-            return ict, threat, creativity, influence, transferBalance#, elementID
+            return ict, threat, creativity, influence, transferBalance, elementID
 
     print("getPlayerStats: Skipping %s -> Web_Name not found", player)
     return 0,0,0,0,0
@@ -84,7 +84,7 @@ def writeNewCSV(table):
 
         playerData = getPlayerStats(FPL, player[0])
         #player
-        current = [player[0], str(int(player[1])+1)]#, playerData[5]]
+        current = [player[0], str(int(player[1])+1)]
 
         #opponent
         team, isHome = getTeam(FPL, player[2])
@@ -125,6 +125,9 @@ def writeNewCSV(table):
         #defenseOdds, attackOdds
         gwOdds = table[1]
 
+        attAdded = False
+        defAdded = False
+
         if(str((int(player[1])+1)) in gwOdds):
             gwDef = gwOdds[int(player[1]) + 1]['Defense']
             gwAtt = gwOdds[int(player[1]) + 1]['Offence']
@@ -132,9 +135,20 @@ def writeNewCSV(table):
             for i in range(0, len(gwDef) - 1):
                 if gwAtt[i][0] == int(current['opponent_team']):
                     current.append(gwAtt[i][1])
+                    attAdded = True
 
+            if not attAdded:
+                current.append(0)
+
+            for i in range(0, len(gwDef) - 1):
                 if gwDef[i][0] == int(current['opponent_team']):
                     current.append(gwDef[i][1])
+                    defAdded = True
+            if not defAdded:
+                current.append(0)
+
+        #elementID
+        current.append(player[24])
 
         newGW.append(current)
 
@@ -186,11 +200,12 @@ def getGWOdds():
 
 def formatDictionary(table):
 
-    orderedList = [['Player', 'Round', #'elementID',
+    orderedList = [['Player', 'Round',
                     'Opponent', 'Opponent_FDR', 'isHome', 'Points', 'minutes',
                     'Opponent_PrevWeek', 'Opponent_FDR_PrevWeek', 'isHome_PrevWeek', 'Points_PrevWeek',
                     'Opponent_2PrevWeek', 'Opponent_FDR_2PrevWeek', 'isHome_2PrevWeek', 'Points_2PrevWeek',
-                    'isCaptain', 'ICT_index', 'Threat','Influence', 'Transfers_Balance', 'Value', 'BPS', 'DefenseOdds', 'OffenceOdds']]
+                    'isCaptain', 'ICT_index', 'Threat','Influence', 'Transfers_Balance', 'Value', 'BPS', 'DefenseOdds', 'OffenceOdds',
+                    'elementID']]
 
     gwOdds = getGWOdds()
 
@@ -205,7 +220,7 @@ def formatDictionary(table):
                 try:
                     print(str(i) + " --> " + player)
                     current = playerList[player][str(i)]
-                    newList = [player, str(i), current['elementID'], current['opponent_team'], current['opponent_FDR'], current['was_home'], current['total_points'], current['minutes'],
+                    newList = [player, str(i),current['opponent_team'], current['opponent_FDR'], current['was_home'], current['total_points'], current['minutes'],
                                current['opponent_PrevWeek'], current['opponent_FDR_PrevWeek'], current['was_home_PrevWeek'], current['points_PrevWeek'],
                                current['opponent_2PrevWeek'], current['opponent_FDR_2PrevWeek'], current['was_home_2PrevWeek'], current['points_2PrevWeek'],
                                current['isCaptain'], current['ict_index'], current['threat'], current['influence'], current['transfers_balance'],
@@ -214,15 +229,25 @@ def formatDictionary(table):
                     if str(i) in gwOdds:
                         gwDef = gwOdds[str(i)]['Defense']
                         gwAtt = gwOdds[str(i)]['Offence']
-
+                        attAdded = False
+                        defAdded = False
                         for i in range (0, len(gwDef)):
                             if gwAtt[i][0] == int(current['opponent_team']):
                                 newList.append(gwAtt[i][1])
+                                attAdded = True
 
+                        if (not attAdded):
+                            newList.append(0)
+
+                        for i in range(0, len(gwDef)):
                             if gwDef[i][0] == int(current['opponent_team']):
                                 newList.append(gwDef[i][1])
+                                defAdded = True
 
+                        if (not defAdded):
+                            newList.append(0)
 
+                    newList.append(current['elementID'])
 
                     orderedList.append(newList)
                 except KeyError as e:

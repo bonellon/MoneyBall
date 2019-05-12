@@ -70,6 +70,20 @@ def splitTable(df):
 
     return keeperDS, defenderDS, midfielderDS, forwardDS
 
+#Scales the following columns:
+#minutes, ICT_index, Threat, Influence, Transfers_Balance, Value, BPS, DefenseOdds, OffenceOdds
+def featureScaling(df):
+    from sklearn.preprocessing import MinMaxScaler
+
+    scale = MinMaxScaler()
+    df[['minutes', 'ICT_index', 'Threat', 'Influence','Transfers_Balance', 'Value', 'BPS','DefenseOdds', 'OffenceOdds']]\
+        = scale.fit_transform(df[['minutes', 'ICT_index', 'Threat', 'Influence',
+                                  'Transfers_Balance', 'Value', 'BPS','DefenseOdds', 'OffenceOdds']].values)
+    #df[['minutes', 'ICT_index', 'Threat', 'Influence','Transfers_Balance', 'Value', 'BPS','DefenseOdds', 'OffenceOdds']] \
+     #   = MinMaxScaler.fit_transform(df[['minutes', 'ICT_index', 'Threat', 'Influence',
+      #                            'Transfers_Balance', 'Value', 'BPS','DefenseOdds', 'OffenceOdds']].values)
+    return df
+
 def removeCurrentAndFuture(ds):
     ds = ds.drop(ds[ds.Round >= CURRENT_GAMEWEEK].index)
     return ds
@@ -188,7 +202,7 @@ def prediction(ds,i):
     feat_imp.plot(kind='bar', title='Importance of Features')
     plt.ylabel('Feature Importance Score')
     plt.show()
-    print('Accuracy of the GBM on test set: {:.3f}'.format(baseline.score(X_test, y_test)))
+#    print('Accuracy of the GBM on test set: {:.3f}'.format(baseline.score(X_test, y_test)))
 
 
     pred = baseline.predict(X_train)
@@ -209,15 +223,14 @@ def prediction(ds,i):
     pred_original_data['prediction'] = pred
     #pred_original_data.drop(pred_original_data[pred_original_data.prediction < 1].index, inplace=True)
 
-    pred_original_data.drop(pred_original_data[pred_original_data.isCaptain < 1].index, inplace=True)
+    pred_original_data.drop(pred_original_data[pred_original_data.prediction < 1].index, inplace=True)
 
     return pred_original_data, train_results, test_results
 
 
-
-
 ds=(pd.read_csv('Predictor.csv', encoding="ISO-8859-1"))
 ds.fillna(ds.mean(), inplace=True)
+ds = featureScaling(ds)
 
 keeperDS, defenderDS, midfielderDS, forwardDS =splitTable(ds)
 
@@ -253,9 +266,10 @@ for i in range(0,1):
     test_results.append(current[2])
 
 print("Finished!")
-for i in range(0, len(names)-1):
-    for j in range(0, len(names[i])-1):
-        print(names[i][j] + "  "+ str(points[i][j]))
+for i in range(0, len(names)):
+    print(names[i])
+    #for j in range(0, len(names[i])-1):
+     #   print(names[i][j] + "  "+ str(points[i][j]))
 '''
 from matplotlib.legend_handler import HandlerLine2D
 
