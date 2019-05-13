@@ -79,9 +79,7 @@ def featureScaling(df):
     df[['minutes', 'ICT_index', 'Threat', 'Influence','Transfers_Balance', 'Value', 'BPS','DefenseOdds', 'OffenceOdds']]\
         = scale.fit_transform(df[['minutes', 'ICT_index', 'Threat', 'Influence',
                                   'Transfers_Balance', 'Value', 'BPS','DefenseOdds', 'OffenceOdds']].values)
-    #df[['minutes', 'ICT_index', 'Threat', 'Influence','Transfers_Balance', 'Value', 'BPS','DefenseOdds', 'OffenceOdds']] \
-     #   = MinMaxScaler.fit_transform(df[['minutes', 'ICT_index', 'Threat', 'Influence',
-      #                            'Transfers_Balance', 'Value', 'BPS','DefenseOdds', 'OffenceOdds']].values)
+
     return df
 
 def removeCurrentAndFuture(ds):
@@ -230,7 +228,7 @@ def prediction(ds,i):
 
 ds=(pd.read_csv('Predictor.csv', encoding="ISO-8859-1"))
 ds.fillna(ds.mean(), inplace=True)
-ds = featureScaling(ds)
+#ds = featureScaling(ds)
 
 keeperDS, defenderDS, midfielderDS, forwardDS =splitTable(ds)
 

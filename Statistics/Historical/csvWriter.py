@@ -34,9 +34,12 @@ def getTeam(FPL, currentOpponent):
     for team in FPL["teams"]:
         current = int(team["current_event_fixture"][0]["opponent"])
         if(int(current) == int(currentOpponent)):
-            opponent = int(team['next_event_fixture'][0]['opponent'])
-            isHome = int(team['next_event_fixture'][0]['is_home'])
-            return opponent, isHome
+            try:
+                opponent = int(team['next_event_fixture'][0]['opponent'])
+                isHome = int(team['next_event_fixture'][0]['is_home'])
+                return opponent, isHome
+            except:
+                return int(current), int(team['current_event_fixture'][0]['is_home'])
 
 
 #Get ict_index, threat, creativity, influence, trasnfers_balance,
@@ -146,6 +149,10 @@ def writeNewCSV(table):
                     defAdded = True
             if not defAdded:
                 current.append(0)
+
+        else:
+            current.append("")
+            current.append("")
 
         #elementID
         current.append(player[24])
