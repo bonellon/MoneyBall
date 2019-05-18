@@ -228,7 +228,7 @@ def prediction(ds,i):
 
 ds=(pd.read_csv('Predictor.csv', encoding="ISO-8859-1"))
 ds.fillna(ds.mean(), inplace=True)
-#ds = featureScaling(ds)
+ds = featureScaling(ds)
 
 keeperDS, defenderDS, midfielderDS, forwardDS =splitTable(ds)
 

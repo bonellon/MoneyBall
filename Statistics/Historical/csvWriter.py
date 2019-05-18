@@ -176,7 +176,7 @@ def getGWOdds():
         return gwDict
 
     gwDict = {}
-    for i in range(1, 38):
+    for i in range(1, 39):
         gw = bettingData.getOddsGW(i)
         defenseOffence = bettingPredictor.getDefenseOffence()
         print("Round: "+str(i))
@@ -244,7 +244,7 @@ def formatDictionary(table):
                                 attAdded = True
 
                         if (not attAdded):
-                            newList.append(0)
+                            newList.append("")
 
                         for i in range(0, len(gwDef)):
                             if gwDef[i][0] == int(current['opponent_team']):
@@ -252,7 +252,7 @@ def formatDictionary(table):
                                 defAdded = True
 
                         if (not defAdded):
-                            newList.append(0)
+                            newList.append("")
 
                     newList.append(current['elementID'])
 
