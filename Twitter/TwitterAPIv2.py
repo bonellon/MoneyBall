@@ -4,15 +4,7 @@ import External.OldTweets.got3 as got
 
 def main():
 
-	def printTweet(descr, t):
-		print(descr)
-		print("Username: %s" % t.username)
-		print("Retweets: %d" % t.retweets)
-		print("Text: %s" % t.text)
-		print("Mentions: %s" % t.mentions)
-		print("Hashtags: %s\n" % t.hashtags)
-
-	with open('gameweekDates.json', 'r') as file:
+	with open('gameweekDates17-18.json', 'r') as file:
 		data = json.load(file)
 
 	for gw in data:
@@ -27,7 +19,7 @@ def main():
 			text = str(tweet.text.encode("utf-8"))
 			gwTweets.append(text)
 
-		with open('GW_Tweets2/' + gw + '.json', 'w') as f:
+		with open('GW_Tweets_2017-18/'+gw+'.json', 'w') as f:
 			i = 1
 			for text in gwTweets:
 				f.write(str(i)+": %s\n" %text)
