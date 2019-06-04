@@ -1,6 +1,6 @@
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
 import csv
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import classification_report
