@@ -1,6 +1,6 @@
-from ibm_watson import NaturalLanguageUnderstandingV1
-from ibm_watson.natural_language_understanding_v1 \
-    import Features, SentimentOptions, EmotionOptions, SyntaxOptions, SyntaxOptionsTokens, CategoriesOptions
+from watson_developer_cloud import NaturalLanguageUnderstandingV1
+from watson_developer_cloud.natural_language_understanding_v1 \
+    import Features, SentimentOptions
 import json
 
 # If service instance provides API key authentication
