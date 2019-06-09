@@ -70,7 +70,7 @@ def writeNewCSV(table):
         maximum = 1
         for i in range (1, 39):
             for j in range(1, len(table)):
-                if(int(table[j][1]) == i):
+                if(int(table[j][2]) == i):
                     maximum = i
                     writer.writerow(table[j])
 
@@ -79,18 +79,18 @@ def writeNewCSV(table):
         gwList = list(reader)
         latestGW = []
         for i in range(1, len(gwList)):
-            if(int(gwList[i][1]) == maximum and int(gwList[i][6]) > 0):
+            if(int(gwList[i][2]) == maximum and int(gwList[i][7]) > 0):
                 latestGW.append(gwList[i])
 
     newGW = []
     for player in latestGW:
 
-        playerData = getPlayerStats(FPL, player[0])
+        playerData = getPlayerStats(FPL, player[1])
         #player
-        current = [player[0], str(int(player[1])+1)]
+        current = [player[0], player[1], str(int(player[2])+1)]
 
         #opponent
-        team, isHome = getTeam(FPL, player[2])
+        team, isHome = getTeam(FPL, player[3])
         current.append(team)
         current.append(Teams.GetFDR(team, isHome))
         current.append(isHome)
@@ -100,16 +100,16 @@ def writeNewCSV(table):
         current.append(90)
 
         #Previous week
-        current.append(player[2])
         current.append(player[3])
         current.append(player[4])
         current.append(player[5])
+        current.append(player[6])
 
         #2 Weeks ago
-        current.append(player[7])
         current.append(player[8])
         current.append(player[9])
         current.append(player[10])
+        current.append(player[11])
 
         #isCaptain = 0
         current.append(0)
@@ -122,8 +122,8 @@ def writeNewCSV(table):
         current.append(playerData[4])
 
         #value, bps
-        current.append(player[20])
         current.append(player[21])
+        current.append(player[22])
 
         #defenseOdds, attackOdds
         gwOdds = table[1]
@@ -131,9 +131,9 @@ def writeNewCSV(table):
         attAdded = False
         defAdded = False
 
-        if(str((int(player[1])+1)) in gwOdds):
-            gwDef = gwOdds[int(player[1]) + 1]['Defense']
-            gwAtt = gwOdds[int(player[1]) + 1]['Offence']
+        if(str((int(player[2])+1)) in gwOdds):
+            gwDef = gwOdds[int(player[3]) + 1]['Defense']
+            gwAtt = gwOdds[int(player[3]) + 1]['Offence']
 
             for i in range(0, len(gwDef) - 1):
                 if gwAtt[i][0] == int(current['opponent_team']):
@@ -155,7 +155,7 @@ def writeNewCSV(table):
             current.append("")
 
         #elementID
-        current.append(player[24])
+        current.append(player[25])
 
         newGW.append(current)
 
@@ -207,7 +207,7 @@ def getGWOdds():
 
 def formatDictionary(table):
 
-    orderedList = [['Player', 'Round',
+    orderedList = [['PlayerID', 'Player', 'Round',
                     'Opponent', 'Opponent_FDR', 'isHome', 'Points', 'minutes',
                     'Opponent_PrevWeek', 'Opponent_FDR_PrevWeek', 'isHome_PrevWeek', 'Points_PrevWeek',
                     'Opponent_2PrevWeek', 'Opponent_FDR_2PrevWeek', 'isHome_2PrevWeek', 'Points_2PrevWeek',
@@ -227,7 +227,7 @@ def formatDictionary(table):
                 try:
                     print(str(i) + " --> " + player)
                     current = playerList[player][str(i)]
-                    newList = [player, str(i),current['opponent_team'], current['opponent_FDR'], current['was_home'], current['total_points'], current['minutes'],
+                    newList = [current['element'], player, str(i),current['opponent_team'], current['opponent_FDR'], current['was_home'], current['total_points'], current['minutes'],
                                current['opponent_PrevWeek'], current['opponent_FDR_PrevWeek'], current['was_home_PrevWeek'], current['points_PrevWeek'],
                                current['opponent_2PrevWeek'], current['opponent_FDR_2PrevWeek'], current['was_home_2PrevWeek'], current['points_2PrevWeek'],
                                current['isCaptain'], current['ict_index'], current['threat'], current['influence'], current['transfers_balance'],

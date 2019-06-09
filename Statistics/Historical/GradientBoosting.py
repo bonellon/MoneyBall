@@ -97,8 +97,8 @@ def getTestTrain(ds, y):
     y_train = X_train['y']
     y_test = X_test['y']
 
-    X_train.drop(['y', 'Player', 'Round', 'isCaptain', 'Points'], axis=1, inplace=True)
-    X_test.drop(['y', 'Player', 'Round', 'isCaptain', 'Points'], axis=1, inplace=True)
+    X_train.drop(['y', 'Player', 'BPS', 'Round', 'isCaptain', 'Points'], axis=1, inplace=True)
+    X_test.drop(['y', 'Player', 'BPS', 'Round', 'isCaptain', 'Points'], axis=1, inplace=True)
 
     return X_train, X_test, y_train, y_test
 
@@ -225,10 +225,13 @@ def prediction(ds,i):
 
     return pred_original_data, train_results, test_results
 
+def writeCleanedCSV(csv):
+    csv.to_csv("predictorCleaned.csv")
 
 ds=(pd.read_csv('Predictor.csv', encoding="ISO-8859-1"))
 ds.fillna(ds.mean(), inplace=True)
-ds = featureScaling(ds)
+#ds = featureScaling(ds)
+writeCleanedCSV(ds)
 
 keeperDS, defenderDS, midfielderDS, forwardDS =splitTable(ds)
 
@@ -265,9 +268,8 @@ for i in range(0,1):
 
 print("Finished!")
 for i in range(0, len(names)):
-    print(names[i])
-    #for j in range(0, len(names[i])-1):
-     #   print(names[i][j] + "  "+ str(points[i][j]))
+    for j in range(0, len(names[i])-1):
+        print(names[i][j] + "  " + str(points[i][j]))
 '''
 from matplotlib.legend_handler import HandlerLine2D
 
