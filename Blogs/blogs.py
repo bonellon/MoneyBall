@@ -1,6 +1,7 @@
 import pandas as pd
 import Blogs.combinator as cb
 import Blogs.AylienAPI as aylien
+import Blogs.blog_injury as injury
 
 from googlesearch import search
 
@@ -11,10 +12,10 @@ def googleSearch():
     query = 'Fantasy Premier League gameweek "'+str(currentGW)+'"'
     urls = []
     print(query)
-    for url in search(query, stop=500, pause=1.0, tbs="qdr:y"):
+    for url in search(query, stop=1, pause=1.0, tbs="qdr:y"):
         print("Appending: "+str(len(urls)))
         urls.append(url)
-
+    '''
     query = 'FPL gameweek '+str(currentGW)
 
     print(query)
@@ -37,7 +38,7 @@ def googleSearch():
         if url not in urls:
             print("Appending: " + str(len(urls)))
             urls.append(url)
-
+    '''
     with open('urls.txt', 'w') as f:
         for item in urls:
             f.write("%s\n" % item)
@@ -51,18 +52,26 @@ def googleSearch():
     players.to_csv("playersResult.csv")
 
 def iterateBlogs():
-    for index, row in blogs.iterrows():
-        url = row["URL"]
-        change = row["Change"]
 
-        url = url.replace(str(change), str(currentGW))
-
-        getRatings(url, players, str(index))
+    googleSearch()
 
     getTotalRatings(players)
     print(players.head())
+
+    print("Removing injured players...")
+    removeInjuries()
+
     players.to_csv("playersResult.csv")
 
+
+def removeInjuries():
+
+    injuries = injury.main()
+    for index, row in players.iterrows():
+        for index2, row2 in injuries.iterrows():
+            if row["secondName"] == row2["secondName"]:
+                print("Removing: "+row["secondName"])
+                players.drop(index, inplace=True)
 
 def getRatings(url, players, blogCount):
     print("Analysing "+str(blogCount)+"\n")
@@ -93,6 +102,8 @@ def matchName(name, sentiment, players, blogCounter):
             print("\tMATCHED! : "+name + "  -  "+row['fullName'])
             sentimentScore = getSentiment(sentiment)
             players.set_value(index, blogCounter, sentimentScore)
+
+            players.at[index]
             return
 
 def getSentiment(sentiment):
@@ -105,9 +116,8 @@ def getSentiment(sentiment):
         return confidence
     return confidence-1.00
 
+if __name__ == '__main__':
+    blogs = pd.read_csv("blogs.csv", delimiter=',', sep='\n')
+    players = pd.read_csv("players.csv", delimiter=',', sep='\n')
 
-blogs = pd.read_csv("blogs.csv", delimiter=',', sep='\n')
-players = pd.read_csv("players.csv", delimiter=',', sep='\n')
-
-#iterateBlogs()
-googleSearch()
+    iterateBlogs()
