@@ -37,6 +37,7 @@ def createPlayerCSV(url):
     for player in all_players:
         current = {"webName": player['web_name'],
                    "ID": player['id'],
+                   "elementID":player['element_type'],
                    "firstName": player['first_name'],
                    "secondName": player['second_name'],
                    "fullName": player['first_name'] + " " + player["second_name"],
