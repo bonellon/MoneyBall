@@ -8,7 +8,7 @@ from sklearn.metrics import roc_curve
 from sklearn.metrics import auc
 
 pd.options.mode.chained_assignment = None  # default='warn'
-CURRENT_GAMEWEEK = 38
+CURRENT_GAMEWEEK = 33
 
 K_SPLITS = 10
 
@@ -87,7 +87,7 @@ def removeCurrentAndFuture(ds):
     return ds
 
 
-def getTestTrain(ds, y):
+def getTestTrain(ds, y, toRemove):
 
     ds['y'] = y
 
@@ -97,33 +97,11 @@ def getTestTrain(ds, y):
     y_train = X_train['y']
     y_test = X_test['y']
 
-    X_train.drop(['y', 'Player', 'BPS', 'Round', 'isCaptain', 'Points'], axis=1, inplace=True)
-    X_test.drop(['y', 'Player', 'BPS', 'Round', 'isCaptain', 'Points'], axis=1, inplace=True)
+    X_train.drop(toRemove, axis=1, inplace=True)
+    X_test.drop(toRemove, axis=1, inplace=True)
 
     return X_train, X_test, y_train, y_test
 
-
-def predictionRandom(ds):
-
-    #remove current & all next gameweeks
-    ds = removeCurrentAndFuture(ds)
-    X, y = generateTable(ds)
-
-    from sklearn.model_selection import RepeatedKFold
-
-#what is n_repeats???
-    kf = RepeatedKFold(n_splits=5, n_repeats=1, random_state=None)
-
-    for train_index, test_index in kf.split(X,y):
-        print("Train:", train_index, "Validation:", test_index)
-
-        X_train, X_test = X.iloc[train_index], X.iloc[test_index]
-        y_train, y_test = y.iloc[train_index], y.iloc[test_index]
-
-        X_train.drop(['Player', 'Round', 'isCaptain', 'Points'], axis=1, inplace=True)
-        X_test.drop(['Player', 'Round', 'isCaptain', 'Points'], axis=1, inplace=True)
-
-        getPredictionResults(X_train, y_train, X_test, y_test)
 
 #plot ROC graphs from test and training set
 #print classification report
@@ -182,24 +160,25 @@ def generateTable(ds):
 
     return GB_table, y
 
-def prediction(ds,i):
+def prediction(ds,i, toRemove):
 
     GB_table, y = generateTable(ds)
 
-    X_train, X_test, y_train, y_test = getTestTrain(GB_table, y)
-    #X_train, X_test, y_train, y_test = train_test_split(GB_table, y, test_size=getTestSize(ds), shuffle=False)
+    X_train, X_test, y_train, y_test = getTestTrain(GB_table, y, toRemove)
 
-    baseline = GradientBoostingClassifier(learning_rate=learning_rates[i], n_estimators=n_estimators[i], max_depth=max_depths[i],
-                                          min_samples_split=min_sample_splits[i], min_samples_leaf=min_samples_leafs[i],
-                                          max_features=max_features[i], subsample=subsample[i], verbose=False)
+    baseline = GradientBoostingClassifier(learning_rate=LEARNING_RATE, n_estimators=N_ESTIMATORS, max_depth=MAX_DEPTH,
+                                          min_samples_split=MIN_SAMPLES_LEAFS, min_samples_leaf=MIN_SAMPLES_LEAFS,
+                                          max_features=MAX_FEATURES, subsample=SUBSAMPLE, verbose=False)
 
     baseline.fit(X_train, y_train)
 
+    '''
     predictors = list(X_train)
     feat_imp = pd.Series(baseline.feature_importances_, predictors).sort_values(ascending=False)
     feat_imp.plot(kind='bar', title='Importance of Features')
     plt.ylabel('Feature Importance Score')
     plt.show()
+    '''
 #    print('Accuracy of the GBM on test set: {:.3f}'.format(baseline.score(X_test, y_test)))
 
 
@@ -237,7 +216,10 @@ def getBlogScores(players):
     for index,row in blogs.iterrows():
         print()
         print(row['cleanName'], end = ' ')
-        for index2, row2 in players.iterrows():
+
+        name = players.drop(players[players.PlayerID != row['ID']].index)
+
+        for index2, row2 in name.iterrows():
 
             if row2['PlayerID'] == row['ID']:
                 try:
@@ -265,36 +247,44 @@ points = []
 train_results = []
 test_results = []
 
+toRemove = ['y', 'Player', 'BPS', 'Round', 'isCaptain', 'Points']#,'BlogScore', 'DefenseOdds', 'OffenceOdds']
 
-for i in range(0,1):
-    current = prediction(keeperDS, i)
+for i in range(0,50):
+    current = prediction(keeperDS, 0, toRemove)
     names.append(current[0]['Player'].tolist())
     points.append(current[0]['Points'].tolist())
     train_results.append(current[1])
     test_results.append(current[2])
 
-    current = prediction(defenderDS, i)
+    current = prediction(defenderDS, 0, toRemove)
     names.append(current[0]['Player'].tolist())
     points.append(current[0]['Points'].tolist())
     train_results.append(current[1])
     test_results.append(current[2])
 
-    current = prediction(midfielderDS, i)
+    current = prediction(midfielderDS, 0, toRemove)
     names.append(current[0]['Player'].tolist())
     points.append(current[0]['Points'].tolist())
     train_results.append(current[1])
     test_results.append(current[2])
 
-    current = prediction(forwardDS, i)
+    current = prediction(forwardDS, 0, toRemove)
     names.append(current[0]['Player'].tolist())
     points.append(current[0]['Points'].tolist())
     train_results.append(current[1])
     test_results.append(current[2])
 
 print("Finished!")
+totalPoints = 0
+totalPlayers = 0
 for i in range(0, len(names)):
     for j in range(0, len(names[i])-1):
+        totalPoints = totalPoints + int(points[i][j])
+        totalPlayers = totalPlayers + 1
         print(names[i][j] + "  " + str(points[i][j]))
+
+print("Total Points: "+str(totalPoints))
+print("Average Player Points: "+str(totalPoints/totalPlayers))
 '''
 from matplotlib.legend_handler import HandlerLine2D
 
