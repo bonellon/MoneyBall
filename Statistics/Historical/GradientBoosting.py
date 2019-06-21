@@ -228,8 +228,33 @@ def prediction(ds,i):
 def writeCleanedCSV(csv):
     csv.to_csv("predictorCleaned.csv")
 
+def getBlogScores(players):
+    blogs = (pd.read_csv('..//..//Blogs//playersResult.csv', encoding="ISO-8859-1"))
+
+    players["BlogScore"] = pd.Series(0.00, index=players.index)
+    print("Adding BlogScores...")
+
+    for index,row in blogs.iterrows():
+        print()
+        print(row['cleanName'], end = ' ')
+        for index2, row2 in players.iterrows():
+
+            if row2['PlayerID'] == row['ID']:
+                try:
+                    currentRound = row2['Round']
+                    print(currentRound, end= ' ')
+                    roundScore = row['score_'+str(currentRound)]
+
+                    players.at[index2, 'BlogScore'] = roundScore
+                except:
+                    pass
+    return players
+
 ds=(pd.read_csv('Predictor.csv', encoding="ISO-8859-1"))
 ds.fillna(ds.mean(), inplace=True)
+
+ds = getBlogScores(ds)
+
 #ds = featureScaling(ds)
 writeCleanedCSV(ds)
 
