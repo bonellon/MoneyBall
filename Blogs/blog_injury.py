@@ -40,12 +40,11 @@ def main():
     ds['firstName'] = ds.apply(lambda row: addFirstName(row), axis=1)
     ds['secondName'] = ds.apply(lambda row: addSecondName(row), axis=1)
 
-    print(ds.head())
 
     i = 0
     for index, row in ds.iterrows():
         for index2, row2 in csv.iterrows():
-            print(str(row["secondName"]) + " " + row2["secondName"])
+            #print(str(row["secondName"]) + " " + row2["secondName"])
             if row["secondName"] == row2["secondName"]:
                 i += 1
 

@@ -6,17 +6,15 @@ import Blogs.blog_injury as injury
 
 from googlesearch import search
 
-currentGW = 38
-
-def googleSearch():
+def googleSearch(currentGW):
 
     query = 'Fantasy Premier League gameweek "'+str(currentGW)+'"'
     urls = []
     print(query)
-    for url in search(query, stop=300, pause=2.0, tbs="qdr:y"):
+    for url in search(query, stop=25, pause=2.0, tbs="qdr:y"):
         print("Appending: "+str(len(urls)))
         urls.append(url)
-
+    '''
     query = 'FPL gameweek '+str(currentGW)
 
     print(query)
@@ -39,39 +37,41 @@ def googleSearch():
         if url not in urls:
             print("Appending: " + str(len(urls)))
             urls.append(url)
-
+    '''
     with open('urls.txt', 'w') as f:
         for item in urls:
             f.write("%s\n" % item)
 
 
-def iterateBlogs():
+def iterateBlogs(players):
 
-
-    if not os.path.isfile('urls.txt'):
-        googleSearch()
-
-    with open("urls.txt", 'r') as f:
-        urls = f.read().splitlines()
-
-    resultList= list(result)
     try:
-        currentLatest = int(resultList[len(resultList) - 1])
+        resultList = list(players)
+        currentLatest = int(str(resultList[len(resultList) - 1]).split("_")[1])+1
     except:
-        currentLatest = 0
+        currentLatest = 1
 
-    for i in range(currentLatest, len(urls)):
-        getRatings(urls[i], players, str(i))
+    for currentGW in range(currentLatest,39):
+
+        players["score_"+str(currentGW)] = pd.Series(0.00, index=players.index)
+
+        googleSearch(currentGW)
+
+        with open("urls.txt", 'r') as f:
+            urls = f.read().splitlines()
+
+
+        for i in range(0, len(urls)):
+            getRatings(urls[i], players, str(i), currentGW)
+            players.to_csv("playersResult.csv")
+
+        print(players.head())
+
+        print("Removing injured players...")
+        removeInjuries(currentGW,players)
+
+        #sortByElementID(players)
         players.to_csv("playersResult.csv")
-
-    getTotalRatings(players)
-    print(players.head())
-
-    print("Removing injured players...")
-    removeInjuries()
-
-    sortByElementID(players)
-    players.to_csv("playersResult.csv")
 
 
 def sortByElementID(allPlayers):
@@ -96,22 +96,19 @@ def sortByElementID(allPlayers):
     print(forward.head(3))
 
 
-def removeInjuries():
+def removeInjuries(currentGW, players):
 
     injuries = injury.main()
     for index, row in players.iterrows():
         for index2, row2 in injuries.iterrows():
             if row["secondName"] == row2["secondName"]:
-                print("Injured: "+row["secondName"])
-                players.set_value(index, "score", row["score"]-1.00)
+                players.set_value(index, "score_"+str(currentGW), row["score_"+str(currentGW)]-1.00)
 
 
 
-def getRatings(url, players, blogCount):
+def getRatings(url, players, blogCount, currentGW):
     print("Analysing "+str(blogCount)+"\n")
     json = aylien.getRatings(url)
-
-    players[blogCount] = pd.Series(0.00, index=players.index)
 
     #Exceptions return None - No internet, url is image/video etc.
     if json == None:
@@ -121,25 +118,19 @@ def getRatings(url, players, blogCount):
         name = entity['mentions'][0]["text"]
         sentiment = entity['overall_sentiment']
 
-        matchName(name, sentiment, players, str(blogCount))
-
-def getTotalRatings(players):
-    columns = []
-    for col in players:
-        if col.isdigit():
-            columns.append(col)
-
-    players["score"] = players[columns].sum(axis =1)
-    players.sort_values("score", inplace=True)
+        matchName(name, sentiment, players, currentGW)
 
 
-
-def matchName(name, sentiment, players, blogCounter):
+def matchName(name, sentiment, players, currentGW):
     for index, row in players.iterrows():
         if(name in row["fullName"] or row["secondName"] in name or name in row['cleanName']):
-            print("\tMATCHED! : "+name + "  -  "+row['fullName'])
+            try:
+                print("\tMATCHED! : "+name + "  -  "+row['fullName'])
+            except:
+                print("\tMATCHED!" +row['fullName'])
+
             sentimentScore = getSentiment(sentiment)
-            players.set_value(index, blogCounter, row[blogCounter]+sentimentScore)
+            players.set_value(index, "score_"+str(currentGW), row["score_"+str(currentGW)]+sentimentScore)
             return
 
 def getSentiment(sentiment):
@@ -154,9 +145,10 @@ def getSentiment(sentiment):
 
 if __name__ == '__main__':
     blogs = pd.read_csv("blogs.csv", delimiter=',', sep='\n')
-    players = pd.read_csv("players.csv", delimiter=',', sep='\n')
 
-    if os.path.isfile('urls.txt'):
-        result = pd.read_csv("playersResult.csv", delimiter=',', sep='\n')
+    if os.path.isfile('playersResult.csv'):
+        players = pd.read_csv("playersResult.csv", delimiter=',', sep='\n')
+    else:
+        players = pd.read_csv("players.csv", delimiter=',', sep='\n')
 
-    iterateBlogs()
+    iterateBlogs(players)
