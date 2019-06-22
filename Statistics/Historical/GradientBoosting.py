@@ -40,6 +40,8 @@ max_features = [2,4,6]
 #0.8
 subsample = np.linspace(0.5, 1, 3, endpoint=True)
 
+train_results = []
+test_results = []
 
 '''
 meanValues = ds.groupby(['isCaptain']).mean()
@@ -82,17 +84,17 @@ def featureScaling(df):
 
     return df
 
-def removeCurrentAndFuture(ds):
-    ds = ds.drop(ds[ds.Round >= CURRENT_GAMEWEEK].index)
+def removeCurrentAndFuture(ds, currentGW):
+    ds = ds.drop(ds[ds.Round >= currentGW].index)
     return ds
 
 
-def getTestTrain(ds, y, toRemove):
+def getTestTrain(ds, y, toRemove, currentGW):
 
     ds['y'] = y
 
-    X_train = removeCurrentAndFuture(ds)
-    X_test = ds.drop(ds[ds.Round != CURRENT_GAMEWEEK].index)
+    X_train = removeCurrentAndFuture(ds, currentGW)
+    X_test = ds.drop(ds[ds.Round != currentGW].index)
 
     y_train = X_train['y']
     y_test = X_test['y']
@@ -103,43 +105,11 @@ def getTestTrain(ds, y, toRemove):
     return X_train, X_test, y_train, y_test
 
 
-#plot ROC graphs from test and training set
-#print classification report
-#print accuracy
-def getPredictionResults(X_train, y_train, X_test, y_test):
-    baseline = GradientBoostingClassifier(learning_rate=LEARNING_RATE, n_estimators=N_ESTIMATORS, max_depth=MAX_DEPTH,
-                                          min_samples_split=MIN_SAMPLES_LEAFS, min_samples_leaf=MIN_SAMPLES_LEAFS,
-                                          max_features=MAX_FEATURES, subsample=SUBSAMPLE, verbose=False)
-
-    baseline.fit(X_train, y_train)
-    pred = baseline.predict(X_train)
-
-    false_positive_rate, true_positive_rate, thresholds = roc_curve(y_train, pred)
-    roc_auc = auc(false_positive_rate, true_positive_rate)
-    train_results.append(roc_auc)
-
-    pred = baseline.predict(X_test)
-
-    false_positive_rate, true_positive_rate, thresholds = roc_curve(y_test, pred)
-    roc_auc = auc(false_positive_rate, true_positive_rate)
-    test_results.append(roc_auc)
-
-    print(classification_report(y_test, pred))
-
-    pred_original_data = ds.iloc[X_test.index]
-    pred_original_data['prediction'] = pred
-    # pred_original_data.drop(pred_original_data[pred_original_data.prediction < 1].index, inplace=True)
-
-    pred_original_data.drop(pred_original_data[pred_original_data.isCaptain < 1].index, inplace=True)
-
-    print('Accuracy of GBM on test set: {:.3f}'.format(baseline.score(X_test, y_test)))
-
-
 #Creates X and Y tables - does not split into train/test
 #Adds all multiplication columns
 def generateTable(ds):
-    y = ds.isCaptain
-    # y = ds.Points
+    #y = ds.isCaptain
+    y = ds.Points
 
     GB_table = ds
     GB_table.head()
@@ -160,11 +130,11 @@ def generateTable(ds):
 
     return GB_table, y
 
-def prediction(ds,i, toRemove):
+def prediction(ds, toRemove, currentGW):
 
     GB_table, y = generateTable(ds)
 
-    X_train, X_test, y_train, y_test = getTestTrain(GB_table, y, toRemove)
+    X_train, X_test, y_train, y_test = getTestTrain(GB_table, y, toRemove, currentGW)
 
     baseline = GradientBoostingClassifier(learning_rate=LEARNING_RATE, n_estimators=N_ESTIMATORS, max_depth=MAX_DEPTH,
                                           min_samples_split=MIN_SAMPLES_LEAFS, min_samples_leaf=MIN_SAMPLES_LEAFS,
@@ -184,25 +154,27 @@ def prediction(ds,i, toRemove):
 
     pred = baseline.predict(X_train)
 
+    '''
     false_positive_rate, true_positive_rate, thresholds = roc_curve(y_train, pred)
     roc_auc = auc(false_positive_rate, true_positive_rate)
     train_results.append(roc_auc)
-
+    '''
     pred = baseline.predict(X_test)
 
+    ''' 
     false_positive_rate, true_positive_rate, thresholds = roc_curve(y_test, pred)
     roc_auc = auc(false_positive_rate, true_positive_rate)
     test_results.append(roc_auc)
-
-    print(classification_report(y_test, pred))
+    '''
+    #print(classification_report(y_test, pred))
 
     pred_original_data = ds.loc[X_test.index]
     pred_original_data['prediction'] = pred
     #pred_original_data.drop(pred_original_data[pred_original_data.prediction < 1].index, inplace=True)
 
-    pred_original_data.drop(pred_original_data[pred_original_data.prediction < 1].index, inplace=True)
+    #pred_original_data.drop(pred_original_data[pred_original_data.prediction <= 6].index, inplace=True)
 
-    return pred_original_data, train_results, test_results
+    return pred_original_data
 
 def writeCleanedCSV(csv):
     csv.to_csv("predictorCleaned.csv")
@@ -211,11 +183,11 @@ def getBlogScores(players):
     blogs = (pd.read_csv('..//..//Blogs//playersResult.csv', encoding="ISO-8859-1"))
 
     players["BlogScore"] = pd.Series(0.00, index=players.index)
-    print("Adding BlogScores...")
+    #print("Adding BlogScores...")
 
     for index,row in blogs.iterrows():
-        print()
-        print(row['cleanName'], end = ' ')
+        #print()
+        #print(row['cleanName'], end = ' ')
 
         name = players.drop(players[players.PlayerID != row['ID']].index)
 
@@ -224,7 +196,7 @@ def getBlogScores(players):
             if row2['PlayerID'] == row['ID']:
                 try:
                     currentRound = row2['Round']
-                    print(currentRound, end= ' ')
+                    #print(currentRound, end= ' ')
                     roundScore = row['score_'+str(currentRound)]
 
                     players.at[index2, 'BlogScore'] = roundScore
@@ -232,67 +204,98 @@ def getBlogScores(players):
                     pass
     return players
 
-ds=(pd.read_csv('Predictor.csv', encoding="ISO-8859-1"))
-ds.fillna(ds.mean(), inplace=True)
 
-ds = getBlogScores(ds)
+def main(toRemove, currentGW):
+    print("Generating predictions...\nGameweek: "+str(currentGW))
+    print("Removing Columns: "+str(toRemove))
 
-#ds = featureScaling(ds)
-writeCleanedCSV(ds)
+    ds=(pd.read_csv('Predictor.csv', encoding="ISO-8859-1"))
+    ds.fillna(ds.mean(), inplace=True)
 
-keeperDS, defenderDS, midfielderDS, forwardDS =splitTable(ds)
+    ds = getBlogScores(ds)
 
-names = []
-points = []
-train_results = []
-test_results = []
+    #ds = featureScaling(ds)
+    writeCleanedCSV(ds)
 
-toRemove = ['y', 'Player', 'BPS', 'Round', 'isCaptain', 'Points']#,'BlogScore', 'DefenseOdds', 'OffenceOdds']
+    keeperDS, defenderDS, midfielderDS, forwardDS =splitTable(ds)
 
-for i in range(0,50):
-    current = prediction(keeperDS, 0, toRemove)
-    names.append(current[0]['Player'].tolist())
-    points.append(current[0]['Points'].tolist())
-    train_results.append(current[1])
-    test_results.append(current[2])
+    names = []
+    points = []
 
-    current = prediction(defenderDS, 0, toRemove)
-    names.append(current[0]['Player'].tolist())
-    points.append(current[0]['Points'].tolist())
-    train_results.append(current[1])
-    test_results.append(current[2])
+    allPoints = []
+    print()
+    print("Iteration: ", end = ' ')
+    for i in range(0,3):
+        print(i, end = ' ')
+        currentPoints = 0
+        current = prediction(keeperDS, toRemove, currentGW)
+        current.sort_values("prediction", ascending=False, inplace=True)
+        current = current.head(1)
 
-    current = prediction(midfielderDS, 0, toRemove)
-    names.append(current[0]['Player'].tolist())
-    points.append(current[0]['Points'].tolist())
-    train_results.append(current[1])
-    test_results.append(current[2])
+        names.append(current['Player'].tolist())
+        points.append(current['Points'].tolist())
 
-    current = prediction(forwardDS, 0, toRemove)
-    names.append(current[0]['Player'].tolist())
-    points.append(current[0]['Points'].tolist())
-    train_results.append(current[1])
-    test_results.append(current[2])
+        for point in current['Points']:
+            currentPoints = currentPoints + point
 
-print("Finished!")
-totalPoints = 0
-totalPlayers = 0
-for i in range(0, len(names)):
-    for j in range(0, len(names[i])-1):
-        totalPoints = totalPoints + int(points[i][j])
-        totalPlayers = totalPlayers + 1
-        print(names[i][j] + "  " + str(points[i][j]))
+        current = prediction(defenderDS, toRemove, currentGW)
+        current.sort_values("prediction", ascending=False, inplace=True)
+        current = current.head(4)
 
-print("Total Points: "+str(totalPoints))
-print("Average Player Points: "+str(totalPoints/totalPlayers))
-'''
-from matplotlib.legend_handler import HandlerLine2D
+        names.append(current['Player'].tolist())
+        points.append(current['Points'].tolist())
 
-line1, = plt.plot(learning_rates, train_results, 'b', label='Train AUC')
-line2, = plt.plot(learning_rates, test_results, 'r', label='Test AUC')
-plt.legend(handler_map={line1: HandlerLine2D(numpoints=2)})
-plt.ylabel('AUC score')
-plt.xlabel('learning rate')
-plt.show()
-'''
+        for point in current['Points']:
+            currentPoints = currentPoints + point
+
+        current = prediction(midfielderDS, toRemove, currentGW)
+        current.sort_values("prediction", ascending=False, inplace=True)
+        current = current.head(5)
+
+        names.append(current['Player'].tolist())
+        points.append(current['Points'].tolist())
+
+        for point in current['Points']:
+            currentPoints = currentPoints + point
+
+
+        current = prediction(forwardDS, toRemove, currentGW)
+        current.sort_values("prediction", ascending=False, inplace=True)
+        current = current.head(1)
+        names.append(current['Player'].tolist())
+        points.append(current['Points'].tolist())
+
+        for point in current['Points']:
+            currentPoints = currentPoints + point
+
+        allPoints.append(currentPoints)
+
+    #print("Finished!")
+    totalPoints = 0
+    totalPlayers = 0
+    for i in range(0, len(names)):
+        for j in range(0, len(names[i])-1):
+            totalPoints = totalPoints + int(points[i][j])
+            totalPlayers = totalPlayers + 1
+            #print(names[i][j] + "  " + str(points[i][j]))
+
+    print("Total Points: "+str(totalPoints))
+    print("Average Player Points: "+str(totalPoints/totalPlayers))
+    '''
+    from matplotlib.legend_handler import HandlerLine2D
+    
+    line1, = plt.plot(learning_rates, train_results, 'b', label='Train AUC')
+    line2, = plt.plot(learning_rates, test_results, 'r', label='Test AUC')
+    plt.legend(handler_map={line1: HandlerLine2D(numpoints=2)})
+    plt.ylabel('AUC score')
+    plt.xlabel('learning rate')
+    plt.show()
+    '''
+
+    return totalPoints/totalPlayers, allPoints
+
+
+if __name__ == '__main__':
+    toRemove = ['y', 'Player', 'BPS', 'Round', 'isCaptain', 'Points']  # ,'BlogScore', 'DefenseOdds', 'OffenceOdds']
+    main(toRemove, CURRENT_GAMEWEEK)
 
