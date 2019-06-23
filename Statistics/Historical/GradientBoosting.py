@@ -142,13 +142,13 @@ def prediction(ds, toRemove, currentGW):
 
     baseline.fit(X_train, y_train)
 
-    '''
+
     predictors = list(X_train)
     feat_imp = pd.Series(baseline.feature_importances_, predictors).sort_values(ascending=False)
     feat_imp.plot(kind='bar', title='Importance of Features')
     plt.ylabel('Feature Importance Score')
     plt.show()
-    '''
+
 #    print('Accuracy of the GBM on test set: {:.3f}'.format(baseline.score(X_test, y_test)))
 
 
@@ -225,7 +225,7 @@ def main(toRemove, currentGW):
     allPoints = []
     print()
     print("Iteration: ", end = ' ')
-    for i in range(0,3):
+    for i in range(0,1):
         print(i, end = ' ')
         currentPoints = 0
         current = prediction(keeperDS, toRemove, currentGW)
