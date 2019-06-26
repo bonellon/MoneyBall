@@ -108,8 +108,8 @@ def getTestTrain(ds, y, toRemove, currentGW):
 #Creates X and Y tables - does not split into train/test
 #Adds all multiplication columns
 def generateTable(ds):
-    #y = ds.isCaptain
-    y = ds.Points
+    y = ds.isCaptain
+    #y = ds.Points
 
     GB_table = ds
     GB_table.head()
@@ -142,13 +142,13 @@ def prediction(ds, toRemove, currentGW):
 
     baseline.fit(X_train, y_train)
 
-
+    '''
     predictors = list(X_train)
     feat_imp = pd.Series(baseline.feature_importances_, predictors).sort_values(ascending=False)
     feat_imp.plot(kind='bar', title='Importance of Features')
     plt.ylabel('Feature Importance Score')
     plt.show()
-
+    '''
 #    print('Accuracy of the GBM on test set: {:.3f}'.format(baseline.score(X_test, y_test)))
 
 
@@ -166,7 +166,7 @@ def prediction(ds, toRemove, currentGW):
     roc_auc = auc(false_positive_rate, true_positive_rate)
     test_results.append(roc_auc)
     '''
-    #print(classification_report(y_test, pred))
+    print(classification_report(y_test, pred))
 
     pred_original_data = ds.loc[X_test.index]
     pred_original_data['prediction'] = pred
