@@ -4878,7 +4878,7 @@ a.close.disabled {
   .bs-popover-top .arrow::before, .bs-popover-auto[x-placement^="top"] .arrow::before {
     bottom: 0;
     border-top-color: rgba(0, 0, 0, 0.25); }
-  
+
   .bs-popover-top .arrow::after,
   .bs-popover-auto[x-placement^="top"] .arrow::after {
     bottom: 1px;
@@ -4898,7 +4898,7 @@ a.close.disabled {
   .bs-popover-right .arrow::before, .bs-popover-auto[x-placement^="right"] .arrow::before {
     left: 0;
     border-right-color: rgba(0, 0, 0, 0.25); }
-  
+
   .bs-popover-right .arrow::after,
   .bs-popover-auto[x-placement^="right"] .arrow::after {
     left: 1px;
@@ -4915,7 +4915,7 @@ a.close.disabled {
   .bs-popover-bottom .arrow::before, .bs-popover-auto[x-placement^="bottom"] .arrow::before {
     top: 0;
     border-bottom-color: rgba(0, 0, 0, 0.25); }
-  
+
   .bs-popover-bottom .arrow::after,
   .bs-popover-auto[x-placement^="bottom"] .arrow::after {
     top: 1px;
@@ -4944,7 +4944,7 @@ a.close.disabled {
   .bs-popover-left .arrow::before, .bs-popover-auto[x-placement^="left"] .arrow::before {
     right: 0;
     border-left-color: rgba(0, 0, 0, 0.25); }
-  
+
   .bs-popover-left .arrow::after,
   .bs-popover-auto[x-placement^="left"] .arrow::after {
     right: 1px;
@@ -8005,7 +8005,8 @@ h1, h2, h3, h4, h5,
   font-weight: 400; }
 
 .container {
-  max-width: 1200px; }
+  max-width: 1200px;
+  height: 90%}
 
 .ftco-navbar-light {
   background: transparent !important;
@@ -8029,10 +8030,10 @@ h1, h2, h3, h4, h5,
     padding: 0; }
     @media (max-width: 1199.98px) {
       .ftco-navbar-light .container {
-        background: #ffb400; } }
+        background: #37003C; } }
     @media (min-width: 1200px) {
       .ftco-navbar-light .container {
-        background: #ffb400;
+        background: #37003C;
         position: relative; }
         .ftco-navbar-light .container:after {
           position: absolute;
@@ -8041,7 +8042,7 @@ h1, h2, h3, h4, h5,
           bottom: 0;
           content: '';
           width: 100%;
-          background: #ffb400; } }
+          background: #37003C; } }
   .ftco-navbar-light .navbar-brand {
     color: #000000;
     padding-top: 1.5rem;
@@ -8062,11 +8063,11 @@ h1, h2, h3, h4, h5,
     padding-bottom: 1.5rem;
     padding-left: 20px;
     padding-right: 20px;
-    color: #000000;
+    color: #00FF87;
     font-weight: 800;
     opacity: 1 !important; }
     .ftco-navbar-light .navbar-nav > .nav-item > .nav-link:hover, .ftco-navbar-light .navbar-nav > .nav-item > .nav-link:focus {
-      color: #000000; }
+      color: #00AE55; }
     @media (max-width: 991.98px) {
       .ftco-navbar-light .navbar-nav > .nav-item > .nav-link {
         padding-left: 0;
@@ -8128,7 +8129,7 @@ h1, h2, h3, h4, h5,
       color: #fff; } }
   .ftco-navbar-light .navbar-toggler {
     border: none;
-    color: black !important;
+    color: #00FF87 !important;
     cursor: pointer;
     padding-right: 1rem;
     text-transform: uppercase;
@@ -8212,11 +8213,11 @@ h1, h2, h3, h4, h5,
 .navbar-brand {
   font-weight: 400;
   font-size: 20px;
-  background: #232931;
+  background: #ffffff;
   padding: 0 1em; }
   .navbar-brand span {
     font-weight: 900;
-    color: #fff; }
+    color: #37003C; }
 
 .hero-wrap {
   width: 100%;
@@ -8436,7 +8437,7 @@ h1, h2, h3, h4, h5,
       color: rgba(255, 255, 255, 0.8); }
     .game-wrap-1 .text .btn {
       display: block; }
-  .game-wrap-1 .team-logo {
+  .game-wrap-1 .team-logo{
     width: 90px;
     position: relative; }
     .game-wrap-1 .team-logo .img {
@@ -8452,7 +8453,7 @@ h1, h2, h3, h4, h5,
       .game-wrap-1 .team-logo .img.img-2 {
         left: 35px;
         z-index: -1; }
-  .game-wrap-1 .team-name {
+  .game-wrap-1 .gameweek {
     width: calc(100% - 90px); }
 
 .scoreboard {
@@ -8496,7 +8497,7 @@ h1, h2, h3, h4, h5,
         border-bottom: 5px solid #ffb400; }
       .scoreboard .sport-team .score.lost span {
         color: rgba(0, 0, 0, 0.2); }
-    .scoreboard .sport-team .team-name {
+    .scoreboard .sport-team .gameweek {
       font-size: 16px;
       font-weight: 700; }
 
@@ -8592,7 +8593,7 @@ h1, h2, h3, h4, h5,
     box-shadow: 0px 24px 36px -11px rgba(0, 0, 0, 0.09); }
   .game-schedule .sport-team .desc {
     width: calc(100% - 100px); }
-  .game-schedule .sport-team .team-name {
+  .game-schedule .sport-team .gameweek{
     font-size: 22px;
     font-weight: 900;
     margin-bottom: 0; }
