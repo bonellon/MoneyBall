@@ -2,13 +2,17 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import csv
-from sklearn.ensemble import GradientBoostingClassifier
+import os
+from sklearn.svm import SVC
+from sklearn.ensemble import GradientBoostingClassifier, RandomForestRegressor
 from sklearn.metrics import classification_report
 from sklearn.metrics import roc_curve
 from sklearn.metrics import auc
 
+from Statistics.Historical import Player
+
 pd.options.mode.chained_assignment = None  # default='warn'
-CURRENT_GAMEWEEK = 33
+CURRENT_GAMEWEEK = 12
 
 K_SPLITS = 10
 
@@ -19,6 +23,7 @@ MIN_SAMPLES_LEAFS = 0.02
 MAX_FEATURES = 2
 SUBSAMPLE = 0.8
 
+CURRENT_PATH = os.path.dirname(__file__)
 
 #0.25
 learning_rates = [0.5, 0.25, 0.105]
@@ -130,15 +135,11 @@ def generateTable(ds):
 
     return GB_table, y
 
-def prediction(ds, toRemove, currentGW):
+def prediction(ds, toRemove, currentGW, baseline):
 
     GB_table, y = generateTable(ds)
 
     X_train, X_test, y_train, y_test = getTestTrain(GB_table, y, toRemove, currentGW)
-
-    baseline = GradientBoostingClassifier(learning_rate=LEARNING_RATE, n_estimators=N_ESTIMATORS, max_depth=MAX_DEPTH,
-                                          min_samples_split=MIN_SAMPLES_LEAFS, min_samples_leaf=MIN_SAMPLES_LEAFS,
-                                          max_features=MAX_FEATURES, subsample=SUBSAMPLE, verbose=False)
 
     baseline.fit(X_train, y_train)
 
@@ -166,7 +167,7 @@ def prediction(ds, toRemove, currentGW):
     roc_auc = auc(false_positive_rate, true_positive_rate)
     test_results.append(roc_auc)
     '''
-    print(classification_report(y_test, pred))
+    print(classification_report(y_test, pred.round()))
 
     pred_original_data = ds.loc[X_test.index]
     pred_original_data['prediction'] = pred
@@ -180,7 +181,7 @@ def writeCleanedCSV(csv):
     csv.to_csv("predictorCleaned.csv")
 
 def getBlogScores(players):
-    blogs = (pd.read_csv('..//..//Blogs//playersResult.csv', encoding="ISO-8859-1"))
+    blogs = (pd.read_csv(CURRENT_PATH+'//..//..//Blogs//playersResult.csv', encoding="ISO-8859-1"))
 
     players["BlogScore"] = pd.Series(0.00, index=players.index)
     #print("Adding BlogScores...")
@@ -205,11 +206,12 @@ def getBlogScores(players):
     return players
 
 
-def main(toRemove, currentGW):
+def main(toRemove, currentGW, baseline):
+    baseline = learningModel(baseline)
     print("Generating predictions...\nGameweek: "+str(currentGW))
     print("Removing Columns: "+str(toRemove))
 
-    ds=(pd.read_csv('Predictor.csv', encoding="ISO-8859-1"))
+    ds=(pd.read_csv(CURRENT_PATH+'/Predictor.csv', encoding="ISO-8859-1"))
     ds.fillna(ds.mean(), inplace=True)
 
     ds = getBlogScores(ds)
@@ -228,41 +230,57 @@ def main(toRemove, currentGW):
     for i in range(0,1):
         print(i, end = ' ')
         currentPoints = 0
-        current = prediction(keeperDS, toRemove, currentGW)
+        current = prediction(keeperDS, toRemove, currentGW, baseline)
         current.sort_values("prediction", ascending=False, inplace=True)
         current = current.head(1)
 
-        names.append(current['Player'].tolist())
+        temp = []
+        for i in range(0, len(current['Player'].tolist())):
+            temp.append(Player.Player(current['Player'].tolist()[i], current['Points'].tolist()[i]).__dict__)
+
+        names.append(temp)
         points.append(current['Points'].tolist())
 
         for point in current['Points']:
             currentPoints = currentPoints + point
 
-        current = prediction(defenderDS, toRemove, currentGW)
+        current = prediction(defenderDS, toRemove, currentGW, baseline)
         current.sort_values("prediction", ascending=False, inplace=True)
         current = current.head(4)
 
-        names.append(current['Player'].tolist())
+        temp = []
+        for i in range(0, len(current['Player'].tolist())):
+            temp.append(Player.Player(current['Player'].tolist()[i], current['Points'].tolist()[i]).__dict__)
+
+        names.append(temp)
         points.append(current['Points'].tolist())
 
         for point in current['Points']:
             currentPoints = currentPoints + point
 
-        current = prediction(midfielderDS, toRemove, currentGW)
+        current = prediction(midfielderDS, toRemove, currentGW, baseline)
         current.sort_values("prediction", ascending=False, inplace=True)
         current = current.head(5)
 
-        names.append(current['Player'].tolist())
+        temp = []
+        for i in range(0, len(current['Player'].tolist())):
+            temp.append(Player.Player(current['Player'].tolist()[i], current['Points'].tolist()[i]).__dict__)
+
+        names.append(temp)
         points.append(current['Points'].tolist())
 
         for point in current['Points']:
             currentPoints = currentPoints + point
 
-
-        current = prediction(forwardDS, toRemove, currentGW)
+        current = prediction(forwardDS, toRemove, currentGW, baseline)
         current.sort_values("prediction", ascending=False, inplace=True)
         current = current.head(1)
-        names.append(current['Player'].tolist())
+
+        temp = []
+        for i in range(0, len(current['Player'].tolist())):
+            temp.append(Player.Player(current['Player'].tolist()[i], current['Points'].tolist()[i]).__dict__)
+
+        names.append(temp)
         points.append(current['Points'].tolist())
 
         for point in current['Points']:
@@ -274,7 +292,8 @@ def main(toRemove, currentGW):
     totalPoints = 0
     totalPlayers = 0
     for i in range(0, len(names)):
-        for j in range(0, len(names[i])-1):
+        length = int(len(names[i])/2)
+        for j in range(0, length-1):
             totalPoints = totalPoints + int(points[i][j])
             totalPlayers = totalPlayers + 1
             #print(names[i][j] + "  " + str(points[i][j]))
@@ -292,10 +311,26 @@ def main(toRemove, currentGW):
     plt.show()
     '''
 
-    return totalPoints/totalPlayers, allPoints
+    return totalPoints/totalPlayers, allPoints, names
+
+def learningModel(choice):
+    if choice == "gbm":
+        return GradientBoostingClassifier(learning_rate=LEARNING_RATE, n_estimators=N_ESTIMATORS, max_depth=MAX_DEPTH,
+                                          min_samples_split=MIN_SAMPLES_LEAFS, min_samples_leaf=MIN_SAMPLES_LEAFS,
+                                          max_features=MAX_FEATURES, subsample=SUBSAMPLE, verbose=False)
+    if choice == "svm":
+        return SVC(kernel='linear')
+
+    else:
+        return RandomForestRegressor(n_estimators=N_ESTIMATORS, random_state=0)
 
 
 if __name__ == '__main__':
-    toRemove = ['y', 'Player', 'BPS', 'Round', 'isCaptain', 'Points']  # ,'BlogScore', 'DefenseOdds', 'OffenceOdds']
-    main(toRemove, CURRENT_GAMEWEEK)
+    toRemove = ['y', 'Player', 'BPS', 'Round', 'isCaptain', 'Points'] #,'BlogScore', 'DefenseOdds', 'OffenceOdds']
+
+    baseline = "gbm"
+
+
+
+    main(toRemove, CURRENT_GAMEWEEK, baseline)
 

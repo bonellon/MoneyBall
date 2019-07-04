@@ -1,0 +1,460 @@
+{
+  "1": {
+    "gameweek": 1,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "2": {
+    "gameweek": 2,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "3": {
+    "gameweek": "3",
+    "goalkeepers": [
+      {
+        "name": "Fraser",
+        "points": 2
+      }
+    ],
+    "defenders": [
+      {
+        "name": "Boly",
+        "points": 8
+      },
+      {
+        "name": "Mee",
+        "points": 3
+      },
+      {
+        "name": "Aké",
+        "points": 8
+      },
+      {
+        "name": "Monreal",
+        "points": 10
+      }
+    ],
+    "midfielders": [
+      {
+        "name": "Hendrick",
+        "points": 7
+      },
+      {
+        "name": "Rodrigues Moura da Silva",
+        "points": 15
+      },
+      {
+        "name": "Salah",
+        "points": 8
+      },
+      {
+        "name": "Pereira Gomes",
+        "points": 5
+      },
+      {
+        "name": "Rodríguez Ledesma",
+        "points": 3
+      }
+    ],
+    "forwards": [
+      {
+        "name": "Mitrovic",
+        "points": 16
+      }
+    ]
+  },
+  "4": {
+    "gameweek": "4",
+    "goalkeepers": [
+      {
+        "name": "Ramses Becker",
+        "points": 3
+      }
+    ],
+    "defenders": [
+      {
+        "name": "Trippier",
+        "points": 1
+      },
+      {
+        "name": "Alonso",
+        "points": 9
+      },
+      {
+        "name": "Monreal",
+        "points": 0
+      },
+      {
+        "name": "Soares",
+        "points": 12
+      }
+    ],
+    "midfielders": [
+      {
+        "name": "Hazard",
+        "points": 11
+      },
+      {
+        "name": "Seri",
+        "points": 7
+      },
+      {
+        "name": "Ghezzal",
+        "points": 8
+      },
+      {
+        "name": "Højbjerg",
+        "points": 9
+      },
+      {
+        "name": "Schürrle",
+        "points": 7
+      }
+    ],
+    "forwards": [
+      {
+        "name": "Lukaku",
+        "points": 12
+      }
+    ]
+  },
+  "5": {
+    "gameweek": "5",
+    "goalkeepers": [
+      {
+        "name": "Arrizabalaga",
+        "points": 2
+      }
+    ],
+    "defenders": [
+      {
+        "name": "Walker",
+        "points": 6
+      },
+      {
+        "name": "Alonso",
+        "points": 2
+      },
+      {
+        "name": "Azpilicueta",
+        "points": 2
+      },
+      {
+        "name": "Soares",
+        "points": 0
+      }
+    ],
+    "midfielders": [
+      {
+        "name": "Maddison",
+        "points": 8
+      },
+      {
+        "name": "Hazard",
+        "points": 20
+      },
+      {
+        "name": "Wijnaldum",
+        "points": 9
+      },
+      {
+        "name": "Silva",
+        "points": 11
+      },
+      {
+        "name": "Xhaka",
+        "points": 9
+      }
+    ],
+    "forwards": [
+      {
+        "name": "King",
+        "points": 11
+      }
+    ]
+  },
+  "6": {
+    "gameweek": 6,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "7": {
+    "gameweek": 7,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "8": {
+    "gameweek": 8,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "9": {
+    "gameweek": 9,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "10": {
+    "gameweek": 10,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "11": {
+    "gameweek": 11,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "12": {
+    "gameweek": 12,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "13": {
+    "gameweek": 13,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "14": {
+    "gameweek": 14,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "15": {
+    "gameweek": 15,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "16": {
+    "gameweek": 16,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "17": {
+    "gameweek": 17,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "18": {
+    "gameweek": 18,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "19": {
+    "gameweek": 19,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "20": {
+    "gameweek": 20,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "21": {
+    "gameweek": 21,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "22": {
+    "gameweek": 22,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "23": {
+    "gameweek": 23,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "24": {
+    "gameweek": 24,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "25": {
+    "gameweek": 25,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "26": {
+    "gameweek": 26,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "27": {
+    "gameweek": 27,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "28": {
+    "gameweek": 28,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "29": {
+    "gameweek": 29,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "30": {
+    "gameweek": 30,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "31": {
+    "gameweek": 31,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "32": {
+    "gameweek": 32,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "33": {
+    "gameweek": 33,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "34": {
+    "gameweek": 34,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "35": {
+    "gameweek": 35,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "36": {
+    "gameweek": 36,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "37": {
+    "gameweek": 37,
+    "goalkeepers": [],
+    "defenders": [],
+    "midfielders": [],
+    "forwards": []
+  },
+  "38": {
+    "gameweek": "38",
+    "goalkeepers": [
+      {
+        "name": "Schmeichel",
+        "points": 7
+      }
+    ],
+    "defenders": [
+      {
+        "name": "Balbuena",
+        "points": 2
+      },
+      {
+        "name": "Davies",
+        "points": 1
+      },
+      {
+        "name": "Stephens",
+        "points": 2
+      },
+      {
+        "name": "Barbosa Pereira",
+        "points": 9
+      }
+    ],
+    "midfielders": [
+      {
+        "name": "Noble",
+        "points": 15
+      },
+      {
+        "name": "Gündogan",
+        "points": 9
+      },
+      {
+        "name": "Ritchie",
+        "points": 9
+      },
+      {
+        "name": "Lerma",
+        "points": 9
+      },
+      {
+        "name": "Mané",
+        "points": 15
+      }
+    ],
+    "forwards": [
+      {
+        "name": "King",
+        "points": 6
+      }
+    ]
+  }
+}
