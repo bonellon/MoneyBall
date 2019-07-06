@@ -1,53 +1,18 @@
-const app = document.getElementById('mainFrame');
 
-const logo = document.createElement('img');
-logo.src = 'images/pl_icon.png';
-
-const container = document.createElement('div');
-container.setAttribute('class', 'container');
-
-app.appendChild(logo);
-app.appendChild(container);
-
-console.log("In prediction.js")
-
-fetch('http://localhost:5000/summary')
-  .then(function(response) {
-      return response.json();
-    })
-    .then(function(myJson) {
-      console.log(JSON.stringify(myJson));
-    });
-
-/*
-request.onload = function () {
-
-  console.log("GOT RESPOSE!!!!!!!!!!!!!!!")
-  console.log(this.response)
-  // Begin accessing JSON data here
-  var data = JSON.parse(this.response);
-  if (request.status >= 200 && request.status < 400) {
-    data.forEach(movie => {
-      const card = document.createElement('div');
-      card.setAttribute('class', 'card');
-
-      const h1 = document.createElement('h1');
-      h1.textContent = movie.title;
-
-      const p = document.createElement('p');
-      movie.description = movie.description.substring(0, 300);
-      p.textContent = `${movie.description}...`;
-
-      container.appendChild(card);
-      card.appendChild(h1);
-      card.appendChild(p);
-    });
-  } else {
-    const errorMessage = document.createElement('marquee');
-    errorMessage.textContent = `Gah, it's not working!`;
-    app.appendChild(errorMessage);
-  }
+function myFunction() {
+  document.getElementById("myDropdown").classList.toggle("show");
 }
 
-request.send();
-*/
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {
+  if (!event.target.matches('.dropbtn')) {
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+}

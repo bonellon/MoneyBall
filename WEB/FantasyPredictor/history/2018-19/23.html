@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<body onload="loadFunction()">
+
+
+  <body>
+
+
+    <h1 id="gameweek"></h1>
+
+    <h2 id="prediction"></h2>
+
+    <p id ="goalkeepers"></p>
+    <p id ="defenders"></p>
+    <p id ="midfielders"></p>
+    <p id ="forwards"></p>
+
+
+    <script type="text/javascript">
+      function loadFunction(){
+
+        var url = window.location.pathname;
+        var filename = url.substring(url.lastIndexOf('/')+1);
+        filename = filename.substring(0, filename.lastIndexOf('.'))
+
+        document.getElementById("gameweek").innerHTML = "Gameweek "+filename;
+
+        getPrediction(filename);
+
+
+      }
+
+      async function getPrediction(gameweek){
+
+        const response = await fetch('http://localhost:5000/predict/'+gameweek, {
+          method: 'GET',
+          //body: myBody, // string or object
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin':'*'
+          }
+        })
+        .then(res = async(res) => await res.json())//response type
+        .then(data => {
+          console.log("Got response..")
+          return data
+        }); //log the data;
+        data = (await Promise.resolve(response))
+        console.log(data)
+
+        var goalkeepers = []
+        for (i = 0; i < data.goalkeepers.length; i++) {
+          goalkeepers.push(data.goalkeepers[i].name)
+        }
+
+        var defenders = []
+        for (i = 0; i < data.defenders.length; i++) {
+          defenders.push(data.defenders[i].name)
+        }
+
+        var midfielders = []
+        for (i = 0; i < data.midfielders.length; i++) {
+          midfielders.push(data.midfielders[i].name)
+        }
+
+
+        var forwards = []
+        for (i = 0; i < data.forwards.length; i++) {
+          forwards.push(data.forwards[i].name)
+        }
+
+        document.getElementById("goalkeepers").innerHTML = goalkeepers
+        document.getElementById("defenders").innerHTML = defenders
+        document.getElementById("midfielders").innerHTML = midfielders
+        document.getElementById("forwards").innerHTML = forwards
+        return x
+      }
+    </script>
+</body>
+</body>

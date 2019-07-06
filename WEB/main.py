@@ -1,6 +1,7 @@
 from Statistics.Historical import Evaluator as ev
 from WEB import Formation as formation
 from flask import Flask, request, jsonify
+from flask_cors import CORS, cross_origin
 import json
 
 
@@ -17,6 +18,7 @@ def init():
 
 
 app = Flask(__name__)
+CORS(app, support_credentials=True)
 init()
 
 
@@ -38,6 +40,7 @@ def summary():
 Store all previous data in json file. If json has output, return that otherwise use model to get predictions.
 '''
 @app.route('/predict/<gw>', methods=['GET'])
+@cross_origin(supports_credentials=True)
 def suggest_places(gw):
     app.logger.info("Predicting Gameweek: "+str(gw))
 

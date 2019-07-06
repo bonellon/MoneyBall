@@ -7,11 +7,59 @@
     "forwards": []
   },
   "2": {
-    "gameweek": 2,
-    "goalkeepers": [],
-    "defenders": [],
-    "midfielders": [],
-    "forwards": []
+    "gameweek": "2",
+    "goalkeepers": [
+      {
+        "name": "Arrizabalaga",
+        "points": 2
+      }
+    ],
+    "defenders": [
+      {
+        "name": "Balbuena",
+        "points": 1
+      },
+      {
+        "name": "Gomez",
+        "points": 6
+      },
+      {
+        "name": "Tarkowski",
+        "points": 7
+      },
+      {
+        "name": "Azpilicueta",
+        "points": 4
+      }
+    ],
+    "midfielders": [
+      {
+        "name": "Rodríguez Ledesma",
+        "points": 8
+      },
+      {
+        "name": "Pogba",
+        "points": 8
+      },
+      {
+        "name": "de Andrade",
+        "points": 9
+      },
+      {
+        "name": "Mané",
+        "points": 10
+      },
+      {
+        "name": "Mkhitaryan",
+        "points": 12
+      }
+    ],
+    "forwards": [
+      {
+        "name": "Kamara",
+        "points": 2
+      }
+    ]
   },
   "3": {
     "gameweek": "3",
@@ -228,11 +276,59 @@
     "forwards": []
   },
   "13": {
-    "gameweek": 13,
-    "goalkeepers": [],
-    "defenders": [],
-    "midfielders": [],
-    "forwards": []
+    "gameweek": "13",
+    "goalkeepers": [
+      {
+        "name": "Rico",
+        "points": 3
+      }
+    ],
+    "defenders": [
+      {
+        "name": "Soares",
+        "points": 4
+      },
+      {
+        "name": "Le Marchand",
+        "points": 4
+      },
+      {
+        "name": "Smalling",
+        "points": 6
+      },
+      {
+        "name": "Clark",
+        "points": 11
+      }
+    ],
+    "midfielders": [
+      {
+        "name": "Ritchie",
+        "points": 4
+      },
+      {
+        "name": "Silva",
+        "points": 9
+      },
+      {
+        "name": "Salah",
+        "points": 8
+      },
+      {
+        "name": "Son",
+        "points": 8
+      },
+      {
+        "name": "Schürrle",
+        "points": 7
+      }
+    ],
+    "forwards": [
+      {
+        "name": "Mitrovic",
+        "points": 13
+      }
+    ]
   },
   "14": {
     "gameweek": 14,
