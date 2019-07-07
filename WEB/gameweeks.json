@@ -478,11 +478,59 @@
     "forwards": []
   },
   "35": {
-    "gameweek": 35,
-    "goalkeepers": [],
-    "defenders": [],
-    "midfielders": [],
-    "forwards": []
+    "gameweek": "35",
+    "goalkeepers": [
+      {
+        "name": "Ramses Becker",
+        "points": 6
+      }
+    ],
+    "defenders": [
+      {
+        "name": "Dunk",
+        "points": 2
+      },
+      {
+        "name": "Walker",
+        "points": 7
+      },
+      {
+        "name": "Aké",
+        "points": 2
+      },
+      {
+        "name": "Stephens",
+        "points": 2
+      }
+    ],
+    "midfielders": [
+      {
+        "name": "Hazard",
+        "points": 7
+      },
+      {
+        "name": "Barnes",
+        "points": 9
+      },
+      {
+        "name": "Wijnaldum",
+        "points": 11
+      },
+      {
+        "name": "Kanté",
+        "points": 6
+      },
+      {
+        "name": "Jota",
+        "points": 8
+      }
+    ],
+    "forwards": [
+      {
+        "name": "Vardy",
+        "points": 9
+      }
+    ]
   },
   "36": {
     "gameweek": 36,

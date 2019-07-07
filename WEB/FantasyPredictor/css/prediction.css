@@ -36,3 +36,8 @@
 .dropdown a:hover {background-color: #ddd;}
 
 .show {display: block;}
+
+.players{
+  background-color: black;
+  text-align: center;
+}
