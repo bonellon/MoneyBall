@@ -1,20 +1,132 @@
 <!DOCTYPE html>
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:200,300,400,600,700,800,900" rel="stylesheet">
+
+  <link rel="stylesheet" href="../../css/open-iconic-bootstrap.min.css">
+  <link rel="stylesheet" href="../../css/animate.css">
+
+  <link rel="stylesheet" href="../../css/owl.carousel.min.css">
+  <link rel="stylesheet" href="../../css/owl.theme.default.min.css">
+  <link rel="stylesheet" href="../../css/magnific-popup.css">
+
+  <link rel="stylesheet" href="../../css/aos.css">
+
+  <link rel="stylesheet" href="../../css/ionicons.min.css">
+
+  <link rel="stylesheet" href="../../css/bootstrap-datepicker.css">
+  <link rel="stylesheet" href="../../css/jquery.timepicker.css">
+
+
+  <link rel="stylesheet" href="../../css/flaticon.css">
+  <link rel="stylesheet" href="../../css/icomoon.css">
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="../../css/prediction.css">
+  <link rel="shortcut icon" type="../../image/png" href="../../images/pl_icon.png"/>
+</head>
 <body onload="loadFunction()">
 
 
-  <body class="navbar-brand">
 
+  <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
+    <div class="container">
+      <a class="navbar-brand" href="index.html"><span>Fantasy Predictor</span></a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="oi oi-menu"></span> Menu
+      </button>
 
-    <h1 id="gameweek"></h1>
+      <div class="collapse navbar-collapse" id="ftco-nav">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item"><a href="../../index.html" class="nav-link">Home</a></li>
+          <li class="nav-item"><a href="../../about.html" class="nav-link">About</a></li>
+          <li class="nav-item active "><a href="../../history.html" class="nav-link">History</a></li>
 
-    <h2 id="prediction"></h2>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <!-- END nav -->
+  <!--:#00ff87-->
+  <div class="hero-wrap js-fullheight" style="background-image: url('../../images/bg_1.jpg');" data-stellar-background-ratio="0.5">
+    <div class="overlay"></div>
 
-    <p id ="goalkeepers">Loading Predictions...</p>
-    <p id ="defenders"></p>
-    <p id ="midfielders"></p>
-    <p id ="forwards"></p>
+    <div class="container">
+      <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-end" data-scrollax-parent="true">
+        <div class="col-md-7 ftco-animate mt-5" id="mainFrame" data-scrollax=" properties: { translateY: '70%' }">
+          <h1 class="mb-4" id="mainTitle1" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">No upcoming predictions!</h1>
+          <h1 class="mb-4" id="mainTitle2" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Check again later...</h1
+        </div>
+      </div>
 
-    <p id="points"> 0 Points</p>
+      <!--:#00ff87-->
+      <div class="hero-wrap js-fullheight" style="background-image: url('images/bg_1.jpg');" data-stellar-background-ratio="0.5">
+
+        <div class="overlay"></div>
+        <div class="container">
+          <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-end" data-scrollax-parent="true">
+            <div class="col-md-7 ftco-animate mt-5" id="mainFrame" data-scrollax=" properties: { translateY: '70%' }">
+              <h1 class="mb-4" id="mainTitle" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">No upcoming predictions!</h1>
+              <h1 class="mb-4" id="mainTitle" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Check again later...</h1
+            </div>
+          </div>
+        </div>
+      </div>
+      <section class="ftco-section ftco-no-pb ftco-no-pt">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="game-wrap-1 ftco-animate p-4">
+                <div class="row p-2">
+                  <div class="col-md-6 pb-4 pb-lg-0 col-lg-3">
+                    <div class="text d-flex">
+                      <div class="team-logo d-flex">
+                        <div class="img" style="background-image: url(images/team-1.jpg);"></div>
+                        <div class="img img-2" style="background-image: url(images/team-2.jpg);"></div>
+                      </div>
+                      <div class="team-name pl-3">
+                        <h3><span>Gameweek 1 Prediction</span></h3>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6 pb-4 pb-lg-0 col-lg-3">
+                    <div class="text">
+                      <div class="img"></div>
+                      <h3 class="league">English Premier League</h3>
+                      <span>Season 2019/20</span>
+                    </div>
+                  </div>
+                  <div class="col-md-6 pb-4 pb-lg-0 col-lg-4">
+                    <div class="text">
+                      <div id="timer" class="d-flex mb-0">
+                        <div class="time" id="days"></div>
+                        <div class="time pl-3" id="hours"></div>
+                        <div class="time pl-3" id="minutes"></div>
+                        <div class="time pl-3" id="seconds"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    <div id="mainPrediction">
+
+        <h1 id="gameweek"></h1>
+      <p id="prediction">Loading Predictions...</p>
+
+      <p id ="goalkeepers"></p>
+      <p id ="defenders"></p>
+      <p id ="midfielders"></p>
+      <p id ="forwards"></p>
+
+      <p id="points"> 0 Points</p>
+    </div>
 
 
     <script type="text/javascript">
@@ -24,7 +136,7 @@
         var filename = url.substring(url.lastIndexOf('/')+1);
         filename = filename.substring(0, filename.lastIndexOf('.'))
 
-        document.getElementById("gameweek").innerHTML = "Gameweek "+filename;
+        document.getElementById("mainTitle1").innerHTML = "Gameweek "+filename;
 
         getPrediction(filename);
 
@@ -32,7 +144,7 @@
       }
 
       async function getPrediction(gameweek){
-
+        try{
         const response = await fetch('http://localhost:5000/predict/'+gameweek, {
           method: 'GET',
           //body: myBody, // string or object
@@ -48,6 +160,12 @@
         }); //log the data;
         data = (await Promise.resolve(response))
         console.log(data)
+      }
+      catch(err){
+
+        document.getElementById("mainTitle2").innerHTML = "Connection timed out"
+        return -1
+      }
 
         var goalkeepers = []
         var points = 0
@@ -75,6 +193,7 @@
           points += data.forwards[i].points
         }
 
+        document.getElementById("mainTitle2").innerHTML = ""
         document.getElementById("goalkeepers").innerHTML = goalkeepers
         document.getElementById("defenders").innerHTML = defenders
         document.getElementById("midfielders").innerHTML = midfielders
