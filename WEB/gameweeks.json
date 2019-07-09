@@ -227,18 +227,114 @@
     ]
   },
   "6": {
-    "gameweek": 6,
-    "goalkeepers": [],
-    "defenders": [],
-    "midfielders": [],
-    "forwards": []
+    "gameweek": "6",
+    "goalkeepers": [
+      {
+        "name": "Fraser",
+        "points": 2
+      }
+    ],
+    "defenders": [
+      {
+        "name": "Aké",
+        "points": 0
+      },
+      {
+        "name": "Chilwell",
+        "points": 2
+      },
+      {
+        "name": "Walker",
+        "points": 6
+      },
+      {
+        "name": "Delph",
+        "points": 6
+      }
+    ],
+    "midfielders": [
+      {
+        "name": "Lennon",
+        "points": 13
+      },
+      {
+        "name": "Knockaert",
+        "points": 7
+      },
+      {
+        "name": "Gudmundsson",
+        "points": 9
+      },
+      {
+        "name": "Maddison",
+        "points": 8
+      },
+      {
+        "name": "Gündogan",
+        "points": 13
+      }
+    ],
+    "forwards": [
+      {
+        "name": "Mitrovic",
+        "points": 8
+      }
+    ]
   },
   "7": {
-    "gameweek": 7,
-    "goalkeepers": [],
-    "defenders": [],
-    "midfielders": [],
-    "forwards": []
+    "gameweek": "7",
+    "goalkeepers": [
+      {
+        "name": "Santana de Moraes",
+        "points": 6
+      }
+    ],
+    "defenders": [
+      {
+        "name": "Otamendi",
+        "points": 6
+      },
+      {
+        "name": "Maguire",
+        "points": 18
+      },
+      {
+        "name": "Castro Otto",
+        "points": 12
+      },
+      {
+        "name": "van Dijk",
+        "points": 2
+      }
+    ],
+    "midfielders": [
+      {
+        "name": "Murphy",
+        "points": 8
+      },
+      {
+        "name": "Sané",
+        "points": 6
+      },
+      {
+        "name": "Sigurdsson",
+        "points": 14
+      },
+      {
+        "name": "Brooks",
+        "points": 6
+      },
+      {
+        "name": "Gueye",
+        "points": 3
+      }
+    ],
+    "forwards": [
+      {
+        "name": "Tosun",
+        "points": 5
+      }
+    ]
   },
   "8": {
     "gameweek": 8,

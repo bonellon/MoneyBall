@@ -11,10 +11,10 @@ def googleSearch(currentGW):
     query = 'Fantasy Premier League gameweek "'+str(currentGW)+'"'
     urls = []
     print(query)
-    for url in search(query, stop=25, pause=2.0, tbs="qdr:y"):
+    for url in search(query, stop=100, pause=2.0, tbs="qdr:y"):
         print("Appending: "+str(len(urls)))
         urls.append(url)
-    '''
+    '
     query = 'FPL gameweek '+str(currentGW)
 
     print(query)
@@ -37,7 +37,7 @@ def googleSearch(currentGW):
         if url not in urls:
             print("Appending: " + str(len(urls)))
             urls.append(url)
-    '''
+    '
     with open('urls.txt', 'w') as f:
         for item in urls:
             f.write("%s\n" % item)

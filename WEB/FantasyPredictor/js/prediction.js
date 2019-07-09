@@ -56,33 +56,44 @@ catch(err){
   var goalkeepers = []
   var points = 0
   for (i = 0; i < data.goalkeepers.length; i++) {
-    goalkeepers.push(data.goalkeepers[i].name)
+    goalkeepers.push(data.goalkeepers[i].name+" ("+data.goalkeepers[i].points+")")
     points += data.goalkeepers[i].points
   }
 
   var defenders = []
   for (i = 0; i < data.defenders.length; i++) {
-    defenders.push(data.defenders[i].name)
+    defenders.push(data.defenders[i].name+" ("+data.defenders[i].points+")")
     points += data.defenders[i].points
   }
 
   var midfielders = []
   for (i = 0; i < data.midfielders.length; i++) {
-    midfielders.push(data.midfielders[i].name)
+    midfielders.push(data.midfielders[i].name+" ("+data.midfielders[i].points+")")
+
     points += data.midfielders[i].points
   }
 
 
   var forwards = []
   for (i = 0; i < data.forwards.length; i++) {
-    forwards.push(data.forwards[i].name)
+    forwards.push(data.forwards[i].name+" ("+data.forwards[i].points+")")
     points += data.forwards[i].points
   }
   document.getElementById("mainTitle2").innerHTML = ""
-  document.getElementById("goalkeepers").innerHTML = goalkeepers
-  document.getElementById("defenders").innerHTML = defenders
-  document.getElementById("midfielders").innerHTML = midfielders
-  document.getElementById("forwards").innerHTML = forwards
-  document.getElementById("points").innerHTML = "Total Points: "+points
+
+  document.getElementById("goalkeeper").innerHTML = goalkeepers
+
+  for(i =1; i <= defenders.length; i++){
+    var current = "defender"+[i]
+    document.getElementById(current).innerHTML = defenders[i-1]
+  }
+
+  for(i =1; i <= midfielders.length; i++){
+    var current = "midfielder"+[i]
+    document.getElementById(current).innerHTML = midfielders[i-1]
+  }
+
+  document.getElementById("forward1").innerHTML = forwards
+  //document.getElementById("points").innerHTML = "Total Points: "+points
   return -1
 }
