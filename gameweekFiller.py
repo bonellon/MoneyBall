@@ -17,7 +17,8 @@ def generateRandomValue(model, data):
 
     value = getRand(models)
 
-    goalkeepers = data[value]["goalkeepers"][0]
+    goalkeepers = []
+    goalkeepers.append(data[value]["goalkeepers"][0])
 
     defenders = []
     for i in range(0, 4):
@@ -44,14 +45,17 @@ def generateRandomValue(model, data):
         else:
             i = i-1
 
-    newModel = Formation.Model(model, goalkeepers, defenders, midfielders, forwards).__dict__
+    newModel = Formation.Model(model, goalkeepers, defenders, midfielders, forwards)
     return newModel
 
 
-with open("WEB/gameweeks.json", 'r', encoding='utf-8') as f:
+with open("WEB/gameweeks.json", 'r') as f:
     data = json.load(f)
 
-del data['1']
+try:
+    del data['1']
+except:
+    pass
 
 for gw in data:
     for model in data[gw]:
@@ -62,8 +66,7 @@ for gw in data:
         current = data[gw][model]
 
         if current["goalkeepers"] == []:
-            print(model, data[gw]["gameweek"])
-            data[gw][model] = generateRandomValue(model, data[gw])
+            data[gw][model] = generateRandomValue(model, data[gw]).__dict__
 
-with open('WEB/gameweeks.json', 'w', encoding='utf-8') as file:
+with open('WEB/gameweeks.json', 'w') as file:
     json.dump(data, file, ensure_ascii=False, indent=2)

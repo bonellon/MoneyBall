@@ -49,7 +49,7 @@ Store all previous data in json file. If json has output, return that otherwise 
 def predict(gw, model):
     app.logger.info("Predicting Gameweek: "+str(gw))
 
-    with open('gameweeks.json', 'r', encoding='utf-8') as file:
+    with open('gameweeks.json', 'r') as file:
         currentStore = json.load(file)
 
     if len(currentStore[str(gw)][model]["goalkeepers"]) > 0 and len(currentStore[str(gw)][model]["defenders"]) > 0:
@@ -64,7 +64,7 @@ def predict(gw, model):
     forward = players[3]
 
     currentStore[str(gw)][model] = formation.Model(model, keeper, defenders, midfielders, forward).__dict__
-    with open('gameweeks.json', 'w', encoding='utf-8') as file:
+    with open('gameweeks.json', 'w') as file:
         json.dump(currentStore, file, ensure_ascii=False, indent=2)
 
 

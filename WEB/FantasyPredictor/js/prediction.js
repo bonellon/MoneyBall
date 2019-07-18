@@ -86,6 +86,7 @@ catch(err){
   }
   document.getElementById("mainTitle2").innerHTML = "Total Points: "+points
 
+  console.log(goalkeepers)
   document.getElementById("goalkeeper").innerHTML = goalkeepers
 
   for(i =1; i <= defenders.length; i++){
