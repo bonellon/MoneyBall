@@ -1,16 +1,29 @@
 class Formation:
     gameweek = 0
+    svm = {}
+    rf = {}
+    gbm = {}
+
+    def __init__(self, gw, svm, rf, gbm):
+        self.gameweek = gw
+        self.svm = svm
+        self.rf = rf
+        self.gbm = gbm
+
+
+class Model:
+    name = ""
     goalkeepers = []
     defenders = []
     midfielders = []
     forwards = []
 
-    def __init__(self, gw, gk, df, md, fw):
-        self.gameweek = gw
-        self.goalkeepers = gk
-        self.defenders = df
-        self.midfielders = md
-        self.forwards = fw
+    def __init__(self, name, goalkeepers, defenders, midfielders, forwards):
+        self.name = name
+        self.goalkeepers = goalkeepers
+        self.defenders = defenders
+        self.midfielders = midfielders
+        self.forwards = forwards
 
 
 class Player:

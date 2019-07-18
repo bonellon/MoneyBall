@@ -38,6 +38,35 @@
 .show {display: block;}
 
 .playerbox{
-  background-color: black;
+  background-color: white;
   text-align: center;
+  margin-top: 90px;
+}
+
+.goalkeeperbox, .goalkeeperLegend{
+  background-color: yellow;
+  color: white;
+  text-align: center;
+  padding: 10px;
+}
+
+.defenderbox, .defenderLegend{
+  background-color: blue;
+  color: white;
+  text-align: center;
+  padding: 10px;
+}
+
+.midfielderbox, .midfielderLegend{
+  background-color: green;
+  color: white;
+  text-align: center;
+  padding: 10px;
+}
+
+.forwardbox, .forwardLegend{
+  background-color: red;
+  color: white;
+  text-align: center;
+  padding: 10px;
 }

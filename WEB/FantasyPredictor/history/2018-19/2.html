@@ -24,23 +24,31 @@
       <link rel="shortcut icon" type="../../image/png" href="../../images/pl_icon.png"/>
     </head>
 
-    <body onload="loadFunction()">
+    <body onload="loadFunction('svm')">
 
   	  <nav class="navbar navbar-expand-lg navbar-dark ftco_navbar bg-dark ftco-navbar-light" id="ftco-navbar">
   	    <div class="container">
-  	      <a class="navbar-brand" href="index.html"><span>Fantasy Predictor</span></a>
+  	      <a class="navbar-brand" href="../../index.html"><span>Fantasy Predictor</span></a>
   	      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
   	        <span class="oi oi-menu"></span> Menu
   	      </button>
 
   	      <div class="collapse navbar-collapse" id="ftco-nav">
   	        <ul class="navbar-nav ml-auto">
-  	          <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
-  	          <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
-  	          <li class="nav-item active"><a href="history.html" class="nav-link">History</a></li>
+  	          <li class="nav-item"><a href="../../index.html" class="nav-link">Home</a></li>
+  	          <li class="nav-item"><a href="../../about.html" class="nav-link">About</a></li>
+  	          <li class="nav-item active"><a href="../../history.html" class="nav-link">History</a></li>
   	        </ul>
   	      </div>
-  	    </div>
+  	    </div></div>
+                                <div class="dropdown">
+                                  <button onclick="myFunction()" class="dropbtn">Prediction Algorithm</button>
+                                  <div id="myDropdown" class="dropdown-content">
+                                      <a onclick="loadFunction('svm')">SVM</a>
+                                      <a onclick="loadFunction('gbm')">Random Forest</a>
+                                      <a onclick="loadFunction('rf')">GBM</a>
+                                  </div>
+                                </div>
   	  </nav>
       <!-- END nav -->
 
@@ -49,32 +57,45 @@
 
         <div class="overlay"></div>
         <div class="container">
-          <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-end" data-scrollax-parent="true">
+
+          <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-end" data-scrollax-parent="true" height=800px>
+
+
+
             <div class="col-md-7 ftco-animate mt-5" id="mainFrame" data-scrollax=" properties: { translateY: '70%' }">
               <h1 class="mb-4" id="mainTitle1" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Gameweek xx</h1>
               <h1 class="mb-4" id="mainTitle2" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">Loading Predictions...</h1>
             </div>
+
+
               <div class="playerbox">
                 <div class=goalkeeperbox>
-                  <h1 class="players" id="goalkeeper" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"></h1>
+                  <p class="players" id="goalkeeper" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"></p>
                 </div>
                 <div class=defenderbox>
-                  <h1 class="players" id="defender1" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"></h1>
-                  <h1 class="players" id="defender2" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"></h1>
-                  <h1 class="players" id="defender3" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"></h1>
-                  <h1 class="players" id="defender4" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"></h1>
+                  <p class="players" id="defender1" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"></p>
+                  <p class="players" id="defender2" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"></p>
+                  <p class="players" id="defender3" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"></p>
+                  <p class="players" id="defender4" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"></p>
                 </div>
                 <div class=midfielderbox>
-                  <h1 class="players" id="midfielder1" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"></h1>
-                  <h1 class="players" id="midfielder2" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"></h1>
-                  <h1 class="players" id="midfielder3" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"></h1>
-                  <h1 class="players" id="midfielder4" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"></h1>
-                  <h1 class="players" id="midfielder5" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"></h1>
+                  <p class="players" id="midfielder1" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"></p>
+                  <p class="players" id="midfielder2" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"></p>
+                  <p class="players" id="midfielder3" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"></p>
+                  <p class="players" id="midfielder4" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"></p>
+                  <p class="players" id="midfielder5" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"></p>
                 </div>
                 <div class=forwardbox>
-                  <h1 class="players" id="forward1" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"></h1>
-                <div>
+                  <p class="players" id="forward1" data-scrollax="properties: { translateY: '30%', opacity: 1.6 }"></p>
+                </div>
               </div>
+
+              <ul id="legend">
+                <li class="goalkeeperLegend"><div>Goalkeepers</div></li>
+                <li class="defenderLegend"><div>Defenders</div></li>
+                <li class="midfielderLegend"><div>Midfielders</div></li>
+                <li class="forwardLegend"><div>Forwards</div></li>
+              </ul>
           </div>
         </div>
       </div>

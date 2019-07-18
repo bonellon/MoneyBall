@@ -7,10 +7,10 @@ def convertToCSV(file_name, df):
     df.to_csv(file_name, encoding='utf-8')
 
 
-def predict(gw):
+def predict(gw, model):
 
-    toRemove = ['y', 'Player', 'BPS', 'Round', 'isCaptain', 'Points']
-    result = GB.main(toRemove, gw, "gbm")
+    toRemove = ['y', 'Player', 'BPS', 'Round', 'isCaptain', 'Points', 'DefenseOdds', 'OffenceOdds', 'BlogScore']
+    result = GB.main(toRemove, gw, model)
     names = result[2]
 
     return result
@@ -18,7 +18,7 @@ def predict(gw):
 
 
 def predictAll(columns, toRemove, csvName, model):
-    df = pd.DataFrame(columns=columns, index=[1, 2, 3])
+    df = pd.DataFrame(columns=columns, index=[1])
 
     for currentGW in range(2, 39):
 
@@ -42,5 +42,12 @@ REMOVER VALUES
 '''
 if __name__ == '__main__':
 
-    predict(3)
+    '''
+    toRemove = ['y', 'Player', 'BPS', 'Round', 'isCaptain', 'Points']
+    columns = []
+    for i in range(2, 39):
+        columns.append("GW_"+str(i))
 
+    predictAll(columns, toRemove, 'gbm.csv', "gbm")
+    '''
+    predict(38)
