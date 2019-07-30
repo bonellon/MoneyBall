@@ -298,8 +298,8 @@ def main(toRemove, currentGW, baseline):
             totalPlayers = totalPlayers + 1
             #print(names[i][j] + "  " + str(points[i][j]))
 
-    print("Total Points: "+str(totalPoints))
-    print("Average Player Points: "+str(totalPoints/totalPlayers))
+    print("Total Points: "+str(allPoints))
+    print("Average Player Points: "+str(allPoints[0]/totalPlayers))
     '''
     from matplotlib.legend_handler import HandlerLine2D
     

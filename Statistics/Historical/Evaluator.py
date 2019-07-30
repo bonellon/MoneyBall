@@ -50,4 +50,10 @@ if __name__ == '__main__':
 
     predictAll(columns, toRemove, 'gbm.csv', "gbm")
     '''
-    predict(38)
+    import time
+
+    st = time.time()
+
+    predict(38, "gbm")
+
+    print("----%.2f----" % (time.time() - st))
