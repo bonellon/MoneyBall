@@ -54,6 +54,6 @@ if __name__ == '__main__':
 
     st = time.time()
 
-    predict(38, "gbm")
+    predict(3, "gbm")
 
     print("----%.2f----" % (time.time() - st))

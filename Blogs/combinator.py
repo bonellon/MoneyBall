@@ -52,7 +52,7 @@ def createPlayerCSV(url):
     return all_players
 
 
-FPL_url = "https://fantasy.premierleague.com/drf/bootstrap-static"
+FPL_url = "https://fantasy.premierleague.com/api/bootstrap-static/"
 createPlayerCSV(FPL_url)
 
 '''

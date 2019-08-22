@@ -12,7 +12,7 @@ from sklearn.metrics import auc
 from Statistics.Historical import Player
 
 pd.options.mode.chained_assignment = None  # default='warn'
-CURRENT_GAMEWEEK = 12
+CURRENT_GAMEWEEK = 3
 
 K_SPLITS = 10
 
@@ -296,7 +296,7 @@ def main(toRemove, currentGW, baseline):
         for j in range(0, length-1):
             totalPoints = totalPoints + int(points[i][j])
             totalPlayers = totalPlayers + 1
-            #print(names[i][j] + "  " + str(points[i][j]))
+            print(names[i][j])
 
     print("Total Points: "+str(allPoints))
     print("Average Player Points: "+str(allPoints[0]/totalPlayers))
@@ -328,7 +328,7 @@ def learningModel(choice):
 if __name__ == '__main__':
     toRemove = ['y', 'Player', 'BPS', 'Round', 'isCaptain', 'Points'] #,'BlogScore', 'DefenseOdds', 'OffenceOdds']
 
-    baseline = "gbm"
+    baseline = "rf"
 
 
 

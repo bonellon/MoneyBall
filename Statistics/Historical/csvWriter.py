@@ -25,11 +25,17 @@ Player
     |   Player  |   Round   |   Opponent    |   points  |   isCaptain   |   opponent_NextWeek   |   points_NextWeek |
 '''
 def getFPL():
-    url = "https://fantasy.premierleague.com/drf/bootstrap-static"
+    url = "https://fantasy.premierleague.com/api/bootstrap-static/"
+    r = requests.get(url)
+    return json.loads(r.text)
+
+def getFixtures():
+    url = "https://fantasy.premierleague.com/api/fixtures/"
     r = requests.get(url)
     return json.loads(r.text)
 
 
+#Old version
 def getTeam(FPL, currentOpponent):
     for team in FPL["teams"]:
         current = int(team["current_event_fixture"][0]["opponent"])
@@ -40,6 +46,34 @@ def getTeam(FPL, currentOpponent):
                 return opponent, isHome
             except:
                 return int(current), int(team['current_event_fixture'][0]['is_home'])
+
+
+#New version - FPL 2019/20
+def getTeamv2(currentGW, currentOpponent):
+
+    events = getFixtures()
+
+    team = '0'
+    match = False
+    for event in events:
+
+        if not match and event['event'] == int(currentGW)-1:
+            if(currentOpponent) == str(event['team_a']):
+                team = event['team_h']
+                match = True
+            elif(currentOpponent) == str(event['team_h']):
+                team = event['team_a']
+                match = True
+
+        if match:
+            if event['event'] == int(currentGW):
+                if team == event['team_a']:
+                    return event['team_h'], 0
+
+                if team == event['team_h']:
+                    return event['team_a'], 1
+
+
 
 
 #Get ict_index, threat, creativity, influence, trasnfers_balance,
@@ -63,7 +97,7 @@ def writeNewCSV(table):
     table = formatDictionary(table)[0]
     FPL = getFPL()
 
-    with open("predictor.csv", 'w', newline='') as csvFile:
+    with open("predictor.csv", 'w', newline='', encoding='utf-8') as csvFile:
         writer = csv.writer(csvFile)
         writer.writerow(table[0])
 
@@ -72,6 +106,8 @@ def writeNewCSV(table):
             for j in range(1, len(table)):
                 if(int(table[j][2]) == i):
                     maximum = i
+
+                    #writer.writerow([str(s).encode("utf-8") for s in table[j]])
                     writer.writerow(table[j])
 
     with open("predictor.csv", 'r') as csvFile:
@@ -90,7 +126,7 @@ def writeNewCSV(table):
         current = [player[0], player[1], str(int(player[2])+1)]
 
         #opponent
-        team, isHome = getTeam(FPL, player[3])
+        team, isHome = getTeamv2(player[2], player[3])
         current.append(team)
         current.append(Teams.GetFDR(team, isHome))
         current.append(isHome)
@@ -225,7 +261,7 @@ def formatDictionary(table):
 
             for i in range (1, maxGameweeks+1):
                 try:
-                    print(str(i) + " --> " + player)
+                    #print(str(i) + " --> " + str(player))
                     current = playerList[player][str(i)]
                     newList = [current['element'], player, str(i),current['opponent_team'], current['opponent_FDR'], current['was_home'], current['total_points'], current['minutes'],
                                current['opponent_PrevWeek'], current['opponent_FDR_PrevWeek'], current['was_home_PrevWeek'], current['points_PrevWeek'],

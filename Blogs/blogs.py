@@ -6,6 +6,8 @@ import Blogs.blog_injury as injury
 
 from googlesearch import search
 
+maxGW = 4
+
 def googleSearch(currentGW):
 
     query = 'Fantasy Premier League gameweek "'+str(currentGW)+'"'
@@ -14,7 +16,7 @@ def googleSearch(currentGW):
     for url in search(query, stop=100, pause=2.0, tbs="qdr:y"):
         print("Appending: "+str(len(urls)))
         urls.append(url)
-    '
+
     query = 'FPL gameweek '+str(currentGW)
 
     print(query)
@@ -37,7 +39,7 @@ def googleSearch(currentGW):
         if url not in urls:
             print("Appending: " + str(len(urls)))
             urls.append(url)
-    '
+
     with open('urls.txt', 'w') as f:
         for item in urls:
             f.write("%s\n" % item)
@@ -51,7 +53,7 @@ def iterateBlogs(players):
     except:
         currentLatest = 1
 
-    for currentGW in range(currentLatest,39):
+    for currentGW in range(currentLatest,maxGW):
 
         players["score_"+str(currentGW)] = pd.Series(0.00, index=players.index)
 
@@ -127,7 +129,7 @@ def matchName(name, sentiment, players, currentGW):
             try:
                 print("\tMATCHED! : "+name + "  -  "+row['fullName'])
             except:
-                print("\tMATCHED!" +row['fullName'])
+                print("\tMATCHED! - CANNOT PRINT FULL NAME")
 
             sentimentScore = getSentiment(sentiment)
             players.set_value(index, "score_"+str(currentGW), row["score_"+str(currentGW)]+sentimentScore)

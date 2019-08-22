@@ -10,10 +10,10 @@ def calculateBestDefense(keep):
 
     current = os.path.abspath(os.curdir).split('\\')
     if current[len(current) - 1] == 'Historical':
-        file = open('../odds/Result&The2TeamsScore.csv', 'r')
+        file = open('../odds/ResultsBothTeamsScore.csv', 'r')
 
     else:
-        file = open('odds/Result&The2TeamsScore.csv', 'r')
+        file = open('odds/ResultsBothTeamsScore.csv', 'r')
 
 
     csv_reader = csv.reader(file, delimiter=',')
@@ -48,10 +48,10 @@ def calculateBestOffence(keep):
 
     current = os.path.abspath(os.curdir).split('\\')
     if current[len(current) - 1] == 'Historical':
-        file = open('../odds/Result&The2TeamsScore.csv', 'r')
+        file = open('../odds/ResultsBothTeamsScore.csv', 'r')
 
     else:
-        file = open('odds/Result&The2TeamsScore.csv', 'r')
+        file = open('odds/ResultsBothTeamsScore.csv', 'r')
 
     csv_reader = csv.reader(file, delimiter=',')
     isFirst = True

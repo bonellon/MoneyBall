@@ -6,7 +6,7 @@ import Statistics.Historical.csvWriter as csvWriter
 import Statistics.Historical.Teams as Teams
 
 CAPTAIN_POINTS = 6
-BASEPATH = str(Path(__file__).parents[2]) + "\\External\\vaastav\\data\\2018-19\\players"
+BASEPATH = str(Path(__file__).parents[2]) + "\\External\\vaastav\\data\\2019-20\\players"
 
 keep = ['round', 'opponent_team', 'opponent_FDR', 'was_home', 'total_points', 'minutes', 'points_PrevWeek',
         'was_home_PrevWeek',
@@ -21,7 +21,7 @@ def getFPL():
     import requests
     import json
 
-    url = "https://fantasy.premierleague.com/drf/bootstrap-static"
+    url = "https://fantasy.premierleague.com/api/bootstrap-static/"
     r = requests.get(url)
     return json.loads(r.text)
 
@@ -73,10 +73,12 @@ def addTotalPointsPrevWeeks(file):
     '''
         ROW POSITIONS
 
-        points      46
-        was_home    51
-        opponent    30
-        minutes     27
+                    2018/19     2019/20
+
+        points      46          24    
+        was_home    51          29
+        opponent    30          13
+        minutes     27          12
     '''
 
     with open(file, 'w', newline='') as csvFile:
@@ -91,50 +93,55 @@ def addTotalPointsPrevWeeks(file):
         newCSV[1].append(0)
         newCSV[1].append(0)
 
-        newCSV[2].append(newCSV[1][46])
+        try:
+            newCSV[2].append(newCSV[1][24])
 
-        isHome = {True: 1, False: 0}[newCSV[1][51] == 'True']
+            isHome = {True: 1, False: 0}[newCSV[1][29] == 'True']
 
-        newCSV[2].append(isHome)
-        newCSV[2].append(newCSV[1][30])
-        newCSV[2].append(Teams.GetFDR(int(newCSV[1][30]), isHome))
-        newCSV[2].append(newCSV[1][27])
+            newCSV[2].append(isHome)
+            newCSV[2].append(newCSV[1][13])
+            newCSV[2].append(Teams.GetFDR(int(newCSV[1][13]), isHome))
+            newCSV[2].append(newCSV[1][12])
 
-        newCSV[2].append(0)
-        newCSV[2].append(0)
-        newCSV[2].append(0)
-        newCSV[2].append(0)
+            newCSV[2].append(0)
+            newCSV[2].append(0)
+            newCSV[2].append(0)
+            newCSV[2].append(0)
 
-        for i in range(3, len(newCSV)):
-            row = newCSV[i]
-            prevRow = newCSV[i - 1]
-            prevRow2 = newCSV[i - 2]
+            for i in range(3, len(newCSV)):
+                row = newCSV[i]
+                prevRow = newCSV[i - 1]
+                prevRow2 = newCSV[i - 2]
 
-            pointsPW = prevRow[46]
-            homePW = {True: 1, False: 0}[prevRow[51] == 'True']
-            opponentPW = prevRow[30]
-            FDR_PW = Teams.GetFDR(int(opponentPW), int(homePW))
-            minutes_PW = int(prevRow[27])
+                pointsPW = prevRow[24]
+                homePW = {True: 1, False: 0}[prevRow[29] == 'True']
+                opponentPW = prevRow[13]
+                FDR_PW = Teams.GetFDR(int(opponentPW), int(homePW))
+                minutes_PW = int(prevRow[12])
 
-            pointsPW2 = prevRow2[46]
-            homePW2 = {True: 1, False: 0}[prevRow2[51] == 'True']
-            opponentPW2 = prevRow[30]
-            FDR_PW2 = Teams.GetFDR(int(opponentPW2), int(homePW2))
+                pointsPW2 = prevRow2[24]
+                homePW2 = {True: 1, False: 0}[prevRow2[29] == 'True']
+                opponentPW2 = prevRow[13]
+                FDR_PW2 = Teams.GetFDR(int(opponentPW2), int(homePW2))
 
-            row.append(pointsPW)
-            row.append(homePW)
-            row.append(opponentPW)
-            row.append(FDR_PW)
-            row.append(minutes_PW)
+                row.append(pointsPW)
+                row.append(homePW)
+                row.append(opponentPW)
+                row.append(FDR_PW)
+                row.append(minutes_PW)
 
-            row.append(pointsPW2)
-            row.append(homePW2)
-            row.append(opponentPW2)
-            row.append(FDR_PW2)
+                row.append(pointsPW2)
+                row.append(homePW2)
+                row.append(opponentPW2)
+                row.append(FDR_PW2)
 
-        writer = csv.writer(csvFile)
-        for key, value in newCSV.items():
-            writer.writerow(value)
+            writer = csv.writer(csvFile)
+            for key, value in newCSV.items():
+                writer.writerow(value)
+
+        except:
+            print("ERROR! Missing points for player: "+str(file))
+            newCSV[2].append(0)
     return newCSV
 
 
@@ -183,7 +190,7 @@ def addElementId(playerLists, FPL):
         for elem in FPL['elements']:
             if (playerLower == elem['web_name'].lower() or playerLower == elem['first_name'].lower()
                     or playerLower == elem['second_name'].lower()):
-                print(elem['web_name'] + ': '+str(elem['element_type']))
+                #print(str(elem['web_name']) + ': '+str(elem['element_type']))
                 elementID = elem['element_type']
 
     for player in playerLists:
